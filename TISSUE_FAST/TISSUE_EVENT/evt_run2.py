@@ -216,6 +216,10 @@ def main():
     ap.add_argument("--use-exempt-feedback", action="store_true")
     ap.add_argument("--steps", type=int, default=32, help="steps a byte (a number of the tissue; E63: 32)")
     ap.add_argument("--cap", type=int, default=0, help="at most this many incoming connections a cell (0: no cap)")
+    ap.add_argument("--turnover", action="store_true", help="plan 2: make a connection every --make-period steps whatever the activity; trial of new connections")
+    ap.add_argument("--make-period", type=int, default=128, help="steps between connections a cell makes (E63: 128)")
+    ap.add_argument("--trial", type=int, default=512, help="steps a new connection from a cell is on trial (plan 2)")
+    ap.add_argument("--trial-theta", type=float, default=0.25, help="kept if its use is at least this share of the mean use of the cell's other connections")
     ap.add_argument("--count-every", type=int, default=128, help="bytes between counts of connections (E63: 128)")
     ap.add_argument("--slow-records", action="store_true", help="the recording loop as E63 wrote it (a call into the core every step)")
     a = ap.parse_args()
@@ -225,6 +229,8 @@ def main():
         evt.EvTissue.counts = _counts_fast
     if a.cap:
         evt.L.evt_set_cap(a.cap)
+    assert not a.turnover or a.withdraw_by_use, 'plan 2 runs with withdrawal by use (the use is measured by it)'
+    evt.L.evt_set_turnover(int(a.turnover), a.make_period, a.trial, a.trial_theta)
     sw = dict(floor=a.floor, tol=a.tol, trace_sender=a.trace_sender, strength_byte=a.strength_byte, astar=a.astar,
               withdraw_by_use=a.withdraw_by_use, use_exempt_feedback=a.use_exempt_feedback)
     out = HERE / "runs" / a.name
@@ -249,7 +255,9 @@ def main():
     cpu_core = time.process_time() - c1
     nb = a.bytes
     steps = cnt["steps"]
-    sw = dict(sw, steps=a.steps, cap=a.cap, records="slow" if a.slow_records else "fast")
+    tc = np.zeros(2, np.int64); evt.L.evt_trial_counts(tc)
+    sw = dict(sw, steps=a.steps, cap=a.cap, turnover=a.turnover, make_period=a.make_period, trial=a.trial, trial_theta=a.trial_theta,
+              trial_withdrawn=int(tc[0]), trial_kept=int(tc[1]), records="slow" if a.slow_records else "fast")
     rec = dict(experiment="E63, the tissue's program (event-driven)", task="TASK_E63_THE_TISSUE_PROGRAM_EVENT_DRIVEN_20261119.md",
                command=" ".join(["python3", "evt_run.py"] + sys.argv[1:]), switches=sw,
                core_sha256=hashlib.sha256(evt.SRC.read_bytes()).hexdigest(),

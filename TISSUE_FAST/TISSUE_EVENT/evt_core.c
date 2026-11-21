@@ -107,6 +107,16 @@ static int *driver, NDRV;
 static double *Astep, *mstep;
 static uint64_t *duebits, *sortbits; static int NW;
 static inline void due_set(int i, int on) { due[i] = (uint8_t)on; if (on) duebits[i >> 6] |= 1ULL << (i & 63); else duebits[i >> 6] &= ~(1ULL << (i & 63)); }
+/* Plan 2 (turnover with a trial period): TURN 1 makes a connection every PMK steps whatever the cell's activity; a connection from a
+   cell made during the life is on trial for TTR steps; at the end of the trial it is withdrawn if its use (the mean over the steps at
+   which the receiving cell was active of the sender's trace times that activity) is 0, or below THTR times the mean running use of
+   the receiving cell's other connections from cells. */
+static int TURN = 0, PMK = 128, TTR = 512; static double THTR = 0.25; static int64_t TRIAL_GONE = 0, TRIAL_KEPT = 0;
+static uint8_t *c_trial; static double *c_tsum; static int *c_tn;
+static int64_t *trq_t, *trq_seq; static int *trq_c, trq_n, trq_h, trq_cap;
+static int is_cell_sender(int j);
+void evt_set_turnover(int on, int pmk, int ttr, double th) { TURN = on; PMK = pmk; TTR = ttr; THTR = th; }
+void evt_trial_counts(int64_t *o) { o[0] = TRIAL_GONE; o[1] = TRIAL_KEPT; }
 static int CAPIN = 1 << 30; void evt_set_cap(int c) { CAPIN = c; }
 static int64_t *slk; static int NSLEEP; static double SLEEP_EMUL, SLEEP_WAKES;   /* step from which a cell sleeps (-1: awake) */                /* the arrival and mismatch of the last step a cell was computed (for checks) */
 /* connections */
@@ -190,6 +200,7 @@ static int new_slot(void) {
         c_w = realloc(c_w, sizeof(double) * CAP); c_e = realloc(c_e, sizeof(double) * CAP); c_ub = realloc(c_ub, sizeof(double) * CAP); c_use = realloc(c_use, sizeof(double) * CAP); c_cnt = realloc(c_cnt, sizeof(int) * CAP);
         c_est = realloc(c_est, sizeof(int64_t) * CAP); c_k0 = realloc(c_k0, sizeof(int64_t) * CAP); c_seq = realloc(c_seq, sizeof(int64_t) * CAP);
         c_alive = realloc(c_alive, CAP); c_mark = realloc(c_mark, CAP);
+        c_trial = realloc(c_trial, CAP); c_tsum = realloc(c_tsum, sizeof(double) * CAP); c_tn = realloc(c_tn, sizeof(int) * CAP);
     }
     return NSLOT++;
 }
@@ -203,6 +214,7 @@ static void tq_push(int64_t t, int i) {
 }
 static void compact_queues(void) {
     if (aq_h > 65536 && aq_h > aq_n / 2) { memmove(aq_t, aq_t + aq_h, 8 * (aq_n - aq_h)); memmove(aq_seq, aq_seq + aq_h, 8 * (aq_n - aq_h)); memmove(aq_c, aq_c + aq_h, 4 * (aq_n - aq_h)); aq_n -= aq_h; aq_h = 0; }
+    if (trq_h > 65536 && trq_h > trq_n / 2) { memmove(trq_t, trq_t + trq_h, 8 * (trq_n - trq_h)); memmove(trq_seq, trq_seq + trq_h, 8 * (trq_n - trq_h)); memmove(trq_c, trq_c + trq_h, 4 * (trq_n - trq_h)); trq_n -= trq_h; trq_h = 0; }
     if (tq_h > 65536 && tq_h > tq_n / 2) { memmove(tq_t, tq_t + tq_h, 8 * (tq_n - tq_h)); memmove(tq_c, tq_c + tq_h, 4 * (tq_n - tq_h)); tq_n -= tq_h; tq_h = 0; }
 }
 
@@ -215,7 +227,7 @@ static void free_all(void) {
     FREE(A); FREE(v); FREE(x); FREE(p); FREE(th); FREE(abar); FREE(vt); FREE(dA); FREE(sm); FREE(sexc); FREE(sinh_);
     FREE(pst); FREE(ast); FREE(vst); FREE(klast); FREE(ncomp); FREE(rule); FREE(theta_on); FREE(inwl); FREE(due); FREE(full);
     FREE(touched); FREE(inlearn); FREE(ischg); FREE(ninh); FREE(driver); FREE(Astep); FREE(mstep); FREE(slk); FREE(duebits); FREE(sortbits);
-    FREE(c_snd); FREE(c_rcv); FREE(c_w); FREE(c_e); FREE(c_ub); FREE(c_use); FREE(c_cnt); FREE(usefb); FREE(c_est); FREE(c_k0); FREE(c_seq); FREE(c_alive); FREE(c_mark);
+    FREE(c_snd); FREE(c_rcv); FREE(c_w); FREE(c_e); FREE(c_ub); FREE(c_use); FREE(c_cnt); FREE(usefb); FREE(c_est); FREE(c_k0); FREE(c_seq); FREE(c_alive); FREE(c_mark); FREE(c_trial); FREE(c_tsum); FREE(c_tn); FREE(trq_t); FREE(trq_seq); FREE(trq_c); trq_n = trq_h = trq_cap = 0; TRIAL_GONE = TRIAL_KEPT = 0;
     FREE(freeslots.a); freeslots.n = freeslots.cap = 0;
     ivec *ls[] = {&wl, &wl2, &chg, &chg2, &gone, &learnl, &dal};
     for (int q = 0; q < 7; q++) { FREE(ls[q]->a); ls[q]->n = ls[q]->cap = 0; }
@@ -275,7 +287,7 @@ static void link_slot(int c) {
 /* a connection present at birth (or in the example): sender, receiver, strength, trace, step of making */
 int evt_add_connection(int j, int i, double w, double e, int64_t k0) {
     int c = new_slot();
-    c_snd[c] = j; c_rcv[c] = i; c_w[c] = w; c_e[c] = e; c_ub[c] = 0.0; c_use[c] = 0.0; c_cnt[c] = 0; c_est[c] = K; c_k0[c] = k0; c_seq[c] = SEQ++;
+    c_snd[c] = j; c_rcv[c] = i; c_w[c] = w; c_e[c] = e; c_ub[c] = 0.0; c_use[c] = 0.0; c_cnt[c] = 0; c_trial[c] = 0; c_est[c] = K; c_k0[c] = k0; c_seq[c] = SEQ++;
     c_alive[c] = 1; c_mark[c] = 0;
     link_slot(c);
     if (LIFE) aq_push(k0 + PS, c, c_seq[c]);
@@ -288,7 +300,7 @@ void evt_start(void) {
 }
 void evt_set_life_cells(const uint8_t *can_make) {     /* cells that make connections (not feedback cells) */
     tq_n = tq_h = 0;
-    for (int i = 0; i < NC; i++) if (can_make[i]) tq_push(klast[i] + PS, i);
+    for (int i = 0; i < NC; i++) if (can_make[i]) tq_push(klast[i] + PMK, i);
 }
 static int nlinechg; static int *linechg;
 void evt_set_line(int j, double val) {                  /* a line's value from this step on (the worked example) */
@@ -333,7 +345,7 @@ static void remove_conn(int c) {
     CNT[4] += in[i].n;
     if (nev_gone == cap_gone) { cap_gone = cap_gone ? 2 * cap_gone : 1024; ev_gone = realloc(ev_gone, sizeof(int64_t) * 4 * cap_gone); }
     ev_gone[4 * nev_gone] = K; ev_gone[4 * nev_gone + 1] = j; ev_gone[4 * nev_gone + 2] = i; ev_gone[4 * nev_gone + 3] = c_seq[c]; nev_gone++;
-    if (full[i]) { full[i] = 0; if (K - klast[i] >= PS) due_set(i, 1); }
+    if (full[i]) { full[i] = 0; if (K - klast[i] >= PMK) due_set(i, 1); }
 }
 static int *mark_s; static int mark_cap; static int *cand; static int cand_cap;
 static void make_for(int i) {
@@ -349,12 +361,17 @@ static void make_for(int i) {
     int j = cand[randbelow(nc)];
     if (!inwl[i]) { if (slk[i] >= 0) (void)wake(i, K + 1); touch(i, K + 1); wl_add(&wl2, i); }
     int c = new_slot();
-    c_snd[c] = j; c_rcv[c] = i; c_w[c] = START_W; c_e[c] = 0.0; c_ub[c] = 0.0; c_use[c] = 0.0; c_cnt[c] = 0; c_est[c] = K + 1; c_k0[c] = K; c_seq[c] = SEQ++;
+    c_snd[c] = j; c_rcv[c] = i; c_w[c] = START_W; c_e[c] = 0.0; c_ub[c] = 0.0; c_use[c] = 0.0; c_cnt[c] = 0; c_trial[c] = 0; c_est[c] = K + 1; c_k0[c] = K; c_seq[c] = SEQ++;
     c_alive[c] = 1; c_mark[c] = 0;
     link_slot(c);
     A[i] += sig[j] * START_W * zsent[j];
     aq_push(K + PS, c, c_seq[c]);
-    klast[i] = K; due_set(i, 0); tq_push(K + PS, i);
+    if (TURN && is_cell_sender(j)) {
+        c_trial[c] = 1; c_tsum[c] = 0.0; c_tn[c] = 0;
+        if (trq_n == trq_cap) { trq_cap = trq_cap ? 2 * trq_cap : 4096; trq_t = realloc(trq_t, 8 * trq_cap); trq_seq = realloc(trq_seq, 8 * trq_cap); trq_c = realloc(trq_c, 4 * trq_cap); }
+        trq_t[trq_n] = K + TTR; trq_seq[trq_n] = c_seq[c]; trq_c[trq_n] = c; trq_n++;
+    }
+    klast[i] = K; due_set(i, 0); tq_push(K + PMK, i);
     MADE++;
     if (nev_made == cap_made) { cap_made = cap_made ? 2 * cap_made : 4096; ev_made = realloc(ev_made, sizeof(int64_t) * 3 * cap_made); }
     ev_made[3 * nev_made] = K; ev_made[3 * nev_made + 1] = j; ev_made[3 * nev_made + 2] = i; nev_made++;
@@ -411,6 +428,7 @@ static void use_step(int i, double xp) {
         if (!is_cell_sender(j)) continue;
         double e = trace_of(c, K);                       /* the trace held before the step */
         c_use[c] = DEC128 * c_use[c] + INC128 * e * xp;
+        if (c_trial[c]) { c_tsum[c] += e * xp; c_tn[c]++; }
         if (c_use[c] > mx) mx = c_use[c];
     }
     double level = INC128 * mx;
@@ -536,6 +554,21 @@ int evt_step(int byte) {
                 aq_h++; CNT[4]++;
             }
         }
+        /* the end of a trial (plan 2) */
+        while (trq_h < trq_n && trq_t[trq_h] <= K) {
+            int c = trq_c[trq_h];
+            if (c_alive[c] && c_seq[c] == trq_seq[trq_h] && c_trial[c]) {
+                c_trial[c] = 0;
+                if (!c_mark[c]) {
+                    int i = c_rcv[c]; double sum = 0.0; int n = 0;
+                    for (int q = 0; q < in[i].n; q++) { int c2 = in[i].a[q]; if (c2 != c && !c_trial[c2] && is_cell_sender(c_snd[c2])) { sum += c_use[c2]; n++; } }
+                    double mean = n ? sum / n : 0.0, u = c_tn[c] ? c_tsum[c] / c_tn[c] : 0.0;
+                    CNT[4] += in[i].n;
+                    if (u == 0.0 || u < THTR * mean) { c_mark[c] = 1; iv_push(&gone, c); TRIAL_GONE++; } else TRIAL_KEPT++;
+                }
+            }
+            trq_h++;
+        }
         if (gone.n) {
             qsort(gone.a, gone.n, sizeof(int), cmp_seq);
             for (int q = 0; q < gone.n; q++) remove_conn(gone.a[q]);
@@ -543,7 +576,7 @@ int evt_step(int byte) {
         }
         while (tq_h < tq_n && tq_t[tq_h] <= K) {
             int i = tq_c[tq_h];
-            if (K - klast[i] >= PS && !full[i]) due_set(i, 1);
+            if (K - klast[i] >= PMK && !full[i]) due_set(i, 1);
             tq_h++;
         }
         for (int w = 0; w < NW; w++) for (uint64_t b = duebits[w]; b; b &= b - 1) {
@@ -553,7 +586,7 @@ int evt_step(int byte) {
             wake_to(i, K + 1, &wl2);
             bring_a(i, K + 1);
             if (in[i].n >= CAPIN) { full[i] = 1; due_set(i, 0); continue; }   /* at the cap: as a full neighbourhood */
-            if (th[i] == 0.0 && abar[i] < ASTAR) make_for(i);
+            if (TURN || (th[i] == 0.0 && abar[i] < ASTAR)) make_for(i);
         }
         compact_queues();
     }
