@@ -47,3 +47,33 @@ The longer schedule (the first brief's step 3). Any search over the rate, the wi
 | `all` | 1.3470264 | 1.3204424 | 1.3237 | 402 s |
 
 **D5 held** (reported: 1.3863 / 1.3717, 1.3462 / 1.3192, 1.3470 / 1.3204).
+
+**Entry 2 (02:45 UTC, 21 November): the network going on, all four seeds** (`dyn.py`; `res/dyn_s<seed>_W<W>.json` and `.f32`; the comparison in `res/compare_going_on.json`). Rate 1e-4 as planned; it made no seed worse, so **the alternative rate was not used**. A teaching step costs 0.25 CPU-s (a batch of one block); a whole pass 1,180 CPU-s with W = 64 (1,743 steps) and 870 with W = 256 (436 steps), nearly all of it the answering.
+
+| seed | nothing changing (plan 1) | going on, W = 64 | named right, % | going on, W = 256 | named right, % |
+|---|---|---|---|---|---|
+| 1337 | 1.4587 | 1.3432 | 58.80 | 1.3524 | 58.49 |
+| 1338 | 1.4588 | 1.3421 | 58.66 | 1.3564 | 58.40 |
+| 1339 | 1.4580 | 1.3431 | 58.76 | 1.3562 | 58.48 |
+| 1340 | 1.4607 | 1.3420 | 58.64 | 1.3561 | 58.35 |
+| **mean; sd** | 1.4590; 0.0011 | **1.3426; 0.0006** | 58.72 | **1.3553; 0.0019** | 58.43 |
+
+The gain from going on is 0.116 nats (W = 64) and 0.104 (W = 256), with block standard errors of 0.014 and 0.012: it is very uneven. By thirds of the tenth (four-seed mean, W = 64): 0.048, 0.056 and **0.246**; the last third is where most is gained. The every-eighth set gives the same figures within 0.006 (1.343 to 1.345 at W = 64).
+
+**Going on against going on** (d = cells - the four-seed mean of the network, all 111,540 bytes; s.e. from blocks of 1,000):
+
+| cells | cells going on | d against W = 64 | s.e. | d against each seed | share of blocks with the cells lower | d against W = 256 | s.e. |
+|---|---|---|---|---|---|---|---|
+| `T2`, second cell | 1.3717 | +0.0291 | 0.0045 | +0.029 to +0.030 | 0.17 | +0.0164 | 0.0067 |
+| `big`, first cell | 1.3462 | +0.0036 | 0.0047 | | 0.36 | -0.0091 | 0.0071 |
+| `big`, second cell | 1.3192 | **-0.0234** | 0.0047 | -0.023 to -0.024 | 0.70 | -0.0361 | 0.0073 |
+| `all`, first cell | 1.3470 | +0.0044 | 0.0046 | | 0.35 | -0.0082 | 0.0071 |
+| `all`, second cell | 1.3204 | **-0.0221** | 0.0047 | -0.022 to -0.023 | 0.71 | -0.0348 | 0.0072 |
+
+**Said plainly (my reading; a first reading).** Going on helps the network about as much as it helps the cells (0.116 against the cells' 0.122 for all kinds), so the order does not change: with both going on, the systems with 164 kinds and the second cell are lower than the network by 0.022 to 0.023 nats a byte against its better window (W = 64), 4.7 to 4.9 block standard errors, on every seed, in about 70% of the blocks; `T2` is higher by 0.029; the first cells of the large systems are level with the network (within one standard error). Setting a going-on cell system (1.32) against the stopped network (1.459) overstated the margin about sixfold; setting like against like, the margin is of the same size as with nothing changing (0.017), a little larger.
+
+**Limits.** One rate, one step a window, two windows, nothing searched: the network's going-on figure is what this first procedure gives, not the best a network can do going on (more steps a window, a tuned rate, or blocks of the stream mixed in were not tried, and any of them tuned on this tenth would spoil it). The cells learn from each byte at once; the network once per 64 or 256 bytes, and the smaller window is the better, so a still smaller window might be better again (not run; W was fixed beforehand). One text, one tenth. The network is the shorter schedule.
+
+**Predictions.** D1 held. **D2 failed**: I expected a gain of 0.01 to 0.06; it is 0.10 to 0.12. D3 held on all four seeds. D4 held (4.7 standard errors against W = 64). D5 held (entry 1).
+
+The checkpoints were deleted after these passes (no strengths are kept; a rerun of plan 1's commands rebuilds them, 3.4 h a seed on one thread).
