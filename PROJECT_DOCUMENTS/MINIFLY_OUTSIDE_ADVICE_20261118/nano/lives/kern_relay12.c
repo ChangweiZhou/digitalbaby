@@ -11,7 +11,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-typedef struct { int64_t H, NL, S, D, soft, right; double eta1, eta2, lam, loss; double *W1t, *b1, *W2, *b2, *Rt; int64_t *hist; int64_t gate, hold, rect; } PNet;      /* PLAN_12: three switches */
+typedef struct { int64_t H, NL, S, D, soft, right; double eta1, eta2, lam, loss; double *W1t, *b1, *W2, *b2, *Rt; int64_t *hist; int64_t gate, hold, rect, holdb; } PNet;      /* PLAN_12: four switches */
 
 int64_t p_steps(PNet *n, int64_t nsteps, const int32_t *xs, const int32_t *ys) {
     const int64_t H = n->H, S = n->S, D = n->D, soft = n->soft;
@@ -46,7 +46,7 @@ int64_t p_steps(PNet *n, int64_t nsteps, const int32_t *xs, const int32_t *ys) {
         for (int64_t v = 0; v < S; v++) {
             const double mv = m[v], f = g * mv / sc; double *restrict w = W2 + v * H, *restrict t = Rt + v * H;
             for (int64_t j = 0; j < H; j++) { const double q = f * h[j] / cs[j]; r[j] += mv * t[j] * cs[j]; w[j] += q; t[j] += q; }
-            n->b2[v] += g * mv;
+            if (!n->holdb) n->b2[v] += g * mv;      /* holdb: the branches' constants stay at nought */
         }
         for (int64_t j = 0; j < H; j++) dv[j] = n->eta1 * sc * r[j] * h[j] * (1.0 - h[j]);
         for (int64_t d = 0; d < D; d++) { double *restrict w = W1t + (d * S + n->hist[d]) * H; for (int64_t j = 0; j < H; j++) w[j] += dv[j]; }

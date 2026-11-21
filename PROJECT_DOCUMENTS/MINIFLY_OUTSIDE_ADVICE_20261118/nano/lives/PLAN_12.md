@@ -61,6 +61,28 @@ Nothing else is changed: 256 logistic cells, ten places, one step of relay, the 
 
 Development seed 1: R (it must repeat `PLAN_11.md`'s 83.5, 96.0 and 0.0), and Rgtqr at theta = 2, 3, 4 for the choice of theta by the first phase alone. Reported: the seeds 73129, 93683, 116089, 406364, 545353, all sixteen forms, nothing chosen among them. Size: 256 cells, about 230,000 strengths (75 byte values). Cost: about 1.5 CPU-minutes a run; 84 runs, about two CPU-hours. **Not run:** subtraction after addition (the same bytes asking for other answers, which no silence can keep apart); a longer English; branches that compete; cells in between that compete; this learner on the six streams; more than one value of theta in the reported runs.
 
+## 4a. The development runs, the choice of theta, and two additions (development seed 1; before any reported run)
+
+Never-shown sums, whole answer, per cent; in brackets the same with only the digit branches answering (`out/relay12_dev*.txt`):
+
+| Form | sums: 5,000 lines | 40,000 | end of the sums | end of the English | the same with the answering strengths of the end of the sums put back | return: 10 lines | 50 | 100 | 500 | 5,000 | held-out English named right: end of the English, end of the return |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| R (as it is) | 5.4 | 83.5 | 96.0 | 0.0 (0.0) | 80.5 | 0.0 (2.6) | 0.0 (6.5) | 0.0 (12.9) | 46.0 (67.7) | 94.2 (94.2) | 41.9, 18.6 |
+| Rgtqr, theta 2 | 17.9 | 91.7 | 98.0 | 0.0 (52.7) | 95.4 | 1.9 (77.3) | 69.8 (92.1) | 82.7 (93.4) | 95.0 (95.9) | 96.8 (96.8) | 45.6, 41.2 |
+| Rgtqr, theta 3 | 21.6 | 91.3 | 97.8 | 0.0 (62.9) | 92.9 | 1.3 (84.6) | 72.0 (92.7) | 84.0 (92.9) | 94.7 (95.2) | 96.7 (96.7) | 46.4, 41.5 |
+| Rgtqr, theta 4 | 34.7 | 92.6 | 98.9 | 0.7 (88.1) | 91.0 | 23.6 (91.0) | 77.4 (91.7) | 88.0 (93.1) | 97.5 (97.6) | 98.4 (98.4) | 46.3, 42.9 |
+| Rgtqrb, theta 4 (addition 1) | 32.3 | 90.5 | 98.3 | 0.0 (87.4) | 90.1 | 0.0 (90.1) | 13.9 (90.9) | 57.6 (92.6) | 95.5 (95.9) | 96.3 (96.3) | 47.4, 44.0 |
+
+**R repeats `PLAN_11.md`** (5.4, 83.5, 96.0, 0.0). **theta.** All three values end the sums within 3 points of R (they end above it), so by the rule of section 2 **theta = 4**, the largest of the set. It is at the edge of the set; a larger value was not tried.
+
+**What the development seed already says of the hypothesis (mine; one seed; not a result).** On its own measure it fails: straight after the English the network with the four changes names 0.7% of the never-shown sums. But the reading is not lost: with only the digit branches answering it names 88.1% (98.9% before the English), and it is back at 88.0% after 100 lines of the return, where the network as it is names none after 100 lines and 46.0% after 500. It also learns both texts better than the network as it is.
+
+**Addition 2 (measurements only; no learner is changed).** (i) *Who answers in the states of the sums*: the output of the right digit's branch, the largest output among the branches that are not digits, and how often such a branch is the loudest. On the development seed, form Rgtqr at theta 4: before the English the right digit's branch gives 0.95 and the loudest other branch 0.00; after the English 0.07 and 0.42, and another branch is the loudest in 78% of the states. So two things happened: the digit branches sank together (their order mostly kept), and branches of the English answer in states of the sums, where they were never taught. (ii) *Shown sums beside never-shown ones* at every mark (500 of the shown pairs, after the same read lines): the helper's reading of the second literature report asked for cases beside the rule (`OUTSIDE_LITERATURE_ROUND2_AGAINST_THE_PROGRAMME_20261121.md`, section 3).
+
+**Addition 1 (a fifth letter, b: the branches' own constants held at nought).** Written after the run at theta 2 showed the whole answers outvoted. I had overlooked, in section 1, that a branch's own constant is a fifth number that belongs to no sending cell and moves whenever the branch is taught. Tried once on the development seed at theta 4 (the last row of the table): it is worse. After 100 lines of the return it names 57.6% against 88.0%; the digit branches' strengths changed by 0.47 of their size against 0.23; the loudest other branch stands at 2.05 against 0.42, with its constant at 0.05 where constants move. So the constants are not what outvotes: the branches of the English are loud in the states of the sums through cells that are active in both texts, and a constant takes up corrections that otherwise fall on the strengths. The letter is carried to the reported seeds in one form only (Rgtqrb), to see whether the direction holds; I state no chance for it. `relay12.py`'s check covers all thirty-two forms (`check12_output.txt`).
+
+**Reported runs, as planned:** the sixteen forms at theta 4 on the five seeds, and Rgtqrb.
+
 ## 5. Outcome
 
 (to be entered after the runs)
