@@ -117,6 +117,12 @@ static int64_t *trq_t, *trq_seq; static int *trq_c, trq_n, trq_h, trq_cap;
 static int is_cell_sender(int j);
 void evt_set_turnover(int on, int pmk, int ttr, double th) { TURN = on; PMK = pmk; TTR = ttr; THTR = th; }
 void evt_trial_counts(int64_t *o) { o[0] = TRIAL_GONE; o[1] = TRIAL_KEPT; }
+/* Plan 3 (a cell's total incoming strength held): NORM 1 scales the strengths of a cell's learnable incoming connections so that those
+   from excitatory senders sum to C_E and those from inhibitory senders to C_I (each kind apart; a kind with sum 0 is left), after the
+   cell's strengths change at the end of a byte, after it makes or loses a connection, and once at the start. */
+static int NORM = 0; static double C_E = 0.75, C_I = 0.25; static int64_t NORM_CALLS = 0;
+void evt_set_norm(int on, double ce, double ci) { NORM = on; C_E = ce; C_I = ci; }
+static void normalise(int i);
 static int CAPIN = 1 << 30; void evt_set_cap(int c) { CAPIN = c; }
 static int64_t *slk; static int NSLEEP; static double SLEEP_EMUL, SLEEP_WAKES;   /* step from which a cell sleeps (-1: awake) */                /* the arrival and mismatch of the last step a cell was computed (for checks) */
 /* connections */
@@ -295,6 +301,7 @@ int evt_add_connection(int j, int i, double w, double e, int64_t k0) {
 }
 /* after all connections: arrivals are built by the passing on of step 0; every cell starts on the work list, the timers of making */
 void evt_start(void) {
+    if (NORM) for (int i = 0; i < NC; i++) normalise(i);
     for (int i = 0; i < NC; i++) wl_add(&wl, i);
     for (int j = 0; j < NC; j++) iv_push(&chg, j);
 }
@@ -332,6 +339,14 @@ static inline void strength_change(int c, double w_new, int i) {   /* w of conne
     c_w[c] = w_new;
     if (LIFE && !F11W && !exempt[c_snd[c]] && K - c_k0[c] >= PS && w_new < GIVE_UP && !c_mark[c]) { c_mark[c] = 1; iv_push(&gone, c); }
 }
+static void normalise(int i) {
+    ivec *ip = &in[i]; double se = 0.0, si = 0.0;
+    for (int q = 0; q < ip->n; q++) { int c = ip->a[q], j = c_snd[c]; if (!learnable[j]) continue; if (sig[j] > 0) se += c_w[c]; else si += c_w[c]; }
+    double fe = se > 0.0 ? C_E / se : 1.0, fi = si > 0.0 ? C_I / si : 1.0;
+    if (fe == 1.0 && fi == 1.0) return;
+    NORM_CALLS++; CNT[3] += 2 * ip->n;
+    for (int q = 0; q < ip->n; q++) { int c = ip->a[q], j = c_snd[c]; if (!learnable[j]) continue; strength_change(c, bound(c_w[c] * (sig[j] > 0 ? fe : fi)), i); }
+}
 static void remove_conn(int c) {
     int j = c_snd[c], i = c_rcv[c];
     if (!inwl[i]) { if (slk[i] >= 0) (void)wake(i, K + 1); touch(i, K + 1); wl_add(&wl2, i); }
@@ -346,6 +361,7 @@ static void remove_conn(int c) {
     if (nev_gone == cap_gone) { cap_gone = cap_gone ? 2 * cap_gone : 1024; ev_gone = realloc(ev_gone, sizeof(int64_t) * 4 * cap_gone); }
     ev_gone[4 * nev_gone] = K; ev_gone[4 * nev_gone + 1] = j; ev_gone[4 * nev_gone + 2] = i; ev_gone[4 * nev_gone + 3] = c_seq[c]; nev_gone++;
     if (full[i]) { full[i] = 0; if (K - klast[i] >= PMK) due_set(i, 1); }
+    if (NORM) normalise(i);
 }
 static int *mark_s; static int mark_cap; static int *cand; static int cand_cap;
 static void make_for(int i) {
@@ -375,6 +391,7 @@ static void make_for(int i) {
     MADE++;
     if (nev_made == cap_made) { cap_made = cap_made ? 2 * cap_made : 4096; ev_made = realloc(ev_made, sizeof(int64_t) * 3 * cap_made); }
     ev_made[3 * nev_made] = K; ev_made[3 * nev_made + 1] = j; ev_made[3 * nev_made + 2] = i; nev_made++;
+    if (NORM) normalise(i);
 }
 static int cmp_int(const void *a, const void *b) { int x1 = *(const int *)a, x2 = *(const int *)b; return (x1 > x2) - (x1 < x2); }
 static int cmp_seq(const void *a, const void *b) { int64_t x1 = c_seq[*(const int *)a], x2 = c_seq[*(const int *)b]; return (x1 > x2) - (x1 < x2); }
@@ -420,25 +437,30 @@ static void strengths_byte(int i) {
     }
 }
 static int is_cell_sender(int j) { return j < NC; }
+static double *ubuf; static int ubuf_cap;
 static void use_step(int i, double xp) {
     ivec *ip = &in[i];
+    int n = ip->n;
+    if (ubuf_cap < n) { ubuf_cap = 2 * n + 16; ubuf = realloc(ubuf, sizeof(double) * ubuf_cap); }
     double mx = 0.0;
-    for (int q = 0; q < ip->n; q++) {
-        int c = ip->a[q], j = c_snd[c];
-        if (!is_cell_sender(j)) continue;
+    for (int q = 0; q < n; q++) {
+        int c = ip->a[q];
+        if (c_snd[c] >= NC) { ubuf[q] = -1.0; continue; }          /* not a cell: its use is not measured */
         double e = trace_of(c, K);                       /* the trace held before the step */
-        c_use[c] = DEC128 * c_use[c] + INC128 * e * xp;
+        double u = DEC128 * c_use[c] + INC128 * e * xp;
+        c_use[c] = u; ubuf[q] = u;
         if (c_trial[c]) { c_tsum[c] += e * xp; c_tn[c]++; }
-        if (c_use[c] > mx) mx = c_use[c];
+        if (u > mx) mx = u;
     }
     double level = INC128 * mx;
-    for (int q = 0; q < ip->n; q++) {
-        int c = ip->a[q], j = c_snd[c];
-        if (!is_cell_sender(j)) continue;
-        if (c_use[c] < level) c_cnt[c]++; else c_cnt[c] = 0;
-        if (c_cnt[c] >= PS && K - c_k0[c] >= PS && !c_mark[c] && !(USE_EXEMPT_FB && usefb[j])) { c_mark[c] = 1; iv_push(&gone, c); }
+    for (int q = 0; q < n; q++) {
+        double u = ubuf[q];
+        if (u < 0.0) continue;
+        int c = ip->a[q];
+        if (u < level) c_cnt[c]++; else c_cnt[c] = 0;
+        if (c_cnt[c] >= PS && K - c_k0[c] >= PS && !c_mark[c] && !(USE_EXEMPT_FB && usefb[c_snd[c]])) { c_mark[c] = 1; iv_push(&gone, c); }
     }
-    CNT[3] += 2 * ip->n;
+    CNT[3] += 2 * n;
 }
 static int stationary_inh(int i, double xn) {         /* coincidence rule: no connection from an inhibitory cell would change */
     ivec *ip = &in[i];
@@ -519,6 +541,7 @@ int evt_step(int byte) {
             wake_to(i, K + 1, &wl2);
             if (!inwl[i]) touch(i, K + 1);
             strengths_byte(i);
+            if (NORM) normalise(i);
             inlearn[i] = 0; sm[i] = sexc[i] = sinh_[i] = 0.0;
         }
         learnl.n = 0;
@@ -660,3 +683,5 @@ void evt_clear_events(void) { nev_made = nev_gone = 0; }
 void evt_live_use(double *use, int *cnt) {
     for (int q = 0; q < norder; q++) { int c = order[q]; use[q] = c_use[c]; cnt[q] = c_cnt[c]; }
 }
+
+int64_t evt_norm_calls(void) { return NORM_CALLS; }

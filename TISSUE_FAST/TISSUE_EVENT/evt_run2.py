@@ -220,6 +220,9 @@ def main():
     ap.add_argument("--make-period", type=int, default=128, help="steps between connections a cell makes (E63: 128)")
     ap.add_argument("--trial", type=int, default=512, help="steps a new connection from a cell is on trial (plan 2)")
     ap.add_argument("--trial-theta", type=float, default=0.25, help="kept if its use is at least this share of the mean use of the cell's other connections")
+    ap.add_argument("--norm", action="store_true", help="plan 3: a cell's learnable incoming strengths held at --c-e (excitatory) and --c-i (inhibitory)")
+    ap.add_argument("--c-e", type=float, default=0.75)
+    ap.add_argument("--c-i", type=float, default=0.25)
     ap.add_argument("--count-every", type=int, default=128, help="bytes between counts of connections (E63: 128)")
     ap.add_argument("--slow-records", action="store_true", help="the recording loop as E63 wrote it (a call into the core every step)")
     a = ap.parse_args()
@@ -231,6 +234,7 @@ def main():
         evt.L.evt_set_cap(a.cap)
     assert not a.turnover or a.withdraw_by_use, 'plan 2 runs with withdrawal by use (the use is measured by it)'
     evt.L.evt_set_turnover(int(a.turnover), a.make_period, a.trial, a.trial_theta)
+    evt.L.evt_set_norm(int(a.norm), a.c_e, a.c_i)
     sw = dict(floor=a.floor, tol=a.tol, trace_sender=a.trace_sender, strength_byte=a.strength_byte, astar=a.astar,
               withdraw_by_use=a.withdraw_by_use, use_exempt_feedback=a.use_exempt_feedback)
     out = HERE / "runs" / a.name
@@ -257,7 +261,7 @@ def main():
     steps = cnt["steps"]
     tc = np.zeros(2, np.int64); evt.L.evt_trial_counts(tc)
     sw = dict(sw, steps=a.steps, cap=a.cap, turnover=a.turnover, make_period=a.make_period, trial=a.trial, trial_theta=a.trial_theta,
-              trial_withdrawn=int(tc[0]), trial_kept=int(tc[1]), records="slow" if a.slow_records else "fast")
+              trial_withdrawn=int(tc[0]), trial_kept=int(tc[1]), norm=a.norm, c_e=a.c_e, c_i=a.c_i, norm_calls=int(evt.L.evt_norm_calls()), records="slow" if a.slow_records else "fast")
     rec = dict(experiment="E63, the tissue's program (event-driven)", task="TASK_E63_THE_TISSUE_PROGRAM_EVENT_DRIVEN_20261119.md",
                command=" ".join(["python3", "evt_run.py"] + sys.argv[1:]), switches=sw,
                core_sha256=hashlib.sha256(evt.SRC.read_bytes()).hexdigest(),
