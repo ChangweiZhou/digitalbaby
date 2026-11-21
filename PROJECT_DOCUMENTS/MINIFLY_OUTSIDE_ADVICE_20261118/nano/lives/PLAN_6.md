@@ -45,7 +45,7 @@ The small system of `PLAN_1.md` (ZA) and the same with the bounded kinds chosen 
 
 Fourteen singles (two systems, seven streams), about 10 to 30 CPU-seconds each on a free machine; the references about 10 CPU-minutes in all. **Not run:** the large system; a life over these streams or over these and the text streams together; any kind made for a kind of data (a row above for pictures, a filter for machine code).
 
-## 6. Outcome (entered 21 November, 01:05 UTC; `report_6.txt`, `res/kinds6_ref__*.json`, `res/mem__K6_*.json`, `manifests6/`)
+## 6. Outcome (entered 21 November, 01:02 UTC; `report_6.txt`, `res/kinds6_ref__*.json`, `res/mem__K6_*.json`, `manifests6/`)
 
 Last tenth, going on, second answering cell, nats a byte; one run each (the systems are deterministic):
 
