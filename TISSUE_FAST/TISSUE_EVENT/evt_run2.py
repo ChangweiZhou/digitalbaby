@@ -191,10 +191,10 @@ class FastRun(EvRun):
                 self.stretch.append(self.read_stretch(lo, self.pos))
                 self.cpu.append(dict(bytes=[lo, self.pos - 1], cpu_s=now - cstretch, per_byte=(now - cstretch) / stretch,
                                      mean_connections=T.counts(self.used)["per_cell_mean"],
-                                     emitted_share=float((self.emis[lo:self.pos] >= 0).mean())))
+                                     emitted_share=float((self.emis[lo:self.pos] >= 0).mean()), active_end=int((T.x > 0).sum())))
                 cstretch = now
                 if log:
-                    print(f"byte {self.pos} cpu/byte {self.cpu[-1]['per_byte']:.4f} conns/cell {self.cpu[-1]['mean_connections']:.2f}", flush=True)
+                    print(f"byte {self.pos} cpu/byte {self.cpu[-1]['per_byte']:.4f} conns/cell {self.cpu[-1]['mean_connections']:.2f} active {self.cpu[-1]['active_end']}", flush=True)
             for wn, w0 in cfg["windows"].items():
                 if self.pos == w0 + cfg["wlen"]:
                     self.save_window(wn, w0)
@@ -223,6 +223,12 @@ def main():
     ap.add_argument("--norm", action="store_true", help="plan 3: a cell's learnable incoming strengths held at --c-e (excitatory) and --c-i (inhibitory)")
     ap.add_argument("--c-e", type=float, default=0.75)
     ap.add_argument("--c-i", type=float, default=0.25)
+    ap.add_argument("--gain", action="store_true", help="plan 5: each cell's own gain, moved once a byte toward rho times its sources' mean value")
+    ap.add_argument("--eta-g", type=float, default=1 / 128)
+    ap.add_argument("--rho", type=float, default=0.875)
+    ap.add_argument("--gmax", type=float, default=8.0)
+    ap.add_argument("--long-frac", type=float, default=0.0, help="plan 5: share of excitatory cells with long axons (given at birth)")
+    ap.add_argument("--long-r", type=float, default=0.5, help="their reach (E63's neighbourhood radius: 1/8)")
     ap.add_argument("--count-every", type=int, default=128, help="bytes between counts of connections (E63: 128)")
     ap.add_argument("--slow-records", action="store_true", help="the recording loop as E63 wrote it (a call into the core every step)")
     a = ap.parse_args()
@@ -235,7 +241,8 @@ def main():
     assert not a.turnover or a.withdraw_by_use, 'plan 2 runs with withdrawal by use (the use is measured by it)'
     evt.L.evt_set_turnover(int(a.turnover), a.make_period, a.trial, a.trial_theta)
     evt.L.evt_set_norm(int(a.norm), a.c_e, a.c_i)
-    sw = dict(floor=a.floor, tol=a.tol, trace_sender=a.trace_sender, strength_byte=a.strength_byte, astar=a.astar,
+    evt.L.evt_set_gain(int(a.gain), a.eta_g, a.rho, a.gmax)
+    sw = dict(floor=a.floor, tol=a.tol, trace_sender=a.trace_sender, strength_byte=a.strength_byte, astar=a.astar, long_frac=a.long_frac, long_r=a.long_r,
               withdraw_by_use=a.withdraw_by_use, use_exempt_feedback=a.use_exempt_feedback)
     out = HERE / "runs" / a.name
     out.mkdir(parents=True, exist_ok=True)
@@ -261,7 +268,7 @@ def main():
     steps = cnt["steps"]
     tc = np.zeros(2, np.int64); evt.L.evt_trial_counts(tc)
     sw = dict(sw, steps=a.steps, cap=a.cap, turnover=a.turnover, make_period=a.make_period, trial=a.trial, trial_theta=a.trial_theta,
-              trial_withdrawn=int(tc[0]), trial_kept=int(tc[1]), norm=a.norm, c_e=a.c_e, c_i=a.c_i, norm_calls=int(evt.L.evt_norm_calls()), records="slow" if a.slow_records else "fast")
+              trial_withdrawn=int(tc[0]), trial_kept=int(tc[1]), norm=a.norm, c_e=a.c_e, c_i=a.c_i, gain=a.gain, eta_g=a.eta_g, rho=a.rho, gmax=a.gmax, norm_calls=int(evt.L.evt_norm_calls()), records="slow" if a.slow_records else "fast")
     rec = dict(experiment="E63, the tissue's program (event-driven)", task="TASK_E63_THE_TISSUE_PROGRAM_EVENT_DRIVEN_20261119.md",
                command=" ".join(["python3", "evt_run.py"] + sys.argv[1:]), switches=sw,
                core_sha256=hashlib.sha256(evt.SRC.read_bytes()).hexdigest(),

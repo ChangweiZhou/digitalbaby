@@ -123,6 +123,14 @@ void evt_trial_counts(int64_t *o) { o[0] = TRIAL_GONE; o[1] = TRIAL_KEPT; }
 static int NORM = 0; static double C_E = 0.75, C_I = 0.25; static int64_t NORM_CALLS = 0;
 void evt_set_norm(int on, double ce, double ci) { NORM = on; C_E = ce; C_I = ci; }
 static void normalise(int i);
+/* Plan 5 (a cell's own gain): GAIN 1 multiplies a cell's arrival by its gain g. Once a byte, at the reading step, g is moved so that
+   the cell's running mean output (abar) goes toward RHO times the running mean of its sources' values (ib, a running mean, 1/128 a
+   step, of the mean value of the senders of its incoming connections): g <- g (1 + ETA_G (t - abar) / (t + abar)), t = RHO ib, kept
+   within [GMIN, GMAX]. The reviewer's form of 19 November (gain by ratio), moved once a byte in place of every step. */
+static int GAIN = 0; static double ETA_G = 1.0 / 128, RHO = 0.875, GMAX = 8.0, GMIN = 1.0 / 64;
+static double *gain, *Zs, *ib; static int64_t *ibst;
+void evt_set_gain(int on, double eta, double rho, double gmax) { GAIN = on; ETA_G = eta; RHO = rho; GMAX = gmax; }
+void evt_gains(double *o) { memcpy(o, gain, 8 * (size_t)NC); }
 static int CAPIN = 1 << 30; void evt_set_cap(int c) { CAPIN = c; }
 static int64_t *slk; static int NSLEEP; static double SLEEP_EMUL, SLEEP_WAKES;   /* step from which a cell sleeps (-1: awake) */                /* the arrival and mismatch of the last step a cell was computed (for checks) */
 /* connections */
@@ -160,7 +168,8 @@ static double relax_vt(double q, double xx, int64_t n) {
 static inline void bring_p(int i, int64_t upto) { if (pst[i] < upto) { p[i] = relax(p[i], A[i], DEC32, INC32, upto - pst[i]); pst[i] = upto; CNT[7]++; } }
 static inline void bring_a(int i, int64_t upto) { if (ast[i] < upto) { abar[i] = relax(abar[i], x[i], DEC128, INC128, upto - ast[i]); ast[i] = upto; } }
 static inline void bring_vt(int i, int64_t upto) { if (vt && vst[i] < upto) { vt[i] = relax_vt(vt[i], x[i], upto - vst[i]); vst[i] = upto; } }
-static inline void touch(int i, int64_t upto) { bring_p(i, upto); bring_a(i, upto); bring_vt(i, upto); }
+static inline void bring_ib(int i, int64_t upto) { if (GAIN && ibst[i] < upto) { int n = in[i].n; ib[i] = relax(ib[i], n ? Zs[i] / n : 0.0, DEC128, INC128, upto - ibst[i]); ibst[i] = upto; } }
+static inline void touch(int i, int64_t upto) { bring_p(i, upto); bring_a(i, upto); bring_vt(i, upto); bring_ib(i, upto); }
 static inline double trace_of(int c, int64_t upto) {       /* the trace of connection c held at the start of step `upto` */
     if (TRACE_SENDER) { int j = c_snd[c]; if (Est[j] < upto) { E[j] = relax(E[j], zsent[j], DEC32, INC32, upto - Est[j]); Est[j] = upto; } return E[j]; }
     if (c_est[c] < upto) { c_e[c] = relax(c_e[c], zsent[c_snd[c]], DEC32, INC32, upto - c_est[c]); c_est[c] = upto; }
@@ -182,9 +191,10 @@ static int wake(int i, int64_t upto) {
     const double xn = 0.0;
     for (; s < upto; s++) {
         SLEEP_EMUL++;
-        double Ai = A[i], m = Ai - p[i];
+        double Ai = gain[i] * A[i], m = Ai - p[i];
         double vn = TAU_V_A * v[i] + TAU_V_A * Ai;
         Astep[i] = Ai; mstep[i] = m;
+        if (GAIN) { int nn = in[i].n; ib[i] = DEC128 * ib[i] + INC128 * (nn ? Zs[i] / nn : 0.0); ibst[i] = s + 1; }
         p[i] = DEC32 * p[i] + INC32 * Ai; pst[i] = s + 1;
         abar[i] = DEC128 * abar[i] + INC128 * xn; ast[i] = s + 1;
         if (vt) { vt[i] = DEC4096 * vt[i] + INC4096 * xn * xn / ASTAR; vst[i] = s + 1; }
@@ -232,7 +242,7 @@ static void free_all(void) {
     FREE(sig); FREE(z); FREE(zsent); FREE(learnable); FREE(exempt); FREE(E); FREE(Est);
     FREE(A); FREE(v); FREE(x); FREE(p); FREE(th); FREE(abar); FREE(vt); FREE(dA); FREE(sm); FREE(sexc); FREE(sinh_);
     FREE(pst); FREE(ast); FREE(vst); FREE(klast); FREE(ncomp); FREE(rule); FREE(theta_on); FREE(inwl); FREE(due); FREE(full);
-    FREE(touched); FREE(inlearn); FREE(ischg); FREE(ninh); FREE(driver); FREE(Astep); FREE(mstep); FREE(slk); FREE(duebits); FREE(sortbits);
+    FREE(touched); FREE(inlearn); FREE(ischg); FREE(ninh); FREE(driver); FREE(Astep); FREE(mstep); FREE(slk); FREE(gain); FREE(Zs); FREE(ib); FREE(ibst); FREE(duebits); FREE(sortbits);
     FREE(c_snd); FREE(c_rcv); FREE(c_w); FREE(c_e); FREE(c_ub); FREE(c_use); FREE(c_cnt); FREE(usefb); FREE(c_est); FREE(c_k0); FREE(c_seq); FREE(c_alive); FREE(c_mark); FREE(c_trial); FREE(c_tsum); FREE(c_tn); FREE(trq_t); FREE(trq_seq); FREE(trq_c); trq_n = trq_h = trq_cap = 0; TRIAL_GONE = TRIAL_KEPT = 0;
     FREE(freeslots.a); freeslots.n = freeslots.cap = 0;
     ivec *ls[] = {&wl, &wl2, &chg, &chg2, &gone, &learnl, &dal};
@@ -258,6 +268,7 @@ void evt_init(int nc, int nz, double floor_, double tol, int trace_sender, int s
     touched = calloc(nc, 1); inlearn = calloc(nc, 1); ischg = calloc(nc, 1); ninh = calloc(nc, 4);
     in = calloc(nc, sizeof(ivec)); members = calloc(nc, sizeof(ivec)); Astep = calloc(nc, 8); mstep = calloc(nc, 8);
     NW = (nc + 63) / 64; duebits = calloc(NW, 8); sortbits = calloc((nz + 63) / 64, 8);
+    gain = malloc(8 * nc); for (int i = 0; i < nc; i++) gain[i] = 1.0; Zs = calloc(nc, 8); ib = calloc(nc, 8); ibst = calloc(nc, 8);
     slk = malloc(8 * nc); for (int i = 0; i < nc; i++) slk[i] = -1; NSLEEP = 0; SLEEP_EMUL = SLEEP_WAKES = 0;
     driver = NULL; NDRV = 0;
     if (vt) for (int i = 0; i < nc; i++) vt[i] = ASTAR;
@@ -326,6 +337,7 @@ static void pass_on(int j) {                           /* sender j passes on the
         if (!TRACE_SENDER && c_est[c] < K) { c_e[c] = relax(c_e[c], zsent[j], DEC32, INC32, K - c_est[c]); c_est[c] = K; }
         if (!inwl[i]) { if (slk[i] >= 0) (void)wake(i, K); touch(i, K); wl_add(&wl, i); }
         A[i] += sig[j] * c_w[c] * d;
+        if (GAIN) Zs[i] += d;
     }
     CNT[2] += o->n;
     zsent[j] = z[j];
@@ -351,6 +363,7 @@ static void remove_conn(int c) {
     int j = c_snd[c], i = c_rcv[c];
     if (!inwl[i]) { if (slk[i] >= 0) (void)wake(i, K + 1); touch(i, K + 1); wl_add(&wl2, i); }
     A[i] -= sig[j] * c_w[c] * zsent[j];
+    if (GAIN) Zs[i] -= zsent[j];
     iv_remove_ordered(&in[i], c); iv_remove_swap(&out[j], c);
     if (learnable[j] && sig[j] < 0) ninh[i]--;
     if (USE_W && c_w[c] >= GIVE_UP) WITHDRAWN_USE++;
@@ -381,6 +394,7 @@ static void make_for(int i) {
     c_alive[c] = 1; c_mark[c] = 0;
     link_slot(c);
     A[i] += sig[j] * START_W * zsent[j];
+    if (GAIN) Zs[i] += zsent[j];
     aq_push(K + PS, c, c_seq[c]);
     if (TURN && is_cell_sender(j)) {
         c_trial[c] = 1; c_tsum[c] = 0.0; c_tn[c] = 0;
@@ -498,7 +512,7 @@ int evt_step(int byte) {
         int i = wl.a[q];
         CNT[0]++;
         touch(i, K);
-        double Ai = A[i], m = Ai - p[i];
+        double Ai = gain[i] * A[i], m = Ai - p[i];
         double vn = TAU_V_A * v[i] + TAU_V_A * Ai;
         double xn = vn - th[i]; xn = xn > 1.0 ? 1.0 : (xn < 0.0 ? 0.0 : xn);
         if (xn < FLOOR) xn = 0.0;
@@ -519,6 +533,7 @@ int evt_step(int byte) {
         p[i] = DEC32 * p[i] + INC32 * Ai; pst[i] = K + 1;
         double thn = theta_on[i] ? fmax(0.0, th[i] + ETA_T * (xn - ASTAR)) : th[i];
         abar[i] = DEC128 * abar[i] + INC128 * xn; ast[i] = K + 1;
+        if (GAIN) { int nn = in[i].n; ib[i] = DEC128 * ib[i] + INC128 * (nn ? Zs[i] / nn : 0.0); ibst[i] = K + 1; }
         if (vt) { vt[i] = DEC4096 * vt[i] + INC4096 * xn * xn / ASTAR; vst[i] = K + 1; }
         int still = (vn == v[i]) && (xn == xp) && (thn == th[i]) && (dA[i] == 0.0);
         if (still && rule[i]) {
@@ -546,6 +561,16 @@ int evt_step(int byte) {
         }
         learnl.n = 0;
         for (int i = 0; i < NC; i++) ncomp[i] = 0;
+    }
+    if (GAIN && last) {
+        for (int i = 0; i < NC; i++) {
+            if (slk[i] >= 0) { if (wake(i, K + 1)) wl_add(&wl2, i); }
+            bring_a(i, K + 1); bring_ib(i, K + 1);
+            double tg = RHO * ib[i], ab = abar[i];
+            double g = gain[i] * (1.0 + ETA_G * (tg - ab) / (tg + ab + 1e-30));
+            g = g < GMIN ? GMIN : (g > GMAX ? GMAX : g);
+            if (g != gain[i]) { gain[i] = g; if (!inwl[i]) { touch(i, K + 1); wl_add(&wl2, i); } }
+        }
     }
     /* the strength changes of this step reach the arrivals of the next */
     ivec tmp = wl; wl = wl2; wl2 = tmp; wl2.n = 0;

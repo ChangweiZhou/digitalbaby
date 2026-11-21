@@ -62,6 +62,8 @@ L.evt_sleep_stats.argtypes = [_d]
 L.evt_set_cap.argtypes = [ctypes.c_int]
 L.evt_set_turnover.argtypes = [ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_double]
 L.evt_trial_counts.argtypes = [_i64]
+L.evt_set_gain.argtypes = [ctypes.c_int, ctypes.c_double, ctypes.c_double, ctypes.c_double]
+L.evt_gains.argtypes = [_d]
 L.evt_set_norm.argtypes = [ctypes.c_int, ctypes.c_double, ctypes.c_double]
 L.evt_norm_calls.restype = ctypes.c_int64
 L.evt_cells.argtypes = [_d, _d, _d, _d, ctypes.c_void_p, _i64]
@@ -81,12 +83,27 @@ class EvTissue:
     """One tissue of E63 (first-form, coincidence or fixed; formula 11 as written for the 512-byte tissue), computed by evt_core.c."""
 
     def __init__(self, seed, rule, f11_written=False, floor=0.0, tol=0.0, trace_sender=False, strength_byte=False, B=None,
-                 astar=ts.ASTAR, withdraw_by_use=False, use_exempt_feedback=False):
+                 astar=ts.ASTAR, withdraw_by_use=False, use_exempt_feedback=False, long_frac=0.0, long_r=0.5):
         assert rule in ("first", "coincidence", "fixed")
         self.seed, self.rule, self.f11w, self.by_use = seed, rule, f11_written, False
         self.switches = dict(floor=floor, tol=tol, trace_sender=bool(trace_sender), strength_byte=bool(strength_byte), astar=float(astar),
                              withdraw_by_use=bool(withdraw_by_use), use_exempt_feedback=bool(use_exempt_feedback))
         B = B if B is not None else ts.birth(seed)
+        if long_frac > 0:                                    # plan 5: a share of the excitatory cells reach farther (given at birth)
+            import copy
+            B = copy.deepcopy(B)
+            P = B["P"]
+            exc = [j for j in range(ts.N) if j not in B["fbset"] and B["sig"][j] > 0]
+            rl = Random(seed + 700000)
+            longs = sorted(rl.sample(exc, int(round(long_frac * len(exc)))))
+            r2 = long_r * long_r
+            for i in range(ts.N):
+                if i in B["fbset"]:
+                    continue
+                have = set(B["members"][i])
+                xi, yi = P[i]
+                B["members"][i] = B["members"][i] + [j for j in longs if j != i and j not in have and (P[j][0] - xi) ** 2 + (P[j][1] - yi) ** 2 <= r2]
+            B["long_cells"] = longs
         self.B = B
         self.kind = B["kind"]; self.sig = B["sig"]
         self.isfb = self.kind == ts.FBK
