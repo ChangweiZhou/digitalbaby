@@ -156,3 +156,21 @@ A after B is below 0.75 or text held-out below 0.30. Also run: `life=texts` with
 **H5 held on three seeds** (A after B 1.000, text held-out 0.337-0.350, G=16 0.995-0.998). Two texts: what A adds over the B-only
 control is 0.040 after A and 0.024 after B on seed 1, 0.021 and 0.019 on seed 2 (before, with one stage and a constant step: 0.073 and
 0.024; 0.033 and 0.007); B is learned as well as by a learner that read only B. Run time 1-2.5 minutes.
+
+## Step 6 (before its runs): replay to the slow stage
+
+The store of step 2 (1,000 episodes of 40 bytes, every episode read with the same chance to be kept); replay teaches the slow stage
+only (`replaying`), the fast stage's activity being put back afterwards. **H6.** In `life=texts`, at rho 1/20 the share of A's own part
+kept after B (A test after B minus the B-only control, over the same after A) rises above step 5's (seed 1: 0.024 / 0.040 = 0.60), with
+the B test within 0.01 of step 5. **Refuted if** the kept share does not rise or B falls by more than 0.01. Also run: rho 1/100; `life=ctx`.
+
+## Outcome of step 6, first part (2,000-byte tests; seeds 1-2)
+
+| | kept share of A's own part, seed 1 / seed 2 | B after B, seed 1 / seed 2 |
+|---|---|---|
+| no replay (step 5) | 0.60 / 0.90 | 0.392 / 0.408 |
+| replay 1/20 | 0.68 / 0.82 | 0.393 / 0.411 |
+| replay 1/100 (seed 1) | 0.64 | 0.393 |
+
+Not decidable at this size: a 2,000-byte test has a standard error of about 0.011 at 0.34, and A's own part is 0.02-0.04. The step is
+repeated with 10,000-byte tests (standard error about 0.005).
