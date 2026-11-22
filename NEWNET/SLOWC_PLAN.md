@@ -53,3 +53,33 @@ with and without slow_c.
 ## Not done
 
 No other net8 option is ported; no other file than `net9.py` (the option only) is edited; no experiment is run beyond the checks.
+
+## Outcome (entered 22 November 2026, after the runs; code at `b11761b1`)
+
+**Check (`OMP_NUM_THREADS=1 python3 check_net8c.py`, 3,000 bytes + 7 rehearsal swaps of 40 bytes + 500 bytes learning off).**
+All 12 cases (text and context stream x teach and yes/no x n_values 32, 64, 128): answers identical at every step. States not
+exactly equal: largest |diff| over all steps and cases h 2.2e-15, y 2.2e-15, m 8.9e-16, O 1.3e-15, vy 7.6e-17, A 2.1e-17, z 0
+(the same granule cells fired at every step). All within 1e-9. The fallback (fb=kp, no expansion) uses the numpy step.
+
+**t13 (`t13_life8.py net=9 f_mode=order eta_f=0.2 f_M=16 life=ctx`), with and without `slow_c=1`: the same printed numbers.**
+
+| run | tests A / B after A | after B | after the return | wall, numpy slow stage | wall, slow_c=1 |
+|---|---|---|---|---|---|
+| teach (the required test) | 1.000 / 0.017 | 1.000 / 0.343 | 1.000 / 0.340 | 114 s | 81 s |
+| fbm=yesno (eps 0.1) | 0.000 / 0.009 | 0.000 / 0.215 | 0.000 / 0.214 | 113 s | 80 s |
+| teach, rho=0.05 (rehearsal: get/set_state) | 1.000 / 0.018 | 1.000 / 0.343 | 1.000 / 0.339 | 104 s | 71 s |
+
+(the first two pairs ran 4 at a time on 4 cores, the third 2 at a time; wall times are indicative only.)
+
+**Speed of the slow stage alone** (V=128, N=1024, gran=8192, tinyshakespeare, 2,000 bytes, one process, OMP_NUM_THREADS=1):
+
+| | teach, learning | teach, off | yes/no, learning | yes/no, off |
+|---|---|---|---|---|
+| net8 (numpy) | 1.385 ms | 0.770 ms | 1.522 ms | 0.701 ms |
+| net8c | 0.180 ms | 0.158 ms | 0.185 ms | 0.156 ms |
+
+About 7.5-8x with learning, 4.5x without. In net9 the whole run is about 30% faster: the slow stage is no longer the larger part;
+the rest is the fast stage (net7) and Python.
+
+**Left in numpy:** every other option of net8 (fb=kp/random/exact, rec, k, norm_rec, send_y, gran=0) and the traces E (not
+kept by net8c; never read in this configuration).
