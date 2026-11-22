@@ -11,13 +11,16 @@ silent (O_v <= 0) and is not the answer forms no mismatch.
 
 Feedback: feedback cell v carries e_v to the region; tissue cell i receives d_i = sum_v B_iv e_v through its own feedback strengths
 B_iv. fb=kp: B changes by the same product as A (e_v at one end, h_i at the other) and both fade by lam, which brings them to agree;
-fb=random: B fixed at birth; fb=none: the tissue does not learn (only the output end does).
+fb=random: B fixed at birth; fb=none: the tissue does not learn (only the output end does). fb=exact: the output end's own strengths
+are used: a measuring instrument for the rule, not something a cell has.
 
 Traces: each strength keeps a trace of how it has shaped its own cell's state, run forward with the state:
     trace(t) = g trace(t-1) + d(h)/d(strength) through this byte's candidate or gate, with the sending activity at this byte;
 a strength changes by eta_t d_i trace. A strength whose sender has not been active has no trace and does not change. learn_gate=0:
 the gate strengths stay as at birth. tau_max > 0: cells are born with different clocks, the gate's constant set so that the time
 constants are log-uniform from 1 to tau_max bytes.
+k > 0: lateral inhibition, only the k cells with the largest candidate input take in (candidate 1, the others 0); their traces use a
+smooth sensitivity around the k-th largest input (the region's level of inhibition).
 """
 import numpy as np
 
@@ -27,7 +30,7 @@ def sig(x): return 1.0 / (1.0 + np.exp(-x))
 
 class Tissue:
     def __init__(self, seed=1, N=256, F=16, n_values=32, eta_o=0.5, eta_t=0.05, lam=1e-4, fb="kp", rule="gated",
-                 learn_gate=1, g_bias=0.0, w_in=1.0, w_rec=1.0, tau_max=0.0, center=0):
+                 learn_gate=1, g_bias=0.0, w_in=1.0, w_rec=1.0, tau_max=0.0, center=0, k=0):
         r = np.random.default_rng(seed)
         self.N, self.F, self.V = N, F, n_values
         self.eta_o, self.eta_t, self.lam, self.fb, self.rule, self.learn_gate = eta_o, eta_t, lam, fb, rule, learn_gate
@@ -42,6 +45,7 @@ class Tissue:
         self.h = np.zeros(N)
         self.E = {k: np.zeros_like(getattr(self, k)) for k in ("Wc", "Wg", "Uc", "Ug", "bc", "bg")}
         self.O = np.zeros(n_values); self.byte = None
+        self.k = k                                                                         # k > 0: only the k cells with the largest candidate input take in
         self.center = center; self.m = np.full(N, 0.5); self.y = np.zeros(N)                # center=TAU: a cell sends its state less its own
                                                                                            # running mean (time constant TAU): adaptation
 
@@ -49,11 +53,16 @@ class Tissue:
         """The byte arrives: learn from the mismatch of the last answer, then read it and give the next answer."""
         if learn and self.byte is not None: self._learn(byte)
         hp = self.h; pre_r = hp[self.src]                                                  # [N, F]
-        c = sig(self.Wc[:, byte] + (self.Uc * pre_r).sum(1) + self.bc)
+        zc = self.Wc[:, byte] + (self.Uc * pre_r).sum(1) + self.bc
+        if self.k:                                                                         # lateral inhibition: the k largest win and take in 1;
+            th = np.partition(zc, -self.k)[-self.k]                                        # the k-th largest is the region's level of inhibition
+            c = (zc >= th).astype(float); sc = sig(zc - th + 0.5); slope = sc * (1 - sc)   # sensitivity for the traces: smooth around that level
+        else:
+            c = sig(zc); slope = c * (1 - c)
         g = sig(self.Wg[:, byte] + (self.Ug * pre_r).sum(1) + self.bg)
         h = g * hp + (1 - g) * c
         if learn:                                                                          # traces, each the cell's own
-            dc = (1 - g) * c * (1 - c); dg = (hp - c) * g * (1 - g)
+            dc = (1 - g) * slope; dg = (hp - c) * g * (1 - g)
             E = self.E
             for k in E: E[k] *= g[:, None] if E[k].ndim == 2 else g
             E["Wc"][:, byte] += dc; E["Wg"][:, byte] += dg
@@ -72,7 +81,8 @@ class Tissue:
         if self.rule == "gated": e = np.where((tgt > 0) | (self.O > 0), e, 0.0)
         h = self.y; dA = np.outer(e, h) * (self.eta_o / (h @ h + 1.0))
         if self.fb != "none":
-            d = self.B @ e                                                                  # what each tissue cell receives
+            d = (self.A.T @ e) if self.fb == "exact" else self.B @ e                     # exact: a measuring instrument only (uses the output end's
+                                                                                           # strengths, which a tissue cell does not have)
             for k, E in self.E.items():
                 if k in ("Wg", "Ug", "bg") and not self.learn_gate: continue
                 W = getattr(self, k)

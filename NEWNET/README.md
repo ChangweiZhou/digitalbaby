@@ -311,3 +311,20 @@ Context stream, at the byte after the gap, last quarter (chance 0.5):
 | 32, 80,000 (64 values) | 0.685, still rising | | 0.605 | |
 
 Controls on seed 1 only. Not yet run: text, keeping, yes/no, more cells, more than one region.
+
+**net8 on text (tinyshakespeare, 16,000 bytes, seed 1).** Count tables (reference): last 1 / 2 / 3 bytes 0.257 / 0.378 / 0.410.
+
+| Setting | online right share, last quarter | best linear readout of the states, fitted offline (instrument, `t12_ceiling.py`) |
+|---|---|---|
+| no tissue learning | 0.273 | 0.299 |
+| tissue learning, eta_t 0.005 / 0.02 / 0.1 / 0.5 | 0.266 / 0.268 / 0.262 / 0.253 | 0.298 / 0.292 / 0.271 / 0.239 |
+| instrument: exact feedback (the output end's strengths), eta_t 0.02 / 0.5 / 2 | 0.277 / 0.242 / 0.159 | 0.286 / 0.235 / 0.155 |
+| lateral inhibition k = 16 / 32, no tissue learning | 0.246 / 0.249 | 0.287 (k 32) |
+| for comparison: the best linear readout of the present byte's line / of the present and the previous byte's lines | | 0.249 / 0.317 |
+
+Findings: (1) the previous byte is in the states (decodable 1.00 for a given present byte, no tissue learning) but a linear readout
+cannot use a conjunction of bytes: even the two bytes given on lines give only 0.317 against the two-byte table's 0.378. Text needs
+cells that stand for conjunctions. (2) The traces are right (finite differences after 40 bytes agree with them to 3-4 digits for
+every kind of strength), so the rule does what it is meant to: a slow, gradient-like change against the present mismatch. In one pass
+over 16,000 bytes it is too slow to build conjunctions, and at a larger rate it follows noise and spoils the states, with exact
+feedback as well. On the context stream it worked because the same pattern came a thousand times.
