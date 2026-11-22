@@ -253,3 +253,10 @@ competition tries the answers close to the best. Text and `life=ctx` on seeds 2-
 **Seeds 2-3, yes/no with noise 0.1:** `life=ctx`, A 20,000: A after B 1.000 / 1.000 (seed 1: 1.000); text test after B 0.237 / 0.246.
 Text held-out after 32,000 bytes: 0.305 / 0.280 (seed 1: 0.294). Confirmed on three seeds: with yes/no alone the system learns A, keeps
 it through text, and reads never-seen text at 0.28-0.31 (teach: 0.34-0.35 after half the bytes).
+
+## Step 8 (before its runs): how long must the fast stage's hierarchy be? (teach, seed 1)
+
+f_L regions code the last f_L + 1 bytes. **Predictions.** (P8a) A on letters with G=8 (its start is 9 bytes before the answer) is lost
+through text with f_L = 2 or 4 unless the slow stage carries it. (P8b) A with G=4 is kept with f_L = 4 (A after B 0.9 or more).
+(P8c) Text held-out with f_L = 4 is within 0.01 of f_L = 8 (0.350). **Refuted if** text falls by more than 0.02 at f_L = 4 (longer
+hierarchies matter for text) or A with G=4 at f_L = 4 is below 0.75 (keeping does not come from the hierarchy reaching A's start).
