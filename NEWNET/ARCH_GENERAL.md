@@ -43,3 +43,8 @@ Readings: with loops and no base the codes depend on the whole past (they do not
 before dominates every region's context (128 of its active sources against 8 from each other region), so every region codes about
 two bytes (predicted share 0.57 against 0.18 for the chain, yet worse held-out). Without loops the paths of a random graph have many
 lengths, so contexts of many lengths, bounded: better than the chain.
+
+**The graph without loops, more runs** (K=2, `mesh_base=0 mesh_dag=1`, joint=1): Moby Dick 16,000, L=8, seed 2: 0.391 (seed 1: 0.394).
+Code 16,000, L=8: **0.392** (chain L=4: 0.384; three-byte table 0.386). Moby Dick 64,000: L=8 0.419, L=16 half-size 0.417 (chain L=8
+0.400, L=4 0.418; three-byte table 0.452). With more reading the table pulls ahead: the learner gains less from more data than counting
+does. My reading, to be tested: the context cells' capacity (2,048 a region) is used up by the many contexts of 64,000 bytes.
