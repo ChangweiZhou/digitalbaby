@@ -48,3 +48,7 @@ lengths, so contexts of many lengths, bounded: better than the chain.
 Code 16,000, L=8: **0.392** (chain L=4: 0.384; three-byte table 0.386). Moby Dick 64,000: L=8 0.419, L=16 half-size 0.417 (chain L=8
 0.400, L=4 0.418; three-byte table 0.452). With more reading the table pulls ahead: the learner gains less from more data than counting
 does. My reading, to be tested: the context cells' capacity (2,048 a region) is used up by the many contexts of 64,000 bytes.
+
+**Capacity of the context cells** (Moby Dick 64,000, L=8, graph without loops): as above 0.419; columns doubled (cC=256) 0.431; the
+same with half the holders 0.429; **cells a column doubled (M=32) 0.444**; no holders at all 0.415 (three-byte table 0.452). The reading
+was right: the context cells were full. More cells for the same byte in different contexts is the size that pays.
