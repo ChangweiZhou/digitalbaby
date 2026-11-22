@@ -41,12 +41,21 @@ void step(int L, int C, int M, int S, int64_t *gsrc, int64_t *rsrc, double *rw, 
           int32_t *head, int32_t *nxt, int32_t *prv)
 {
     const int CM = C * M, NC = 2 * CM;
-    int *n_on = calloc(CM, sizeof(int)), *n_act = calloc(CM, sizeof(int)), *sH = calloc(CM, sizeof(int)), *aH = calloc(CM, sizeof(int));
-    uint8_t *pred = calloc(CM, 1), *match = calloc(CM, 1), *f = calloc(CM, 1), *af = malloc((size_t)C * S), *colp = calloc(C, 1);
-    int *touched = malloc(sizeof(int) * CM), *prev = malloc(sizeof(int) * NC), *miss = malloc(sizeof(int) * NC), *tmp = malloc(sizeof(int) * NC);
-    int *stamp = calloc(NC, sizeof(int)), *order = malloc(sizeof(int) * S), *wins = malloc(sizeof(int) * C), *fcell = malloc(sizeof(int) * C);
-    size_t cap = 1024, nact; int32_t *actl = malloc(sizeof(int32_t) * cap);
-    int stamp_id = 0;
+    /* workspace kept between calls (zero-valued parts are left zero at the end of every call), so a byte costs no O(C*M) allocation */
+    static int cCM = 0, cC = 0, cS = 0, stamp_id = 0; static size_t cap = 0;
+    static int *cur, *curh, *n_on, *n_act, *sH, *aH, *touched, *prev, *miss, *tmp, *stamp, *order, *wins, *fcell;
+    static uint8_t *pred, *match, *f, *af, *colp; static int32_t *actl;
+    if (CM > cCM || C > cC || S > cS) {
+        if (cCM) { free(n_on); free(n_act); free(sH); free(aH); free(pred); free(match); free(f); free(af); free(colp); free(touched);
+                   free(prev); free(cur); free(curh); free(miss); free(tmp); free(stamp); free(order); free(wins); free(fcell); }
+        cCM = CM > cCM ? CM : cCM; cC = C > cC ? C : cC; cS = S > cS ? S : cS; stamp_id = 0;
+        n_on = calloc(cCM, sizeof(int)); n_act = calloc(cCM, sizeof(int)); sH = calloc(cCM, sizeof(int)); aH = calloc(cCM, sizeof(int));
+        pred = calloc(cCM, 1); match = calloc(cCM, 1); f = calloc(cCM, 1); af = malloc((size_t)cC * cS); colp = calloc(cC, 1);
+        touched = malloc(sizeof(int) * cCM); prev = malloc(sizeof(int) * 2 * cCM); cur = malloc(sizeof(int) * 2 * cCM); curh = malloc(sizeof(int) * 2 * cCM); miss = malloc(sizeof(int) * 2 * cCM); tmp = malloc(sizeof(int) * 2 * cCM);
+        stamp = calloc(2 * (size_t)cCM, sizeof(int)); order = malloc(sizeof(int) * cS); wins = malloc(sizeof(int) * cC); fcell = malloc(sizeof(int) * cC);
+    }
+    if (!cap) { cap = 1024; actl = malloc(sizeof(int32_t) * cap); }
+    size_t nact;
     long pc_win = 0, win_tot = 0;
     for (int d = 0; d < L; d++) {
         const uint8_t *cx = ctx + (size_t)d * NC, *cl = cols + (size_t)d * C;
@@ -58,17 +67,24 @@ void step(int L, int C, int M, int S, int64_t *gsrc, int64_t *rsrc, double *rw, 
         double nap = p->n_grow && np_ > p->n_grow ? p->n_grow : np_, nah = p->n_grow && nh > p->n_grow ? p->n_grow : nh;
         /* counts, by the lists of the active sources */
         int nt = 0; nact = 0;
-        for (int j = 0; j < P_; j++) {
-            int h = prev[j] >= CM;
-            for (int32_t sl = head[(size_t)d * NC + prev[j]]; sl >= 0; sl = nxt[sl]) {
+        int na = 0;                                                           /* the lists are walked side by side (independent loads) */
+        for (int j = 0; j < P_; j++) { int32_t sl = head[(size_t)d * NC + prev[j]]; if (sl >= 0) { cur[na] = sl; curh[na++] = prev[j] >= CM; } }
+        while (na) {
+            int keep = 0;
+            for (int q = 0; q < na; q++) {
+                int32_t sl = cur[q]; int h = curh[q];
+                int32_t nx = nxt[sl];
                 double w = rw[sl];
-                if (!(w > 0)) continue;
-                int i = (int)(((size_t)sl - sbase) / S);
-                if (!n_act[i]) touched[nt++] = i;
-                int st = w >= p->w_on; n_act[i]++; n_on[i] += st; aH[i] += h; sH[i] += st && h;
-                if (nact == cap) { cap *= 2; actl = realloc(actl, sizeof(int32_t) * cap); }
-                actl[nact++] = sl;
+                if (w > 0) {
+                    int i = (int)(((size_t)sl - sbase) / S);
+                    if (!n_act[i]) touched[nt++] = i;
+                    int st = w >= p->w_on; n_act[i]++; n_on[i] += st; aH[i] += h; sH[i] += st && h;
+                    if (nact == cap) { cap *= 2; actl = realloc(actl, sizeof(int32_t) * cap); }
+                    actl[nact++] = sl;
+                }
+                if (nx >= 0) { cur[keep] = nx; curh[keep++] = h; }
             }
+            na = keep;
         }
         int ok = np_ > 0;
         for (int t = 0; t < nt; t++) {
@@ -116,7 +132,7 @@ void step(int L, int C, int M, int S, int64_t *gsrc, int64_t *rsrc, double *rw, 
             if (P_) for (int q = 0; q < nf; q++) {                                /* making of connections, cells ascending */
                 int i = fcell[q];
                 size_t o = (base + i) * S;
-                if (++stamp_id == 0x7fffffff) { memset(stamp, 0, sizeof(int) * NC); stamp_id = 1; }
+                if (++stamp_id == 0x7fffffff) { memset(stamp, 0, sizeof(int) * 2 * (size_t)cCM); stamp_id = 1; }
                 const uint8_t *a = af + (size_t)q * S;
                 for (int s = 0; s < S; s++) {
                     if (rw[o + s] > 0 && rsrc[o + s] >= 0 && rsrc[o + s] < NC) stamp[rsrc[o + s]] = stamp_id;
@@ -157,6 +173,4 @@ void step(int L, int C, int M, int S, int64_t *gsrc, int64_t *rsrc, double *rw, 
         for (int q = 0; q < nf; q++) f[fcell[q]] = 0;
     }
     stats[0] = win_tot ? (double)pc_win / win_tot : 0.0;
-    free(n_on); free(n_act); free(sH); free(aH); free(pred); free(match); free(f); free(af); free(colp); free(touched); free(prev);
-    free(miss); free(tmp); free(stamp); free(order); free(wins); free(fcell); free(actl);
 }

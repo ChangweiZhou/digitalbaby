@@ -49,6 +49,22 @@ class Tissue(net7.Tissue):                                                      
         self.ix_prv = np.full(L * C * M * S, -2, np.int32); self._ix_built = False   # the inverted index (built at the first step)
         self._cells = np.zeros(L * C * M, np.uint8); self._sur = np.zeros(L, np.uint8); self._st = np.zeros(1)
 
+    def _context(self):
+        """net7's context array (prev part, then hold part, > 0), built from the active cells and columns only: the same values"""
+        L, C, M = self.L, self.C, self.M; CM = C * M
+        ctx = np.zeros((L, 2 * CM), np.uint8)
+        cnz = self.cells.reshape(L, CM) > 0; cells_on = [np.flatnonzero(cnz[d]) for d in range(L)]
+        cols_on = [(np.flatnonzero(self.cols[d] > 0)[:, None] * M + np.arange(M)).ravel() for d in range(L)]   # every cell of an active column
+        for d in range(L):
+            if self.mesh:                                                             # as net7: K other regions' cells, plus the own columns if mesh_base or no source
+                for e in self.msrc[d]: ctx[d, cells_on[e]] = 1
+                if self.mesh_base or not len(self.msrc[d]): ctx[d, cols_on[d]] = 1
+            elif self.ctx_mode == 2: ctx[d, cols_on[0] if d == 0 else cells_on[d - 1]] = 1
+            elif self.ctx_mode: ctx[d, cols_on[d]] = 1
+            else: ctx[d, cells_on[d]] = 1
+        ctx[:, CM:] = self.hold.reshape(L, CM) > 0
+        return ctx
+
     def reindex(self):
         _lib.build_index(self.L, self.C, self.M, self.S, _p(self.gsrc), _p(self.rw), _p(self.ix_head), _p(self.ix_nxt), _p(self.ix_prv))
         self._ix_built = True
@@ -60,15 +76,7 @@ class Tissue(net7.Tissue):                                                      
             self.tr += (cols - self.tr) / self.slow; self.lt += (cols - self.lt) / self.slow_lt   # the code: the SLOW_K columns most above their mean
             top = np.argsort(-(self.tr / self.lt), 1)[:, : self.slow_k]
             sc = np.zeros((L, C)); np.put_along_axis(sc, top, 1.0, 1); self.hold = np.repeat(sc[:, :, None], M, 2)
-        prevc = np.repeat(self.cols[:, :, None], M, 2) if self.ctx_mode else self.cells
-        if self.mesh:                                                                     # mesh: the byte before (own columns, every cell) and the
-            base = np.repeat(self.cols[:, :, None], M, 2)                                 # cells of K other regions at the byte before
-            prevc = np.zeros_like(self.cells)
-            for d in range(L):
-                if len(self.msrc[d]): prevc[d] = self.cells[self.msrc[d]].max(0)
-                if self.mesh_base or not len(self.msrc[d]): prevc[d] = np.maximum(prevc[d], base[d])   # a region with no sources reads the byte before
-        if self.ctx_mode == 2 and not self.mesh: prevc = np.concatenate([prevc[:1], self.cells[:-1]], 0)
-        ctx = np.ascontiguousarray(np.concatenate([prevc.reshape(L, -1), self.hold.reshape(L, -1)], 1) > 0, np.uint8)
+        ctx = self._context()
         cu = np.ascontiguousarray(cols > 0, np.uint8)
         self.par.learn = 1 if learn else 0
         if not self._ix_built: self.reindex()
