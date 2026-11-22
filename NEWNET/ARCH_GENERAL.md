@@ -151,3 +151,7 @@ are unchanged and the holders' vote for the right byte collapses (0.040 against 
 in the holders' expansion (`h_noline=1`) the same (0.263 -> 0.033; keep8 0.470; moby 0.392, code 0.392): the holders' states inside A and
 in text differ too little (as `t14_overlap.py` found earlier for the expansion), so their expansion cells are taught by text. In these
 architectures a long context is separated only by long paths of context cells; the holders carry it across a gap but do not protect it.
+
+**Two pathways with 12 regions** (chain of 6 + graph of 6, 4 winners, M=11): M1 (graph K=1): moby 0.395, code 0.402, keep8 0.470, keep4,
+keep2, mem 1.000 (0.711); M2 (K=2): 0.389 / 0.391 / 0.470 (0.708). As predicted, a chain of 6 regions does not reach A's start 9 bytes
+back: the length of a context kept is the length of the pure chain.
