@@ -56,3 +56,8 @@ was right: the context cells were full. More cells for the same byte in differen
 **Size that pays, further** (64,000 bytes, L=8, graph without loops, joint=1): Moby Dick M=16 0.419, M=32 0.444 (seed 2: 0.446),
 M=32 with cC=256 0.448, **M=64 0.455** (three-byte table 0.452). Code, M=32: **0.445** (three-byte table 0.420). Each doubling of the
 cells a column holds raises the held-out share; at M=64 the learner is above the three-byte table on a text never used in design.
+
+**The battery for net10 (L=8, graph without loops, K=2, M=32, joint=1), seed 1:** memory G=16 (128 values, 40,000 bytes): 1.000 at the
+gap. Two texts (10,000-byte tests): A 0.383 -> 0.369, B 0.447, control 0.340 / 0.441 (net9: 0.356 -> 0.346, B 0.409, control 0.328 /
+0.403): every level higher. **Keeping A on letters: 0.960 -> 0.470 (net9: 1.000 -> 1.000): a regression.** Candidates: paths of the
+random graph shorter than the 9 bytes back to A's start, or the shared mismatch (net9's fast compartment learned alone).
