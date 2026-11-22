@@ -16,7 +16,7 @@ putback = a.pop("putback", 0); warm = a.pop("warm", 0); NT = a.pop("NT", 2000)  
 rho, K, EP = a.pop("rho", 0.0), a.pop("K", 1000), 40   # rehearsal: a store of K episodes of 40 bytes (each read episode has the same chance to be kept); rho bytes rehearsed a byte read
 TA, TB, TR = a.pop("TA", 4000 if life == "ctx" else 16000), a.pop("TB", 16000), a.pop("TR", 2000)
 netn = a.pop("net", 8)
-kw = dict(n_values=128, N=1024, tau_max=150, center=1000, fb="none", gran=8192, out_var=1000); kw.update(a)
+kw = dict(n_values=128, N=1024, tau_max=150, center=1000, fb="none", gran=8192, out_var=1000) if netn in (8, 9) else dict(n_values=128); kw.update(a)   # the slow-stage defaults are for net8/net9
 net = importlib.import_module("net%d" % netn).Tissue(**kw); rng = np.random.default_rng(kw.get("seed", 1) + 1000)
 here = "/home/user/digitalbaby/"
 SH = np.frombuffer(open(here + "PROJECT_DOCUMENTS/MINIFLY_OUTSIDE_ADVICE_20261118/nano/data/tinyshakespeare.txt", "rb").read(), np.uint8).astype(int)
