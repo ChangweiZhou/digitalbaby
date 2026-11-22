@@ -1,7 +1,9 @@
 """net5 with the context part of its step in C (net7.c). Same definition and parameters as net5.py (see its docstring).
 Differences: among equally weak slots a new connection takes the lowest slot (net5: numpy's sort order), and the random sample
 of new sources (only when more sources are active than n_grow) uses the C generator. With no sampling the cells, surprise and
-predictions are those of net5 step for step (check_net7.py). The forward part and the hold are as in net5 (numpy)."""
+predictions are those of net5 (stable=1) step for step (check_net7.py). The forward part and the hold are as in net5 (numpy).
+recall=1 (also in net5): surprise also when most winning columns were not predicted (else a hold left by another stream can
+never be refreshed: nothing matches it, so nothing is predicted, so no surprise)."""
 import ctypes, os, subprocess
 import numpy as np
 
@@ -14,7 +16,7 @@ _lib = ctypes.CDLL(_so)
 
 class _P(ctypes.Structure):
     _fields_ = [(n, ctypes.c_double) for n in ("eta", "eta_minus", "w_on", "w_new", "th_on", "th_match", "s_th", "lam")] + \
-               [(n, ctypes.c_int) for n in ("n_grow", "burst", "ctx_mode", "learn")]
+               [(n, ctypes.c_int) for n in ("n_grow", "burst", "ctx_mode", "learn", "recall")]
 
 
 def _p(a): return a.ctypes.data_as(ctypes.c_void_p)
@@ -22,7 +24,7 @@ def _p(a): return a.ctypes.data_as(ctypes.c_void_p)
 
 class Tissue:
     def __init__(self, seed=1, L=12, C=64, M=8, k_win=8, fan_in=32, S=48, n_values=32, lines_in=8, eta=0.2, eta_minus=0.05,
-                 w_on=0.5, w_new=0.4, th_on=0.75, th_match=0.6, s_th=0.75, lam=0.1, n_grow=0, burst=0, ctx=0, hold=1,
+                 w_on=0.5, w_new=0.4, th_on=0.75, th_match=0.6, s_th=0.75, lam=0.1, n_grow=0, burst=0, ctx=0, hold=1, recall=0,
                  theta=1e-9, sweep=1):
         rng = np.random.default_rng(seed)
         self.L, self.C, self.M, self.k, self.S, self.theta, self.n_values, self.sweep = L, C, M, k_win, S, theta, n_values, sweep
@@ -36,7 +38,7 @@ class Tissue:
         self.rel = np.full((L, C, M), 1.0)
         self.cells = np.zeros((L, C, M)); self.cols = np.zeros((L, C)); self.hold = np.zeros((L, C, M))
         self.predicted = 0.0; self.surprise = np.zeros(L, bool)
-        self.par = _P(eta, eta_minus, w_on, w_new, th_on, th_match, s_th, lam, n_grow, burst, ctx, 1)
+        self.par = _P(eta, eta_minus, w_on, w_new, th_on, th_match, s_th, lam, n_grow, burst, ctx, 1, recall)
         _lib.seed_rng(ctypes.c_uint64(seed + 7))
         self._cells = np.zeros(L * C * M, np.uint8); self._sur = np.zeros(L, np.uint8); self._st = np.zeros(1)
 

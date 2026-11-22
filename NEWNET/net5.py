@@ -27,12 +27,12 @@ import numpy as np
 
 class Tissue:
     def __init__(self, seed=1, L=12, C=64, M=8, k_win=8, fan_in=32, S=48, n_values=32, lines_in=8, eta=0.2, eta_minus=0.05,
-                 w_on=0.5, w_new=0.4, th_on=0.75, th_match=0.6, s_th=0.75, lam=0.1, n_grow=0, burst=0, ctx=0, hold=1, stable=0, theta=1e-9, sweep=1):
+                 w_on=0.5, w_new=0.4, th_on=0.75, th_match=0.6, s_th=0.75, lam=0.1, n_grow=0, burst=0, ctx=0, hold=1, stable=0, recall=0, theta=1e-9, sweep=1):
         rng = np.random.default_rng(seed)
         self.L, self.C, self.M, self.k, self.S, self.theta, self.n_values = L, C, M, k_win, S, theta, n_values
         self.eta, self.eta_minus, self.w_on, self.w_new = eta, eta_minus, w_on, w_new
         self.th_on, self.th_match, self.s_th, self.sweep, self.lam = th_on, th_match, s_th, sweep, lam
-        self.n_grow = n_grow; self.burst = burst; self.ctx_mode = ctx; self.use_hold = hold; self.sort_kind = 'stable' if stable else None; self.grng = np.random.default_rng(seed + 7)
+        self.n_grow = n_grow; self.burst = burst; self.ctx_mode = ctx; self.use_hold = hold; self.sort_kind = 'stable' if stable else None; self.recall = recall; self.grng = np.random.default_rng(seed + 7)
         self.rel = np.full((L, C, M), 1.0)                                                  # how often a cell's prediction came true
         self.fsrc = np.stack([rng.choice(C, (C, fan_in)) for _ in range(L)])
         self.fw = rng.random((L, C, fan_in))
@@ -77,6 +77,7 @@ class Tissue:
         pw = pred & (cols > 0)[:, :, None]                                                # predicted cells in winning columns
         relw = np.where(pw.any((1, 2)), (self.rel * pw).sum((1, 2)) / np.maximum(pw.sum((1, 2)), 1), 1.0)
         surprise = ((npc > 0) & (hit < self.s_th * npc)) | (relw < self.s_th)            # predicted more than happened, or unreliably
+        if self.recall: surprise |= hit < self.s_th * (cols > 0).sum(1)                   # recall=1: most winning columns were not predicted
         score = np.where(pred, 1e6 + n_on, np.where(match, 1e3 + n_act, -self.use))
         choice = np.argmax(score, 2)
         pick = choice if self.ctx_mode else np.where(surprise[:, None], 0, choice)          # ctx=1: no default cell (the order is bounded anyway)

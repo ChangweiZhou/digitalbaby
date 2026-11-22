@@ -9,7 +9,7 @@ static uint64_t rs = 88172645463325252ULL;
 void seed_rng(uint64_t s) { rs = s * 2654435761ULL + 1; if (!rs) rs = 1; }
 static inline uint64_t xr(void) { rs ^= rs << 13; rs ^= rs >> 7; rs ^= rs << 17; return rs; }
 
-typedef struct { double eta, eta_minus, w_on, w_new, th_on, th_match, s_th, lam; int n_grow, burst, ctx_mode, learn; } P;
+typedef struct { double eta, eta_minus, w_on, w_new, th_on, th_match, s_th, lam; int n_grow, burst, ctx_mode, learn, recall; } P;
 
 /* arrays: gsrc, rsrc [L*C*M*S] int64; rw [L*C*M*S] double; ctx [L*2CM] uint8; cols [L*C] uint8;
    use, rel [L*C*M] double; out: cells [L*C*M] uint8, surprise [L] uint8; stats[0] = predicted share of winning columns */
@@ -48,7 +48,8 @@ void step(int L, int C, int M, int S, int64_t *gsrc, int64_t *rsrc, double *rw, 
             if (cl[c]) { win_tot++; pc_win += pc; }
         }
         double relw = npw ? rsum / npw : 1.0;
-        int sur = (npc > 0 && hit < p->s_th * npc) || relw < p->s_th;
+        int nwin = 0; for (int cc = 0; cc < C; cc++) nwin += cl[cc] != 0;
+        int sur = (npc > 0 && hit < p->s_th * npc) || relw < p->s_th || (p->recall && hit < p->s_th * nwin);   /* recall: most winners unpredicted */
         surprise[d] = sur;
         memset(f, 0, CM);
         for (int c = 0; c < C; c++) {

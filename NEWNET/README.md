@@ -203,3 +203,42 @@ cells are active), each tissue part 2.7 ms (numpy over every slot). Changes:
 
 What is left is spread evenly (C scan of the slots, numpy forward part, Python per byte, about a third each, about 1 ms a byte for 12
 regions). The old output rule stays dense (it renormalises every strength every byte); new work uses the delta rule.
+
+## Keeping: A -> B -> A in one life (`t8_life.py`), 22 November 2026
+
+**The life.** A: the context stream (G=8, two branches). B: tinyshakespeare from its start (8,000 bytes unless stated). Then A
+again (200 sequences). Nothing is reset and no task signal is given. Tests with learning off, at the end of A, after B and after the
+return: A at the byte after the gap, over 100 fresh sequences (chance 0.5); text over 2,000 bytes never read (from byte 600,000).
+Diagnostics: the output end of before B put back (`put back`); the branch decoded from the tissue's cells at the gap (no output end);
+`t9_where.py`: for each area and region, whether the cells at the gap are those of before B, the predicted share over A's middle and
+surprise at its start. Output end: `rule=gated` (the right byte's cell and any cell that spoke wrongly are taught; a silent wrong cell
+is not, PLAN_12's letter r in `nano/lives`); `rule=delta` gave the same in every case run with both.
+
+**What was found, in order** (net6 fast=1, order areas 3 regions, hold areas 6 regions burst=1):
+
+1. A was lost after 8,000 bytes of text (0.47), and *reading* 2,000 bytes of text with learning off already lost it. The cause was a
+   deadlock in the hold areas: after text the hold held a text code, so nothing of A was predicted, so no surprise (it needed a
+   broad prediction), so the hold was never refreshed. **`recall=1`**: surprise also when most winning columns were not predicted.
+   Then A was kept on seeds 1 and 3, not on seed 2 (codes drifted), and not after 32,000 bytes of text.
+2. After 32,000 bytes the cells of A still had their strong connections (14 to 16 of 16), but some were also used by text contexts,
+   whose predictions failed; the reliability kept by the cell (net5) fell to 0.03-0.13, and on A's return the region read their
+   predictions as unreliable and refreshed the hold in the middle. **`lam=0`** (no reliability; learning on surprise, added
+   earlier, already covers what it was for): A kept on all three seeds, after 8,000 and after 32,000 bytes. The context stream alone
+   still gives 1.000 (G=8 hold areas alone, G=16 both).
+3. With A on **lowercase letters** (bytes text uses too) the hold areas lost A again: after `b` the region also predicts text's
+   successors of `b`; the prediction is broad, so surprise, and the hold is refreshed. For that region this is a real ambiguity.
+   The order areas kept A's cells exactly (1.00). **8 order regions** (`o_L=8`: region 7 codes the last 9 bytes, which reach the
+   start from the gap) keep A.
+
+| `rule=gated recall=1 lam=0`; A after B (learning off) / tissue branch after B / text after B -> after the return | seed 1 | seed 2 | seed 3 |
+|---|---|---|---|
+| disjoint bytes, B 8,000 | 1.000 / 1.00 / 0.287 -> 0.293 (lam 0.1) | 1.000 / 1.00 / 0.287 -> 0.283 | 1.000 / 1.00 / 0.280 -> 0.280 (lam 0.1) |
+| disjoint bytes, B 32,000 | 1.000 / 1.00 / 0.322 -> 0.323 | 1.000 / 1.00 / 0.317 -> 0.319 | 1.000 / 1.00 / 0.328 -> 0.321 |
+| letters, 3 order + 6 hold regions | 0.510 / 0.50 | 0.000 / 0.50 | |
+| letters, 8 order + 6 hold regions | 1.000 / 1.00 / 0.292 -> 0.279 | 1.000 / 1.00 / 0.285 -> 0.273 | 1.000 / 1.00 / 0.287 -> 0.277 |
+| letters, 8 order regions, no hold areas | 1.000 / - / 0.325 -> 0.327 | 1.000 / - / 0.318 -> 0.329 | 1.000 / - / 0.321 -> 0.331 |
+| letters, 8 order regions, no hold, B 32,000 | 1.000 / - / 0.342 -> 0.342 | | |
+
+On the return, A is right from the first block of 20 sequences in every kept case. Text read alone with 8 order + 6 hold regions:
+0.402 (one seed). Run time 50-120 s. Open: what the hold areas are for once order areas are deep (they are needed for gaps longer
+than the order reaches: G=16, 32); why they cost text about 0.01 on the return; two texts (A and B both real text).
