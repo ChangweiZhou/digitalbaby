@@ -218,3 +218,8 @@ ceiling is about 0.86 and 0.90: learned). G=16, 120,000 bytes: all bytes 0.853 (
 `t16_split.py` (learning off after the life, choosing between the two end bytes): G=12, 60,000 bytes, yes/no: right from the slow
 compartment alone 1.00, the fast alone 0.52, the sum 1.00 (teach the same); the fast compartment gives the two end bytes the same value
 (difference 0.000), so it does not drown the slow one. G=16 and G=24 frozen splits are running.
+
+**Frozen splits under yes/no** (choosing between the two end bytes only): G=12, 60,000 bytes, seed 2: slow alone 1.00, sum 1.00;
+G=16, 120,000 bytes: slow alone 0.96 / 1.00 (seeds 1 / 2), sum the same; G=24, 120,000 bytes: 1.00. So under yes/no the slow stage
+does learn the branch across 16 and 24 bytes; the online 0.466 at G=16 counts answers over all byte values, so at the gap another
+byte is often answered. Which, is being measured.

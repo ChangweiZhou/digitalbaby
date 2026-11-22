@@ -16,12 +16,16 @@ u = rng.choice(64, G + 4, replace=False); mid = list(u[:G]); st, en = u[G:G + 2]
 s = []
 while len(s) < T + 1: b = rng.integers(2); s += [st[b]] + mid + [en[b]]
 for t in range(T): net.step(int(s[t])); net.answer()
-R = []
+R = []; W = []; kinds = []
 for _ in range(200):
     b = rng.integers(2)
     for x in [st[b]] + mid: net.step(int(x), False)
     os_, of = net.slow.O[en], net.Of[en]
     R.append((np.argmax(os_) == b, np.argmax(of) == b, np.argmax(os_ + of) == b, abs(os_[0] - os_[1]), abs(of[0] - of[1])))
+    full = net.slow.O + net.Of; g = int(np.argmax(full)); W.append(g == en[b])
+    if g != en[b]: kinds.append("end" if g in en else "start" if g in st else "middle" if g in mid else "other")
     net.step(int(en[b]), False)
 R = np.array(R, float)
+from collections import Counter
+print(f"  over all byte values: right {np.mean(W):.2f}; wrong answers by kind {dict(Counter(kinds))}")
 print(f"{' '.join(f'{k}={v}' for k, v in a.items())} G={G} T={T}: after the gap, branch right from slow alone {R[:,0].mean():.2f}, fast alone {R[:,1].mean():.2f}, sum {R[:,2].mean():.2f} | mean |difference| slow {R[:,3].mean():.3f}, fast {R[:,4].mean():.3f}")
