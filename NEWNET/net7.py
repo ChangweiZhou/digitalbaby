@@ -36,12 +36,17 @@ class Tissue:
         self.ctx_mode, self.use_hold = ctx, hold
         self.slow, self.slow_k, self.slow_lt = slow, slow_k, slow_lt                     # slow=tau: the hold part is a slow code instead
         self.tr = np.zeros((L, C)); self.lt = np.full((L, C), 1e-3)
-        self.mesh_base = mesh_base                                                        # mesh_base=0: no own columns of the byte before
+        self.mesh_dag = mesh_dag; self.mesh_base = mesh_base                                                        # mesh_base=0: no own columns of the byte before
         self.mesh = mesh                                                                  # mesh=K: regions in a random graph (see step)
         if mesh:
             mr = np.random.default_rng(seed + 55)
             if mesh_dag:                                                                   # mesh_dag=1: a random graph without loops: region d reads only
-                if mesh_dag == 2:                                                          # mesh_dag=2: the region just before, and K-1 random earlier ones
+                if mesh_dag == 3:                                                          # mesh_dag=3: K parallel chains (streams), each from the byte before
+                    per = max(1, L // mesh)
+                    self.msrc = [np.array([d - 1]) if d % per else np.zeros(0, int) for d in range(L)]
+                elif mesh_dag == 4:                                                        # mesh_dag=4: feedforward and feedback: region d reads d-1 and d+1
+                    self.msrc = [np.array([j for j in (d - 1, d + 1) if 0 <= j < L]) for d in range(L)]
+                elif mesh_dag == 2:                                                        # mesh_dag=2: the region just before, and K-1 random earlier ones
                     self.msrc = [np.r_[d - 1, mr.choice(d - 1, min(mesh - 1, d - 1), replace=False)].astype(int) if d else np.zeros(0, int) for d in range(L)]
                 else:
                     self.msrc = [mr.choice(d, min(mesh, d), replace=False) if d else np.zeros(0, int) for d in range(L)]   # regions before it
@@ -90,7 +95,7 @@ class Tissue:
             prevc = np.zeros_like(self.cells)
             for d in range(L):
                 if len(self.msrc[d]): prevc[d] = self.cells[self.msrc[d]].max(0)
-                if self.mesh_base or not len(self.msrc[d]): prevc[d] = np.maximum(prevc[d], base[d])   # a region with no sources reads the byte before
+                if self.mesh_base or not len(self.msrc[d]) or (self.mesh_dag == 4 and d == 0): prevc[d] = np.maximum(prevc[d], base[d])   # a region with no sources (or the lowest, with feedback) reads the byte before
         if self.ctx_mode == 2 and not self.mesh: prevc = np.concatenate([prevc[:1], self.cells[:-1]], 0)
         ctx = np.ascontiguousarray(np.concatenate([prevc.reshape(L, -1), self.hold.reshape(L, -1)], 1) > 0, np.uint8)
         cu = np.ascontiguousarray(cols > 0, np.uint8)
