@@ -274,3 +274,10 @@ Tried at the output end, seed 1 unless stated (A test after A / after B; B after
 
 Open: a reading that depends on which text is being read needs the tissue to carry something of the text over a longer range
 than 9 bytes (vocabulary, style), so that the two texts' contexts are not the same cells.
+
+**A slow code of which text is read (tried, not enough).** Each column keeps a slow trace of its own activity (time constant tau)
+and a long-term mean (20,000); the code is the 8 columns most above their mean. On its own it tells the two texts apart (nearest
+centroid 0.85 at tau 1,000, 0.80 at 300, chance 0.5) and changes in 7% of bytes (tau 1,000). (a) As the required second part of the
+order areas' context (`net7 slow=1000`): contexts split and learning suffers (A after A 0.274 and 0.265 against 0.369 and 0.357;
+tau 300: 0.293). (b) As 4 extra "style" regions beside the plain 8 (`net6 s_L=4`): A after A / after B / control: seed 1 0.359 /
+0.317 / 0.313, seed 2 0.363 / 0.325 / 0.306: the A-specific part is still mostly lost; 6 minutes a run.

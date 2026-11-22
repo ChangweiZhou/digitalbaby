@@ -2,6 +2,8 @@
 Differences: among equally weak slots a new connection takes the lowest slot (net5: numpy's sort order), and the random sample
 of new sources (only when more sources are active than n_grow) uses the C generator. With no sampling the cells, surprise and
 predictions are those of net5 (stable=1) step for step (check_net7.py). The forward part and the hold are as in net5 (numpy).
+slow=TAU: the hold part of every cell's context is a slow code (per region: the SLOW_K columns whose trace with time constant
+TAU is most above its long-term mean, time constant SLOW_LT), every cell of those columns; it is required as the hold is.
 recall=1 (also in net5): surprise also when most winning columns were not predicted (else a hold left by another stream can
 never be refreshed: nothing matches it, so nothing is predicted, so no surprise)."""
 import ctypes, os, subprocess
@@ -25,10 +27,12 @@ def _p(a): return a.ctypes.data_as(ctypes.c_void_p)
 class Tissue:
     def __init__(self, seed=1, L=12, C=64, M=8, k_win=8, fan_in=32, S=48, n_values=32, lines_in=8, eta=0.2, eta_minus=0.05,
                  w_on=0.5, w_new=0.4, th_on=0.75, th_match=0.6, s_th=0.75, lam=0.1, n_grow=0, burst=0, ctx=0, hold=1, recall=0,
-                 theta=1e-9, sweep=1):
+                 slow=0, slow_k=8, slow_lt=20000, theta=1e-9, sweep=1):
         rng = np.random.default_rng(seed)
         self.L, self.C, self.M, self.k, self.S, self.theta, self.n_values, self.sweep = L, C, M, k_win, S, theta, n_values, sweep
         self.ctx_mode, self.use_hold = ctx, hold
+        self.slow, self.slow_k, self.slow_lt = slow, slow_k, slow_lt                     # slow=tau: the hold part is a slow code instead
+        self.tr = np.zeros((L, C)); self.lt = np.full((L, C), 1e-3)
         self.fsrc = np.stack([rng.choice(C, (C, fan_in)) for _ in range(L)])
         self.fw = rng.random((L, C, fan_in))
         self.lsrc = rng.integers(0, n_values, (C, lines_in)); self.lw = rng.random((C, lines_in))
@@ -56,6 +60,10 @@ class Tissue:
     def step(self, byte, learn=True):
         L, C, M = self.L, self.C, self.M
         cols = self.forward(byte)
+        if self.slow:                                                                     # each column's slow trace and its long-term mean (its own state);
+            self.tr += (cols - self.tr) / self.slow; self.lt += (cols - self.lt) / self.slow_lt   # the code: the SLOW_K columns most above their mean
+            top = np.argsort(-(self.tr / self.lt), 1)[:, : self.slow_k]
+            sc = np.zeros((L, C)); np.put_along_axis(sc, top, 1.0, 1); self.hold = np.repeat(sc[:, :, None], M, 2)
         prevc = np.repeat(self.cols[:, :, None], M, 2) if self.ctx_mode else self.cells
         if self.ctx_mode == 2: prevc = np.concatenate([prevc[:1], self.cells[:-1]], 0)
         ctx = np.ascontiguousarray(np.concatenate([prevc.reshape(L, -1), self.hold.reshape(L, -1)], 1) > 0, np.uint8)
