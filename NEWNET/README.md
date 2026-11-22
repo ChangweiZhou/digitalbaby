@@ -281,3 +281,33 @@ centroid 0.85 at tau 1,000, 0.80 at 300, chance 0.5) and changes in 7% of bytes 
 order areas' context (`net7 slow=1000`): contexts split and learning suffers (A after A 0.274 and 0.265 against 0.369 and 0.357;
 tau 300: 0.293). (b) As 4 extra "style" regions beside the plain 8 (`net6 s_L=4`): A after A / after B / control: seed 1 0.359 /
 0.317 / 0.313, seed 2 0.363 / 0.325 / 0.306: the A-specific part is still mostly lost; 6 minutes a run.
+
+## net8: a tissue taught by its own mismatch (22 November 2026)
+
+Designed from the task and from biological principles, with what was learned from the outside session's work taken in as principles
+only (its programs and structure are not used): the tissue must receive the mismatch, holding must be learned, and a number that
+changes only while its own sender is active is not overwritten by another task. `net8.py`, `t11_gate.py` (numpy, 256 cells, 1-20 s a run).
+
+- Cells with a state and a gate (hold or take in), both reading the present byte's line, 16 other cells one byte before, a constant.
+- Output cells, one per byte value, read the cells (delta rule; a silent wrong output cell is not taught).
+- Feedback cells carry each output cell's mismatch to the region; a tissue cell weighs it with its own feedback strengths, which
+  change by the same local product as the output strengths (`fb=kp`), or stay as born (`fb=random`).
+- Every strength keeps a trace, run forward with its own cell's state, of how it shaped that state; it changes by the mismatch its
+  cell receives times the trace. No pass backward; a strength whose sender was silent has no trace.
+- Two general properties were needed, both found by measurement:
+  (1) **cells born with different clocks** (`tau_max=150`: the gate's constant gives time constants log-uniform from 1 to 150 bytes);
+  with every gate near one half at birth, nothing of the start reaches the end of a gap of 8 and no trace reaches back to it;
+  (2) **adaptation** (`center=1000`): a cell sends its state less its own running mean. The branch was decodable from the cells'
+  states at the gap (nearest centroid 1.00) but as differences of 0.02 to 0.05 on a large common part, which the output end could
+  not learn. With both, the tissue's rate had to be raised from 0.05 (whose changes were too small to matter: about 4e-4 an event).
+
+Context stream, at the byte after the gap, last quarter (chance 0.5):
+
+| G, life | learning tissue and gates (`fb=kp eta_t=0.5`) | gates as born | no tissue learning | feedback as born |
+|---|---|---|---|---|
+| 8, 12,000 (eta_t 0.05) | 1.000 | 0.977 | 0.927 | 1.000 |
+| 16, 16,000 | 0.757 | | 0.586 (eta 0.05) | 0.617 |
+| 16, 40,000 | **1.000, 0.989, 0.998** (seeds 1-3) | 0.633 | 0.665 | |
+| 32, 80,000 (64 values) | 0.685, still rising | | 0.605 | |
+
+Controls on seed 1 only. Not yet run: text, keeping, yes/no, more cells, more than one region.
