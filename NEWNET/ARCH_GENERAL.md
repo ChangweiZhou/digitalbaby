@@ -61,3 +61,11 @@ cells a column holds raises the held-out share; at M=64 the learner is above the
 gap. Two texts (10,000-byte tests): A 0.383 -> 0.369, B 0.447, control 0.340 / 0.441 (net9: 0.356 -> 0.346, B 0.409, control 0.328 /
 0.403): every level higher. **Keeping A on letters: 0.960 -> 0.470 (net9: 1.000 -> 1.000): a regression.** Candidates: paths of the
 random graph shorter than the 9 bytes back to A's start, or the shared mismatch (net9's fast compartment learned alone).
+
+**Why keeping regressed** (life=ctx, M=32): chain with joint 1.000 -> **1.000**; chain, own mismatch 0.910 -> 0.470; graph without loops
+K=1, joint 0.960 -> 0.470; the same K=2, own 0.530 -> 0.470. Keeping needs a path as long as the context to be told apart (the chain's 8
+regions reach A's start 9 bytes back; the random graph's longest path does not), and on the chain the shared mismatch keeps better than
+each compartment alone. The chain gives long paths, the random graph many lengths. New topology `mesh_dag=2`: each region reads the
+region just before (a path through all) and K-1 random earlier ones (paths of many lengths).
+
+## Search, batch 1 (running): A0-A7, same size (L=8, M=16); results in `search_results.tsv`

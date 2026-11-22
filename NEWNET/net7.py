@@ -41,7 +41,10 @@ class Tissue:
         if mesh:
             mr = np.random.default_rng(seed + 55)
             if mesh_dag:                                                                   # mesh_dag=1: a random graph without loops: region d reads only
-                self.msrc = [mr.choice(d, min(mesh, d), replace=False) if d else np.zeros(0, int) for d in range(L)]   # regions before it
+                if mesh_dag == 2:                                                          # mesh_dag=2: the region just before, and K-1 random earlier ones
+                    self.msrc = [np.r_[d - 1, mr.choice(d - 1, min(mesh - 1, d - 1), replace=False)].astype(int) if d else np.zeros(0, int) for d in range(L)]
+                else:
+                    self.msrc = [mr.choice(d, min(mesh, d), replace=False) if d else np.zeros(0, int) for d in range(L)]   # regions before it
             else:
                 self.msrc = [mr.choice([j for j in range(L) if j != d], min(mesh, L - 1), replace=False) for d in range(L)]
             self.mlsrc = mr.integers(0, n_values, (L, C, lines_in)); self.mlw = mr.random((L, C, lines_in))
