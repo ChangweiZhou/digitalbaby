@@ -182,3 +182,6 @@ keep8 0.470, keep4 0.500 (0.629); E6 64 x 32 with 2 winners (N7): 0.391 / 0.391 
 
 K8 and N1 cannot be told apart (same mean score; streams within 0.003). Graphs without a long serial path are best on new streams but
 never keep the G=8 context.
+
+**N1 combinations** (seed 1): R1 N1 + thresholds 0.9 / 0.75: moby 0.385, code 0.389, all keeping and memory 1.000 (0.796); R2 N1 + n_grow
+16: 0.390 / 0.401 / all 1.000 (0.799). Both within the seed spread of N1 (0.797-0.799): no gain.
