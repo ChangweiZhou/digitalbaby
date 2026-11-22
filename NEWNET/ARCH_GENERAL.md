@@ -169,3 +169,16 @@ better: more cells for the same byte in different contexts, as before.
 **Too few columns** (4 winners unless stated): E6 32 x 64 (N5): moby 0.390, code 0.397, keep8 0.470 (0.709); H5 32 x 84 (N6): 0.395 / 0.408 /
 keep8 0.470, keep4 0.500 (0.629); E6 64 x 32 with 2 winners (N7): 0.391 / 0.391 / keep8 0.470 (0.709). With 32 columns keeping fails
 (different bytes share too many columns, my reading); 2 winners lose keep8 too. The optimum on this axis: 64 columns, 4 winners.
+
+## The leaders on three seeds (batches 8, 10, 11, 12; six tests, score = mean of six)
+
+| architecture | seed 1 | seed 2 | seed 3 | mean score | moby mean | code mean | keep8 |
+|---|---|---|---|---|---|---|---|
+| K8: two pathways (pure chain + graph K=1), 4 winners, thresholds 0.9 / 0.75 (L=16, cC=64) | 0.801 | 0.798 | 0.796 | **0.798** | 0.393 | 0.397 | 1 / 1 / 1 |
+| N1: chain + one random earlier source, 4 winners, 64 columns x 32 cells | 0.797 | 0.799 | 0.797 | **0.798** | 0.390 | 0.396 | 1 / 1 / 1 |
+| H3: chain + shortcut, 4 winners, thresholds 0.9 / 0.75 | 0.795 | 0.793 | 0.793 | 0.794 | 0.381 | 0.382 | 1 / 1 / 1 |
+| E4: chain, 4 winners (seed 1 had four tests) | - | 0.795 | 0.793 | - | 0.381 | 0.380 | 1 / 1 / 1 |
+| H5: graph without loops, L=6 M=21, 4 winners | 0.711 | 0.713 | 0.723 | 0.716 | 0.395 | 0.403 | 0.47 / 0.48 / 0.54 |
+
+K8 and N1 cannot be told apart (same mean score; streams within 0.003). Graphs without a long serial path are best on new streams but
+never keep the G=8 context.
