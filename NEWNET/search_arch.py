@@ -2,7 +2,8 @@
 on a fixed battery, the same for every candidate, of which two streams were never used in design:
   moby  - Moby Dick, read 16,000 bytes, held-out 10,000 (learning off)          (t17_general.py)
   code  - the repository's Python files outside NEWNET, the same                (t17_general.py)
-  keep  - A on letters (G=8, 4,000 bytes), then 16,000 bytes of text: A after B  (t13_life8.py life=ctx)
+  keep  - A on letters (G=8, 4,000 bytes), then 16,000 bytes of text: A after B  (t13_life8.py life=ctx); keep4, keep2: the same with
+          G=4 and G=2 (so that keeping is not judged at one depth only)
   mem   - context stream G=16, 40,000 bytes: right at the byte after the gap     (t11_gate.py)
 Score = the mean of the four. Results are appended to search_results.tsv (one line a test), so that every candidate ever run is kept.
 Usage: python3 search_arch.py NAME 'opt=val opt=val ...' [tests=moby,code,keep,mem]"""
@@ -13,8 +14,10 @@ here = os.path.dirname(os.path.abspath(__file__))
 cmd = {"moby": f"python3 t17_general.py stream=moby {opts}",
        "code": f"python3 t17_general.py stream=code {opts}",
        "keep": f"python3 t13_life8.py net=10 life=ctx {opts}",
+       "keep4": f"python3 t13_life8.py net=10 life=ctx G=4 {opts}",
+       "keep2": f"python3 t13_life8.py net=10 life=ctx G=2 {opts}",
        "mem": f"python3 t11_gate.py net=10 G=16 T=40000 {opts}"}
-pat = {"moby": r"held-out ([0-9.]+)", "code": r"held-out ([0-9.]+)", "keep": r"after B ([0-9.]+) /", "mem": r"after the gap \(last quarter\) ([0-9.]+)"}
+pat = {"moby": r"held-out ([0-9.]+)", "code": r"held-out ([0-9.]+)", "keep": r"after B ([0-9.]+) /", "keep4": r"after B ([0-9.]+) /", "keep2": r"after B ([0-9.]+) /", "mem": r"after the gap \(last quarter\) ([0-9.]+)"}
 env = dict(os.environ, OMP_NUM_THREADS="1")
 procs = {t: (subprocess.Popen(cmd[t], shell=True, cwd=here, env=env, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True), time.time()) for t in tests}
 res = {}

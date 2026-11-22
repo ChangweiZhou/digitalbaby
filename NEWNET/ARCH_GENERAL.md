@@ -110,3 +110,11 @@ Parallel pathways keep only when each is long enough.
 **Batch 6** (two pathways of different plan, `mesh_dag=5`, L=16 half-size): F2 (graph half K=1): moby 0.388, code 0.378, keep 1.000, mem
 1.000 (0.692); F1 (K=2): 0.382 / 0.364 / 1.000 / 1.000 (0.686); F3 (full-size regions, M=8): 0.374 / 0.345 / 1.000 / 1.000 (0.680). A pure
 chain beside a graph keeps A and reads new streams nearly as well as the graph alone; E6 (one graph, sparser) is as good and simpler.
+
+**Batch 7** (sparseness): G3 = E6 with M=32 (twice the context cells): moby 0.395, code 0.409, keep 1.000, mem 1.000 (0.701; larger, not
+an equal-size comparison); G1 E6 with 2 winners: 0.378 / 0.392 / 1.000 / 1.000 (0.693); G4 feedforward+feedback with 4 winners: 0.349 /
+0.321 / 0.660 / 1.000 (0.583); G2 graph without loops with 4 winners: 0.381 / 0.393 / 0.470 / 1.000 (0.561).
+
+**A fault of the battery.** A's start is 9 bytes before the answer, so `keep` can only be passed by an architecture with a path of at
+least 8 regions: the test rewards a depth matched to it (the trap of choosing 8 regions for this test, again). From batch 8 on,
+`keep4` and `keep2` (the same life with G=4 and G=2) are run beside it, and the score is read with all three.
