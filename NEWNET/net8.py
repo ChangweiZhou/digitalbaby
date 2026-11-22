@@ -34,7 +34,7 @@ def sig(x): return 1.0 / (1.0 + np.exp(-x))
 
 class Tissue:
     def __init__(self, seed=1, N=256, F=16, n_values=32, eta_o=0.5, eta_t=0.05, lam=1e-4, fb="kp", rule="gated",
-                 learn_gate=1, g_bias=0.0, w_in=1.0, w_rec=1.0, tau_max=0.0, center=0, k=0, rec=0, rec_line=4.0, rec_ctx=4.0, rec_bias=-6.0, rec_gate=-2.0, use_tau=2000, grace=2000, send_y=0, norm_rec=0, novel=0, out_var=0, gran=0, g_fan=4, g_k=0.02):
+                 learn_gate=1, g_bias=0.0, w_in=1.0, w_rec=1.0, tau_max=0.0, center=0, k=0, rec=0, rec_line=4.0, rec_ctx=4.0, rec_bias=-6.0, rec_gate=-2.0, use_tau=2000, grace=2000, send_y=0, norm_rec=0, novel=0, out_var=0, gran=0, g_fan=4, g_k=0.02, fbm="teach"):
         r = np.random.default_rng(seed)
         self.N, self.F, self.V = N, F, n_values
         self.eta_o, self.eta_t, self.lam, self.fb, self.rule, self.learn_gate = eta_o, eta_t, lam, fb, rule, learn_gate
@@ -53,6 +53,7 @@ class Tissue:
         self.rec, self.rec_line, self.rec_ctx, self.rec_bias, self.rec_gate = rec, rec_line, rec_ctx, rec_bias, rec_gate
         self.use_tau, self.grace = use_tau, grace
         self.use = np.zeros(N); self.born = np.full(N, -10**9); self.t = 0; self.yprev = np.zeros(N); self.n_rec = 0
+        self.fbm = fbm; self.gave = None                                                   # fbm=yesno: only the answer given is told right or wrong
         self.gran = gran                                                                   # gran=NG: an expansion layer of NG sparse cells (as granule
         if gran:                                                                           # cells): each reads g_fan random tissue cells and the present
             self.gsrc = r.integers(0, N, (gran, g_fan)); self.gw = r.normal(0, 1, (gran, g_fan))   # byte's line; the g_k share with the largest input
@@ -106,6 +107,8 @@ class Tissue:
     def _learn(self, nxt):
         tgt = np.zeros(self.V); tgt[nxt] = 1.0; e = tgt - self.O
         if self.rule == "gated": e = np.where((tgt > 0) | (self.O > 0), e, 0.0)
+        if self.fbm == "yesno" and self.gave is not None:                                  # the cell that answered learns: 1 if right, 0 if wrong
+            g = self.gave; e = np.zeros(self.V); e[g] = (1.0 if g == nxt else 0.0) - self.O[g]
         h = self.z
         if self.gran:                                                                       # sparse binary senders: normalised step
             if self.out_var: self.vy += (self.y * self.y - self.vy) / self.out_var

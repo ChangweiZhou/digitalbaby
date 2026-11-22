@@ -194,3 +194,20 @@ Not yet known: where the lost third is (fast or slow compartment); why replay at
 with the slow one put back: seed 1 0.356 / 0.346 / 0.358 / 0.357; seed 2 0.349 / 0.342 / 0.349 / 0.354. Either compartment put back
 restores A fully: the tissue (fast cells, slow states) keeps everything, and both compartments' readings of the contexts the two texts
 share have moved towards B. The loss is the reading of shared contexts following the latest text, in both compartments.
+
+## Step 7 (22 November 2026): yes/no feedback alone (seed 1 unless stated)
+
+`fbm=yesno`: the answer given (the largest sum of the two compartments; while learning, with chance 0.1 a random byte) is told right
+or wrong; only that byte's output cell learns, in both compartments (target 1 if right, 0 if wrong). Replayed episodes are the system's
+own, so their bytes are known. A first run broke ties by the lowest byte (all outputs start at 0, so the same byte was answered again
+and again); ties are now broken at random (noise in the competition).
+
+| Test | yes/no, ties at random | teach (step 5) |
+|---|---|---|
+| `life=ctx`, A 20,000 bytes: A after A / after B / after the return | **1.000 / 0.990 / 1.000** | 1.000 / 1.000 / 1.000 (A 4,000) |
+| context G=8, 20,000 bytes: all bytes, last quarter / after the gap | 0.834, rising / 0.672 | 0.95 / 1.000 |
+| context G=16, 40,000: all / after the gap | 0.856 / 0.453 | 0.97 / 0.995 |
+| text held-out after 32,000 bytes | 0.225 | 0.350 (16,000) |
+
+Yes/no carries one bit an answer where teaching tells every output cell; learning is slower, and not finished at these lengths.
+Longer lives (G=8 60,000; G=16 120,000) and seeds 2-3 for `life=ctx` are running.
