@@ -78,8 +78,8 @@ exactly equal: largest |diff| over all steps and cases h 2.2e-15, y 2.2e-15, m 8
 | net8 (numpy) | 1.385 ms | 0.770 ms | 1.522 ms | 0.701 ms |
 | net8c | 0.180 ms | 0.158 ms | 0.185 ms | 0.156 ms |
 
-About 7.5-8x with learning, 4.5x without. In net9 the whole run is about 30% faster: the slow stage is no longer the larger part;
-the rest is the fast stage (net7) and Python.
+About 7.5-8x with learning, 4.5x without. In net9 the whole t13 run is about 30% faster (114 s to 81 s): the rest of its time is the fast
+stage (net7) and Python, not touched here.
 
 **Left in numpy:** every other option of net8 (fb=kp/random/exact, rec, k, norm_rec, send_y, gran=0) and the traces E (not
 kept by net8c; never read in this configuration).
