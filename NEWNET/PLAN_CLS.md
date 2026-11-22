@@ -249,3 +249,7 @@ noise of s.d. 0.1, instead of a uniformly random byte one time in ten), yes/no:
 
 The reading of the failure is borne out: uniform exploration over 128 values hardly tries the other end byte at the gap; noise in the
 competition tries the answers close to the best. Text and `life=ctx` on seeds 2-3 not yet run.
+
+**Seeds 2-3, yes/no with noise 0.1:** `life=ctx`, A 20,000: A after B 1.000 / 1.000 (seed 1: 1.000); text test after B 0.237 / 0.246.
+Text held-out after 32,000 bytes: 0.305 / 0.280 (seed 1: 0.294). Confirmed on three seeds: with yes/no alone the system learns A, keeps
+it through text, and reads never-seen text at 0.28-0.31 (teach: 0.34-0.35 after half the bytes).
