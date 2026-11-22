@@ -39,12 +39,24 @@ osrc = rng.choice(ncell, (V, fan_out)) if fan_out < ncell else np.tile(np.arange
 right = np.zeros(T, bool)
 for t in range(T):
     cells, cols = net.step(stream[t])
-    x = cols[0] if out_all == 2 else (cells if out_all else cells[-1]).reshape(-1); pre = x[osrc]
-    O = (ow * pre).sum(1)
+    x = cols[0] if out_all == 2 else (cells if out_all else cells[-1]).reshape(-1)
+    full = fan_out == ncell                                  # the output end reads every cell: work on the active ones only
+    if full:
+        act = np.flatnonzero(x); O = ow[:, act].sum(1)
+    else:
+        pre = x[osrc]; O = (ow * pre).sum(1)
     gave = int(np.argmax(O)) if O.max() > 0 else int(rng.integers(0, V))
     if mode == "yesno" and rng.random() < eps: gave = int(rng.integers(0, V))
     nxt = stream[t + 1]; right[t] = gave == nxt
     if rule == "delta":                                   # each output cell moves its own output towards its target
+        if full:
+            n_in = max(float(len(act)), 1.0)
+            if mode == "teach":
+                tgt = np.zeros(V); tgt[nxt] = 1.0
+                ow[:, act] += ((eta / n_in) * (tgt - O))[:, None]
+            else:
+                ow[gave, act] += (eta / n_in) * ((1.0 if gave == nxt else 0.0) - O[gave])
+            continue
         n_in = max(pre.sum(1).max(), 1.0)
         if mode == "teach":
             tgt = np.zeros(V); tgt[nxt] = 1.0
@@ -52,6 +64,7 @@ for t in range(T):
         else:                                             # yes/no: only the cell that answered learns, target 1 if right, 0 if wrong
             ow[gave] += (eta / n_in) * pre[gave] * ((1.0 if gave == nxt else 0.0) - O[gave])
         continue
+    if full: pre = x[osrc]                                # the old rule: dense, as before
     if mode == "teach":
         tgt = np.zeros(V); tgt[nxt] = 1.0; g = np.zeros(V); g[gave] = 1.0
         ow += eta * pre * (tgt - g)[:, None]
@@ -77,3 +90,5 @@ if kind == "text":                                       # yardsticks (count tab
         t1[x][y] += 1; t2[k2][y] += 1; t3[k3][y] += 1
     extra = f" | last quarter, count tables (reference): last byte {r1[3*q:].mean():.3f}, last two {r2[3*q:].mean():.3f}, last three {r3[3*q:].mean():.3f}"
 print(f"{mode:5s} {kind:7s} regions={net.L}: right share by quarter " + " ".join(f"{right[i*q:(i+1)*q].mean():.3f}" for i in range(4)) + extra)
+import os
+if os.environ.get("DUMP"): np.save(os.environ["DUMP"], right)

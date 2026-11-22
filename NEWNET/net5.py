@@ -27,12 +27,12 @@ import numpy as np
 
 class Tissue:
     def __init__(self, seed=1, L=12, C=64, M=8, k_win=8, fan_in=32, S=48, n_values=32, lines_in=8, eta=0.2, eta_minus=0.05,
-                 w_on=0.5, w_new=0.4, th_on=0.75, th_match=0.6, s_th=0.75, lam=0.1, n_grow=0, burst=0, ctx=0, hold=1, theta=1e-9, sweep=1):
+                 w_on=0.5, w_new=0.4, th_on=0.75, th_match=0.6, s_th=0.75, lam=0.1, n_grow=0, burst=0, ctx=0, hold=1, stable=0, theta=1e-9, sweep=1):
         rng = np.random.default_rng(seed)
         self.L, self.C, self.M, self.k, self.S, self.theta, self.n_values = L, C, M, k_win, S, theta, n_values
         self.eta, self.eta_minus, self.w_on, self.w_new = eta, eta_minus, w_on, w_new
         self.th_on, self.th_match, self.s_th, self.sweep, self.lam = th_on, th_match, s_th, sweep, lam
-        self.n_grow = n_grow; self.burst = burst; self.ctx_mode = ctx; self.use_hold = hold; self.grng = np.random.default_rng(seed + 7)
+        self.n_grow = n_grow; self.burst = burst; self.ctx_mode = ctx; self.use_hold = hold; self.sort_kind = 'stable' if stable else None; self.grng = np.random.default_rng(seed + 7)
         self.rel = np.full((L, C, M), 1.0)                                                  # how often a cell's prediction came true
         self.fsrc = np.stack([rng.choice(C, (C, fan_in)) for _ in range(L)])
         self.fw = rng.random((L, C, fan_in))
@@ -115,7 +115,7 @@ class Tissue:
                     pr = np.where(have | ~pm[None, :], np.inf, self.grng.random(have.shape))
                     rk = np.argsort(np.argsort(pr, 1), 1)
                     have = have | (pm[None, :] & (rk >= need[:, None]))
-            key = np.where(a, np.inf, w); order = np.argsort(key, 1)
+            key = np.where(a, np.inf, w); order = np.argsort(key, 1, kind=self.sort_kind)          # stable=1: ties go to the lowest slot
             rank = np.cumsum(~have, 1) - 1
             rows, js = np.nonzero(~have); r = rank[rows, js]; ok = r < self.S
             rows, js, r = rows[ok], js[ok], r[ok]; slot = order[rows, r]

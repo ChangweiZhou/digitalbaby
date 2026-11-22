@@ -180,3 +180,26 @@ apart from what is learned): order areas (`ctx=2, hold=0`, 3 regions, M=16, S=64
 One tissue now carries a branch across 32 predictable bytes and passes the two-byte table on text, but on text the hold areas
 cost 0.04-0.05 against the order areas alone; a larger output rate does not recover it, so it is interference of the hold
 areas' activity at the output end, not its rate. Cost: about 190 s for 8,000 bytes of text with both (too slow for the 2-minute rule).
+
+## Speed, second pass (22 November 2026)
+
+Where the time went (text, both kinds of area, per byte): output end 15 ms (dense update of 128 x 14,000 strengths although about 72
+cells are active), each tissue part 2.7 ms (numpy over every slot). Changes:
+
+1. **Output end** (`t4_output.py`, when it reads every cell): only the columns of the active cells are read and changed. Same answers at
+   every step, compared over 3,000 bytes on text (teach) and on the context stream (yes/no) against the previous version.
+2. **Tissue step in C** (`net7.c`, `net7.py`; the forward part and the hold stay in numpy). Same definition as net5, with ties among
+   equally weak slots going to the lowest slot; `net5.py stable=1` does the same in numpy (its default is unchanged and checked
+   identical with `check_same.py`). `check_net7.py`: cells, surprise and predicted share identical to `net5 stable=1` at every step
+   over 3,000 bytes in four settings without random sampling. Where more sources are active than `n_grow` (order areas), the sample
+   uses C's own generator, so those runs are not step-identical to numpy; they were re-run instead. `net6.py fast=1` uses it.
+
+| Run (one seed) | before | now | result before / now |
+|---|---|---|---|
+| text, both kinds of area, 8,000 bytes | 194 s | 21 s | 0.405 / 0.407 |
+| text, order areas only, 8,000 bytes | about 90 s | 9 s | 0.453 / 0.447 |
+| context stream G=16, both, 8,000 bytes | about 90 s | 10 s | 1.000 / 1.000 |
+| context stream G=32, 12,000 bytes, old output rule | 155 s | 61 s | 1.000 / 1.000 |
+
+What is left is spread evenly (C scan of the slots, numpy forward part, Python per byte, about a third each, about 1 ms a byte for 12
+regions). The old output rule stays dense (it renormalises every strength every byte); new work uses the delta rule.
