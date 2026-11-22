@@ -236,3 +236,16 @@ alone 0.99. So 128 values are not the cause; yes/no fails at G=16 with 128 value
 two end bytes very different values without seeing the start (0.600), which steers the answer; under yes/no only the answer given is
 taught, and exploration at random over 128 values tries the other end byte at the gap about once in a thousand answers (my reading,
 not checked). Exploration in proportion to the outputs, not uniform over all bytes, would be the general remedy to test if this recurs.
+
+**Exploration by noise in the competition** (`noise=0.1 eps=0`: each answer while learning is the largest of the outputs plus normal
+noise of s.d. 0.1, instead of a uniformly random byte one time in ten), yes/no:
+
+| | eps 0.1 (uniform) | noise 0.1 |
+|---|---|---|
+| G=16, 128 values, 120,000 bytes, seed 1: online at the gap / frozen | 0.466 / 0.44 | **0.998 / 1.00** |
+| the same, seed 2 | 0.906 / 0.99 | 0.989 / 0.98 |
+| text held-out after 32,000 bytes (seed 1) | 0.225 | **0.294** (teach: 0.350 after 16,000) |
+| `life=ctx`, A 20,000: A after B / text test after B (seed 1) | 0.990 / 0.154 | 1.000 / 0.275 |
+
+The reading of the failure is borne out: uniform exploration over 128 values hardly tries the other end byte at the gap; noise in the
+competition tries the answers close to the best. Text and `life=ctx` on seeds 2-3 not yet run.
