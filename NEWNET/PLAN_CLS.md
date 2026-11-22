@@ -298,3 +298,11 @@ and B after B is within 0.01 of 0.409. **Refuted if** the kept share does not ri
 **H9 refuted**: the kept share does not rise (0.63 against 0.64) and B falls by 0.056. The hidden variables lag and pull the visible
 strength back, which here acts as a smaller step: every score falls, and the share kept stays the same. Not tried: hidden variables
 born at the visible value, or flows independent of the plasticity step; a cascade that does not slow learning would need either.
+
+## Step 10 (before its runs): context-dependent codes in the slow stage
+
+A reading of shared contexts must be one mixture unless the reading can tell which text is read. Expansion cells that combine slow
+cells (whose state differs between texts) with recent bytes fire only in one text, and their strengths are not taught in the other.
+**H10.** Slower clocks (`tau_max=1000`) or wider expansion cells (`g_fan=8`) raise the kept share of A's own part after B above 0.64
+(seed 1, 10,000-byte tests, each arm with its own B-only control), with B after B within 0.01 of its arm without the change.
+**Refuted if** neither arm raises the kept share.
