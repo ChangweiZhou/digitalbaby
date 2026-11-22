@@ -17,6 +17,9 @@ Compartments (on the same shared mismatch as net10's when joint=1; each adds to 
            mismatch code(target) - z); answer line v reads z through its own code (dec(v) = 2 code(v) - 1, as a cell tuned to v):
            O[v] = relu(dec(v).z / 8 - 0.5) * 2 (1 for an exact match). What carries over to symbols never given as answers is then
            what M learned on the code, not a wired map.
+  match=K  match cells: m[k, j] = 1 when the byte k back equals the byte k+j back (k = 0..K-1, j = 1..W-1): coincidence detectors
+           on the delay line ("the same as j bytes before"), content-free relations; they are inputs of both compartments (with the
+           lag cells), so a gate can learn "relay lag j when the last answer repeated lag j'", whatever the symbols.
   ctxg=NG  context-gated readout (both compartments): their strengths come in NG groups (as synapses on NG dendritic branches);
            a slow trace of the bytes read (time constant ctxg_tau bytes, one value per byte line) is projected at random onto the
            groups, and the ctxg_k groups it drives most are the ones open (k winners); the output is the mean over the open groups,
@@ -31,7 +34,7 @@ from net10 import Tissue as Net10
 
 
 class Tissue(Net10):
-    def __init__(self, W=8, lagro=0, relay=0, eta_l=0.2, eta_r=0.2, ctxg=0, ctxg_k=2, ctxg_tau=30.0, ctxg_err=0.0, eta_m=0.05, **kw):
+    def __init__(self, W=8, lagro=0, relay=0, eta_l=0.2, eta_r=0.2, ctxg=0, ctxg_k=2, ctxg_tau=30.0, ctxg_err=0.0, eta_m=0.05, match=0, **kw):
         super().__init__(**kw)
         V = self.V; self.W, self.lagro, self.relay, self.eta_l, self.eta_r = W, lagro, relay, eta_l, eta_r
         self.ng, self.gk, self.gtau = max(ctxg, 1), (ctxg_k if ctxg else 1), ctxg_tau
@@ -40,17 +43,23 @@ class Tissue(Net10):
         if ctxg:
             gr = np.random.default_rng(kw.get("seed", 1) + 1234); self.P = gr.normal(0, 1, (ctxg, V)); self.Q = gr.normal(0, 1, (ctxg, W))
         self.lagb = [-1] * W                                                               # bytes at lags 0..W-1 (-1: none yet)
+        self.match = match; self.nin = W * V + match * (W - 1)                             # inputs: lag cells, then match cells
         extra = (1 if lagro else 0) + (1 if relay else 0)
         if self.joint:
             old = self.ncomp; self.ncomp = old + extra
             for h in self.holds: h.eta_o = h.eta_o * old / self.ncomp
-        if lagro: self.B = np.zeros((self.ng, V, W * V)); self.Ob = np.zeros(V)
-        if relay: self.G = np.zeros((self.ng, W, W * V)); self.a = np.zeros(W); self.Or = np.zeros(V)
+        if lagro: self.B = np.zeros((self.ng, V, self.nin)); self.Ob = np.zeros(V)
+        if relay: self.G = np.zeros((self.ng, W, self.nin)); self.a = np.zeros(W); self.Or = np.zeros(V)
         if relay == 2:
             self.code = np.array([np.r_[b, 1 - b] for b in ((np.arange(V)[:, None] >> np.arange(8)) & 1)], float)   # V x 16
             self.dec = 2 * self.code - 1; self.M = np.zeros((16, 16)); self.eta_m = eta_m; self.z = np.zeros(16)
 
-    def _act(self): return np.array([j * self.V + u for j, u in enumerate(self.lagb) if u >= 0], int)
+    def _act(self):
+        act = [j * self.V + u for j, u in enumerate(self.lagb) if u >= 0]
+        if self.match:                                                                     # m[k, j]: lag k equals lag k + j
+            L = self.lagb; o = self.W * self.V
+            act += [o + k * (self.W - 1) + j - 1 for k in range(self.match) for j in range(1, self.W - k) if L[k] >= 0 and L[k] == L[k + j]]
+        return np.array(act, int)
 
     def _osum(self):
         O = self.Oc.sum(0) + sum(h.O for h in self.holds)
