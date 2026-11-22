@@ -46,7 +46,7 @@ class Tissue:
     def step(self, byte, learn=True):
         if learn and self.byte is not None:                                               # context compartments: their own mismatch
             tgt = np.zeros(self.V); tgt[byte] = 1.0
-            Osum = self.Oc.sum(0) + sum(h.O for h in self.holds)
+            Osum = self._osum()                                                          # the sum of every compartment (net11 adds its own)
             for m in range(self.L):
                 act = np.flatnonzero(self.xc[m])
                 if not len(act): continue
@@ -65,6 +65,8 @@ class Tissue:
         for m in range(self.L):
             act = np.flatnonzero(self.xc[m]); self.Oc[m] = self.Ac[m][:, act].sum(1)
         self.byte = byte; self.learning = learn; self.gave = None
+
+    def _osum(self): return self.Oc.sum(0) + sum(h.O for h in self.holds)
 
     def answer(self):
         O = self.Oc.sum(0) + sum(h.O for h in self.holds)
