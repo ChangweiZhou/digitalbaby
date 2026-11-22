@@ -12,22 +12,30 @@ Compartments (on the same shared mismatch as net10's when joint=1; each adds to 
            (a_j = mean of the active cells' strengths), says how strongly lag j is relayed. O[v] = sum_j a_j X[j, v].
            The gate learns locally: synapse (j', u) -> gate j changes by its presynaptic activity times the mismatch on the line that
            lag j carries now (delta rule of the gate: e[byte at lag j]).
-W (window), eta_l and eta_r are the same for every stream. Nothing in it is set for a task."""
+  ctxg=NG  context-gated readout (both compartments): their strengths come in NG groups (as synapses on NG dendritic branches);
+           a slow trace of the bytes read (time constant ctxg_tau bytes, one value per byte line) is projected at random onto the
+           groups, and the ctxg_k groups it drives most are the ones open (k winners); the output is the mean over the open groups,
+           and only they learn. Similar situations (traces) open the same groups (shared, so what is learned carries over);
+           different ones open different groups (what one learned is not overwritten by the other). ctxg=0: one group, always open.
+W (window), eta_l, eta_r and the ctxg sizes are the same for every stream. Nothing in it is set for a task."""
 import numpy as np
 from net10 import Tissue as Net10
 
 
 class Tissue(Net10):
-    def __init__(self, W=8, lagro=0, relay=0, eta_l=0.2, eta_r=0.2, **kw):
+    def __init__(self, W=8, lagro=0, relay=0, eta_l=0.2, eta_r=0.2, ctxg=0, ctxg_k=2, ctxg_tau=30.0, **kw):
         super().__init__(**kw)
         V = self.V; self.W, self.lagro, self.relay, self.eta_l, self.eta_r = W, lagro, relay, eta_l, eta_r
+        self.ng, self.gk, self.gtau = max(ctxg, 1), (ctxg_k if ctxg else 1), ctxg_tau
+        self.grp = np.arange(self.gk); self.trace = np.zeros(V)
+        if ctxg: self.P = np.random.default_rng(kw.get("seed", 1) + 1234).normal(0, 1, (ctxg, V))
         self.lagb = [-1] * W                                                               # bytes at lags 0..W-1 (-1: none yet)
         extra = (1 if lagro else 0) + (1 if relay else 0)
         if self.joint:
             old = self.ncomp; self.ncomp = old + extra
             for h in self.holds: h.eta_o = h.eta_o * old / self.ncomp
-        if lagro: self.B = np.zeros((V, W * V)); self.Ob = np.zeros(V)
-        if relay: self.G = np.zeros((W, W * V)); self.a = np.zeros(W); self.Or = np.zeros(V)
+        if lagro: self.B = np.zeros((self.ng, V, W * V)); self.Ob = np.zeros(V)
+        if relay: self.G = np.zeros((self.ng, W, W * V)); self.a = np.zeros(W); self.Or = np.zeros(V)
 
     def _act(self): return np.array([j * self.V + u for j, u in enumerate(self.lagb) if u >= 0], int)
 
@@ -43,18 +51,22 @@ class Tissue(Net10):
             if self.fbm == "yesno" and self.gave is not None:
                 e = np.zeros(self.V); g = self.gave; e[g] = (1.0 if g == byte else 0.0) - O[g]
             else: e = np.where((tgt > 0) | (O > 0), tgt - O, 0.0)
-            if not self.joint: raise ValueError("net11 compartments need joint=1")
+            if not self.joint: raise ValueError("net12 compartments need joint=1")
             act = self._act()
-            if self.lagro and len(act): self.B[:, act] += (self.eta_l / len(act) / self.ncomp) * e[:, None]
-            if self.relay and len(act):
-                el = np.array([e[u] if u >= 0 else 0.0 for u in self.lagb])               # the mismatch on the line each lag carries
-                self.G[:, act] += (self.eta_r / len(act) / self.ncomp) * el[:, None]
+            for g in self.grp:                                                             # only the open groups learn
+                if self.lagro and len(act): self.B[g][:, act] += (self.eta_l / len(act) / self.ncomp) * e[:, None]
+                if self.relay and len(act):
+                    el = np.array([e[u] if u >= 0 else 0.0 for u in self.lagb])           # the mismatch on the line each lag carries
+                    self.G[g][:, act] += (self.eta_r / len(act) / self.ncomp) * el[:, None]
         super().step(byte, learn)                                                          # net10's compartments (their shared mismatch is
         self.lagb = [byte] + self.lagb[:-1]                                                # over every compartment: _osum)
+        if self.ng > 1:                                                                    # the slow trace and the open groups
+            self.trace *= 1 - 1 / self.gtau; self.trace[byte] += 1 / self.gtau
+            self.grp = np.argpartition(-(self.P @ self.trace), self.gk - 1)[: self.gk]
         act = self._act()
-        if self.lagro: self.Ob = self.B[:, act].sum(1)
+        if self.lagro: self.Ob = self.B[self.grp][:, :, act].sum(2).mean(0)
         if self.relay:
-            self.a = self.G[:, act].mean(1) if len(act) else np.zeros(self.W); self.Or = np.zeros(self.V)
+            self.a = self.G[self.grp][:, :, act].mean(2).mean(0) if len(act) else np.zeros(self.W); self.Or = np.zeros(self.V)
             for j, u in enumerate(self.lagb):
                 if u >= 0: self.Or[u] += self.a[j]
 
