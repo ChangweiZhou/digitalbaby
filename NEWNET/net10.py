@@ -12,6 +12,7 @@ joint=1: every compartment learns on one shared mismatch, the target less the su
 help gets small strengths by itself); the step is divided by the number of compartments, so that together they take one step.
 mesh=K: the context cells' regions form a random graph instead of a chain (net7 mesh=K).
 c_X=v / h_X=v pass option X to the context cells (net7) / the holders (net8c), for the search.
+h_noline=1: the holders' expansion cells do not read the present byte's line (only the holders).
 ctx_e=1: the context cells by net7e (the same results, cost by the active sources).
 Nothing in it is set for a task: sizes per module (cC columns of M cells, nH holders, nG expansion cells), rates (eta_c, eta_h) and
 the band rule are the same for every module and every stream."""
@@ -21,7 +22,7 @@ from net8c import Tissue as Hold
 
 
 class Tissue:
-    def __init__(self, seed=1, L=4, n_values=128, cC=128, M=16, nH=256, nG=2048, eta_c=0.2, eta_h=0.1, fbm="teach", noise=0.0, hold=1, joint=0, mesh=0, mesh_base=1, mesh_dag=0, ctx_e=0, **kw):
+    def __init__(self, seed=1, L=4, n_values=128, cC=128, M=16, nH=256, nG=2048, eta_c=0.2, eta_h=0.1, fbm="teach", noise=0.0, hold=1, joint=0, mesh=0, mesh_base=1, mesh_dag=0, ctx_e=0, h_noline=0, **kw):
         self.L, self.V, self.eta_c, self.fbm, self.noise, self.use_hold = L, n_values, eta_c, fbm, noise, hold
         self.joint = joint                                                                 # joint=1: every compartment learns on one shared mismatch (target - the sum)
         ck = dict(S=64, n_grow=8); ck.update({k[2:]: v for k, v in kw.items() if k.startswith("c_")})   # c_X=v: option X of the context cells
@@ -38,6 +39,8 @@ class Tissue:
                            out_var=1000, fb="none", eta_o=eta_h, fbm=fbm, **hk) for m in range(L)] if hold else []
         self.ncomp = (2 * L if hold else L) if joint else 1                                # joint: one step shared by all compartments
         for h in self.holds: h.eta_o = eta_h / self.ncomp
+        if h_noline:                                                                      # h_noline=1: the holders' expansion reads the holders only
+            for h in self.holds: h.gline[...] = 0.0                                       # (the present byte is the context cells' part)
         self.arng = np.random.default_rng(seed + 900); self.gave = None; self.learning = False; self.byte = None; self.replaying = False
 
     def step(self, byte, learn=True):

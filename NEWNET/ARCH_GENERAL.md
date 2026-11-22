@@ -143,3 +143,11 @@ sparser and wider (`h_g_k` 0.005 / 0.002, `h_g_fan` 16).
 winners in the context cells: 0.386 / 0.396 / 0.470 (0.709); keep4, keep2, mem 1.000 in all. Refuted: a sparser expansion of the holders
 does not keep A at G=8 in the graph. My reading, not checked: at the gap the context compartments (taught by text on the shared letters)
 outvote the holders, which do carry the branch.
+
+**Why the graph loses A at G=8** (`t18_votes.py`; votes at A's gap, learning off). Graph without loops: before B the context compartments
+cannot tell the branch (right 0.472, best wrong 0.462) and the holders decide it (0.246 against 0.048); after B the context compartments
+are unchanged and the holders' vote for the right byte collapses (0.040 against 0.115). Chain: the context compartments decide alone
+(0.877 against 0.048) before and after B. So the loss is in the holders' reading, not in being outvoted. Without the present byte's line
+in the holders' expansion (`h_noline=1`) the same (0.263 -> 0.033; keep8 0.470; moby 0.392, code 0.392): the holders' states inside A and
+in text differ too little (as `t14_overlap.py` found earlier for the expansion), so their expansion cells are taught by text. In these
+architectures a long context is separated only by long paths of context cells; the holders carry it across a gap but do not protect it.
