@@ -242,3 +242,35 @@ is not, PLAN_12's letter r in `nano/lives`); `rule=delta` gave the same in every
 On the return, A is right from the first block of 20 sequences in every kept case. Text read alone with 8 order + 6 hold regions:
 0.402 (one seed). Run time 50-120 s. Open: what the hold areas are for once order areas are deep (they are needed for gaps longer
 than the order reaches: G=16, 32); why they cost text about 0.01 on the return; two texts (A and B both real text).
+
+## Two real texts in one life (`t10_texts.py`), 22 November 2026
+
+A: tinyshakespeare from its start; B: Austen's *Emma* from byte 50,000; then A again where it stopped (2,000 bytes). Tissue:
+8 order regions, no hold areas (net6 fast=1 o_L=8 h_L=0). Output end gated, constant step 0.2. Tests with learning off on 2,000
+bytes of each text never read. Control: the same life with no A (TA=0): what reading only B gives on the A test.
+
+| 24,000 bytes each | A test after A | A test after B | control (B only) on A | B test after B | A after B with the output end of after A put back | after the return (A / B) |
+|---|---|---|---|---|---|---|
+| seed 1 | 0.369 | 0.320 | 0.296 | 0.398 | **0.358** | 0.332 / 0.392 |
+| seed 2 | 0.357 | 0.331 | 0.324 | 0.392 | **0.369** | 0.340 / 0.396 |
+
+With 8,000 bytes each the A-specific part was too small to measure (seed 1: 0.326 / 0.325 / control 0.314).
+
+**Reading.** B costs most of what A adds over the control (seed 1: 0.073 above it after A, 0.024 after B; seed 2: 0.033 and 0.007).
+It is lost at the output end, not in the tissue: with the output end of after A put back on the tissue after B, A is back at 0.358
+and 0.369. The two texts share their contexts (the same English byte sequences, the same cells), and the output end's constant
+step makes its reading of a context follow the latest text. Nothing of B is lost on the return.
+
+Tried at the output end, seed 1 unless stated (A test after A / after B; B after B), none of which helps:
+
+| Output end | A after A | A after B | B after B |
+|---|---|---|---|
+| constant step (above) | 0.369 | 0.320 | 0.398 |
+| rehearsal, a store of 1,000 episodes of 40 bytes (every episode read has the same chance to be kept), rho 1/100 | 0.364 | 0.328 | 0.407 |
+| the same, rho 1/20 | 0.366 | 0.327 | 0.406 |
+| each connection steps 1/n (n: its own updates) | 0.321 | 0.339 | 0.338 |
+| the same, at least 0.01 | 0.327 | 0.347 | 0.361 |
+| fast (constant) plus slow (1/n) connections on one error, seeds 1 / 2 | 0.367 / 0.350 | 0.316 / 0.332 | 0.400 / 0.391 |
+
+Open: a reading that depends on which text is being read needs the tissue to carry something of the text over a longer range
+than 9 bytes (vocabulary, style), so that the two texts' contexts are not the same cells.
