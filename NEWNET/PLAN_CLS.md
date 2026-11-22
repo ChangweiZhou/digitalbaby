@@ -223,3 +223,9 @@ compartment alone 1.00, the fast alone 0.52, the sum 1.00 (teach the same); the 
 G=16, 120,000 bytes: slow alone 0.96 / 1.00 (seeds 1 / 2), sum the same; G=24, 120,000 bytes: 1.00. So under yes/no the slow stage
 does learn the branch across 16 and 24 bytes; the online 0.466 at G=16 counts answers over all byte values, so at the gap another
 byte is often answered. Which, is being measured.
+
+**The online 0.466 at G=16 explained in part** (`t16_split.py`, yes/no, 120,000 bytes, seed 1): with 32 byte values online 0.906,
+frozen 1.00, slow alone 1.00; with 64: 0.905 / 0.96 / 0.96; with 128 (the default of net9, used by `t11_gate.py` above): 0.466 / 0.44 /
+0.48, and the fast compartment now gives the two end bytes very different values (0.600) although it cannot see the start. So the
+failure is with 128 byte values, not with yes/no as such; and every context-stream result with teaching so far used 32 or 64 values,
+while text uses 128. Whether the slow stage carries a gap of 16 with 128 values when taught is being measured.
