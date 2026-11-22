@@ -32,3 +32,17 @@ Seeds 2 and 3 are running.
 0.321; Chinese->English K8 0.341 -> 0.311, 0.337 -> 0.305; N1 0.344 -> 0.272, 0.335 -> 0.271. The second text after it: K8 0.333 /
 0.331 and 0.360 / 0.348, N1 0.345 / 0.335 and 0.367 / 0.355. After the return: within 0.01 of the first text's level, or above.)
 K8 keeps better than N1 on every seed and in both orders: confirmed.
+
+## Where the first text is lost (`t19_putback.py`, seed 1): put each part back as it was after the first text
+
+| life | structure | first text after it / after the second | context cells' connections back | context outputs back | holders' outputs back |
+|---|---|---|---|---|---|
+| Chinese -> English | K8 | 0.336 / 0.313 | 0.294 | 0.320 | **0.337** |
+| Chinese -> English | N1 | 0.335 / 0.266 | 0.247 | 0.274 | **0.324** |
+| English -> Chinese | K8 | 0.371 / 0.365 | 0.367 | 0.364 | 0.364 |
+| English -> Chinese | N1 | 0.381 / 0.339 | 0.337 | 0.338 | **0.373** |
+
+The loss is in the holders' output strengths: put back, the first text returns almost fully. Recycling of context cells is not the
+cause (putting the context cells' connections back does not help). Some of the holders' expansion cells fire in both languages, and
+their reading is rewritten, as between two English texts. Next: a sparser and wider holders' expansion, where the two languages'
+holder states should differ much more than two English texts do.
