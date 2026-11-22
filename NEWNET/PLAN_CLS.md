@@ -130,3 +130,29 @@ A's gap; reading only cells with context removes the harm (text back to 0.302, A
 (A after B 0.400, as the slow stage alone). (2) Binding to the slow context hurts in every form tried: A is learned less well and text
 falls to 0.20 (my reading, not checked: contexts split by the slow code are each learned once at a fast rate, and loose matching lets
 a cell fire, with its vote, in contexts close to the one it was taught in). No form of the fast stage tried keeps A.
+
+## Step 5 (before its runs): the fast stage as a hierarchy of temporal receptive windows
+
+After the owner's ruling of 22 November (WHAT_A_NEURON_HAS section 21: a short window at the level of a cell is allowed; no cell records
+a long text). Fast stage: 8 regions (net7 `ctx=2 hold=0`, C=128, M=16, S=64): each cell reads the present byte's columns and region d-1's
+cells one byte late, so region d codes the last d + 2 bytes; the span comes from the hierarchy, as temporal receptive windows lengthen
+along the cortex. Its compartment learns at 0.2 (normalised over its active cells); the slow stage as in step 1 (eta_o 0.1).
+
+**H5.** `life=ctx` (A on letters): A after B 0.9 or more; text held-out 0.31 or more; context stream G=16: 0.99 or more. **Refuted if**
+A after B is below 0.75 or text held-out below 0.30. Also run: `life=texts` with its B-only control (no prediction made). Seed 1 first.
+
+## Outcome of step 5 (entered 22 November 2026; seeds 1-3)
+
+| | seed 1 | seed 2 | seed 3 |
+|---|---|---|---|
+| `life=ctx`: A after A / after B / after the return | 1.000 / **1.000** / 1.000 | 1.000 / **1.000** / 1.000 | 1.000 / **1.000** / 1.000 |
+| `life=ctx`: text test after B / after the return | 0.343 / 0.340 | 0.333 / 0.340 | 0.351 / 0.342 |
+| text held-out after 16,000 bytes of it | **0.350** | 0.337 | 0.340 |
+| context stream G=16, 40,000 bytes | **0.995** | 0.998 | 0.998 |
+| `life=texts`: A test after A / after B / after the return | 0.350 / 0.334 / 0.335 | 0.337 / 0.335 / 0.347 | 0.340 / 0.334 / 0.342 |
+| `life=texts`: B test after B / after the return | 0.392 / 0.387 | 0.408 / 0.408 | 0.401 / 0.398 |
+| control, B only: A test / B test after B | 0.310 / 0.388 | 0.316 / 0.398 | |
+
+**H5 held on three seeds** (A after B 1.000, text held-out 0.337-0.350, G=16 0.995-0.998). Two texts: what A adds over the B-only
+control is 0.040 after A and 0.024 after B on seed 1, 0.021 and 0.019 on seed 2 (before, with one stage and a constant step: 0.073 and
+0.024; 0.033 and 0.007); B is learned as well as by a learner that read only B. Run time 1-2.5 minutes.

@@ -3,7 +3,7 @@ or on random bytes (stream=random, the control). Right share of the answers by q
 Usage: python3 t11_gate.py [T=6000 G=2 NB=2 stream=context seed=1 ...net8 parameters]"""
 import sys, time
 import numpy as np
-from net8 import Tissue
+import importlib
 def num(v):
     for f in (int, float):
         try: return f(v)
@@ -11,7 +11,7 @@ def num(v):
     return v
 a = {k: num(v) for k, v in (x.split("=") for x in sys.argv[1:])}
 T, G, NB, kind = a.pop("T", 6000), a.pop("G", 2), a.pop("NB", 2), a.pop("stream", "context")
-net = Tissue(**a); V = net.V; rng = np.random.default_rng(a.get("seed", 1) + 1000)
+netn = a.pop("net", 8); net = importlib.import_module("net%d" % netn).Tissue(**a); V = net.V; rng = np.random.default_rng(a.get("seed", 1) + 1000)
 u = rng.choice(V, G + 2 * NB, replace=False); mid = list(u[:G]); st, en = u[G:G + NB], u[G + NB:]
 s, dec = [], []
 while len(s) < T + 1:
