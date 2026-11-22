@@ -133,3 +133,7 @@ least 8 regions: the test rewards a depth matched to it (the trap of choosing 8 
 Keeping at gaps of 2 and 4 is general (every candidate); only G=8 separates them, and it is passed only by architectures with a long
 serial path, and not on every seed (E6 seed 3: 0.540). A fixed depth keeps no context longer than its paths; beyond them the context is
 only in the holders, which do not keep it through later text. The graphs without loops remain the best on the never-used streams.
+
+**Batch 9 (queued): separation of long contexts by a sparse expansion of the holders, not by depth.** As the dentate gyrus separates
+similar slow inputs by a very sparse, highly combinatorial code. On the graph without loops (H6, which fails keep8): holders' expansion
+sparser and wider (`h_g_k` 0.005 / 0.002, `h_g_fan` 16).
