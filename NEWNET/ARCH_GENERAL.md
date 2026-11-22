@@ -165,3 +165,7 @@ not told apart here.
 (0.797); E6 with 256 x 8 (N2): 0.375 / 0.363 / 1.000 (0.790); H5 with 64 x 42 (N3): **0.398 / 0.415** / keep8 0.470 (0.714); H5 with
 256 x 10 (N4): 0.370 / 0.377 / 0.470 (0.703). (128 x 16: E6 0.385 / 0.394, H5 0.396 / 0.402.) Fewer columns with more cells each is
 better: more cells for the same byte in different contexts, as before.
+
+**Too few columns** (4 winners unless stated): E6 32 x 64 (N5): moby 0.390, code 0.397, keep8 0.470 (0.709); H5 32 x 84 (N6): 0.395 / 0.408 /
+keep8 0.470, keep4 0.500 (0.629); E6 64 x 32 with 2 winners (N7): 0.391 / 0.391 / keep8 0.470 (0.709). With 32 columns keeping fails
+(different bytes share too many columns, my reading); 2 winners lose keep8 too. The optimum on this axis: 64 columns, 4 winners.
