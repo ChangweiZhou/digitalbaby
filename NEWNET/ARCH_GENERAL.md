@@ -137,3 +137,9 @@ only in the holders, which do not keep it through later text. The graphs without
 **Batch 9 (queued): separation of long contexts by a sparse expansion of the holders, not by depth.** As the dentate gyrus separates
 similar slow inputs by a very sparse, highly combinatorial code. On the graph without loops (H6, which fails keep8): holders' expansion
 sparser and wider (`h_g_k` 0.005 / 0.002, `h_g_fan` 16).
+
+**Batch 9** (sparse, wide expansion of the holders, on the graph without loops): I1 h_g_k 0.005 fan 16: moby 0.395, code 0.391, keep8
+0.470 (score 0.709); I2 0.002: 0.392 / 0.392 / 0.470 (0.709); I3 0.005 with nG 8192: 0.396 / 0.396 / 0.470 (0.710); I4 0.005 with 4
+winners in the context cells: 0.386 / 0.396 / 0.470 (0.709); keep4, keep2, mem 1.000 in all. Refuted: a sparser expansion of the holders
+does not keep A at G=8 in the graph. My reading, not checked: at the gap the context compartments (taught by text on the shared letters)
+outvote the holders, which do carry the branch.
