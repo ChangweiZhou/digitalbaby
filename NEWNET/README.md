@@ -118,3 +118,33 @@ when the stream changes; why the last region does not settle at G=16.
 **Speed (same numbers).** One flat gather with a stored index, sums over slots in uint8, learning updates only on the rows that
 change, no sampling when the sample would take every candidate: 10.7 → 3.8 ms a byte (12 regions), checked identical over 2,000
 bytes against the committed version (`check_same.py REF`: cells, strengths, sources, reliabilities and holds compared with ==).
+
+## Real text (tinyshakespeare, bytes as they are), 22 November 2026
+
+`t4_output.py stream=text` reads the file's bytes from the start (65 distinct values; `n_values=128`, `C=128 lines_in=16` so that every
+value wins its 8 columns in region 0; with C=64, lines_in=8 some values won none). Yardsticks, reference only (they keep counts of
+the whole past and are not learners): the most frequent next byte given the last byte, and given the last two, counted online.
+
+**The output rule was the first bottleneck.** Reading only region 0's columns (the present byte), the rule of the earlier tests
+(dw = eta pre (target - gave), total held at 1) gave 0.13-0.18 against the last-byte table's 0.289: it changes only on errors and
+does not estimate which byte is most probable. `rule=delta`: each output cell moves its own output towards its target
+(dw = eta/n pre (target - O); yes/no: only the cell that answered, target 1 or 0). 0.281 from the present byte alone (one seed).
+The context stream still gives 1.000 at G=8 with it.
+
+**The context of a cell was the second.** With net5's context (the previous byte's exact cells, plus the hold), on text no context
+ever repeats (every occurrence of ' ' had its own code, nothing was predicted) and the output stays at the present-byte level
+(0.27-0.28 with 2 to 6 regions). Tried and not enough: `burst=1` (an unpredicted column fires its default cell; on text the broad
+predictions then made 92% of steps surprising and every column fired its default cell). `ctx=1`: the previous-byte part of the
+context is the previous byte's columns (every cell of a winning column counts), so a cell codes (present byte, previous byte);
+with the hold still required it failed on both streams (the hold, refreshed on most bytes of text, chained again; the context
+stream lost the branch: 0.61 at G=8). **`ctx=1 hold=0`** (order 2, no hold): the previous byte is decodable from region 0's
+cells at 1.00 (chance 0.12; 11-13 codes for a present byte), and
+
+| text, T=8000, teach, delta, last quarter | seed 1 | seed 2 | seed 3 | count tables (reference): last byte / last two |
+|---|---|---|---|---|
+| 1 region | 0.399 | 0.395 | 0.402 | 0.289 / 0.407 |
+| 2 regions, M=16, S=64 | 0.406 | 0.406 | 0.403 | 0.289 / 0.407 |
+| 1 region, T=16000 (seed 1) | 0.368 | | | 0.257 / 0.383 |
+
+So the tissue now reaches the two-byte table on text. Open: beyond order 2 (more context than the previous byte without the chain
+coming back); one tissue that does both the context stream (needs the hold) and text (the hold must not be required); yes/no on text.

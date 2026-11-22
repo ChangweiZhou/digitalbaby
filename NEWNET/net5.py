@@ -15,18 +15,22 @@ Context part, per region:
   - otherwise a winning column fires its predicted cell (most active strong slots), else its matching cell (most active slots),
     else its least used cell among 1..M-1, which learns: active slots grow (w += ETA (1 - w)), missing sources are made in the
     weakest inactive slots at W_NEW; predicted cells that did not fire weaken their active slots (w -= ETA_MINUS w).
+  burst=1: a winning column with no predicted cell also fires its default cell (its chosen cell still learns), so context
+  restarts at every unpredicted byte and grows only along predicted paths (bounded, variable order).
+  ctx=1: the previous-byte part is the previous byte's columns (every cell of a winning column counts), so a cell codes
+  (present byte, previous byte), order 2, and no default cell is forced on surprise; the hold still takes the code on surprise.
   The hold persists between surprises: through bytes the region predicts, the code of the last uncertain byte is kept."""
 import numpy as np
 
 
 class Tissue:
     def __init__(self, seed=1, L=12, C=64, M=8, k_win=8, fan_in=32, S=48, n_values=32, lines_in=8, eta=0.2, eta_minus=0.05,
-                 w_on=0.5, w_new=0.4, th_on=0.75, th_match=0.6, s_th=0.75, lam=0.1, n_grow=0, theta=1e-9, sweep=1):
+                 w_on=0.5, w_new=0.4, th_on=0.75, th_match=0.6, s_th=0.75, lam=0.1, n_grow=0, burst=0, ctx=0, hold=1, theta=1e-9, sweep=1):
         rng = np.random.default_rng(seed)
         self.L, self.C, self.M, self.k, self.S, self.theta, self.n_values = L, C, M, k_win, S, theta, n_values
         self.eta, self.eta_minus, self.w_on, self.w_new = eta, eta_minus, w_on, w_new
         self.th_on, self.th_match, self.s_th, self.sweep, self.lam = th_on, th_match, s_th, sweep, lam
-        self.n_grow = n_grow; self.grng = np.random.default_rng(seed + 7)
+        self.n_grow = n_grow; self.burst = burst; self.ctx_mode = ctx; self.use_hold = hold; self.grng = np.random.default_rng(seed + 7)
         self.rel = np.full((L, C, M), 1.0)                                                  # how often a cell's prediction came true
         self.fsrc = np.stack([rng.choice(C, (C, fan_in)) for _ in range(L)])
         self.fw = rng.random((L, C, fan_in))
@@ -51,18 +55,19 @@ class Tissue:
     def step(self, byte, learn=True):
         L, C, M, S = self.L, self.C, self.M, self.S
         cols = self.forward(byte)
-        ctx = np.concatenate([self.cells.reshape(L, -1), self.hold.reshape(L, -1)], 1)  # [L, 2*C*M]
+        prevc = np.repeat(self.cols[:, :, None], M, 2) if self.ctx_mode else self.cells      # ctx=1: every cell of a column that won counts
+        ctx = np.concatenate([prevc.reshape(L, -1), self.hold.reshape(L, -1)], 1)          # [L, 2*C*M]
         act = (ctx > 0).ravel()[self.gsrc] & (self.rw > 0)
         strong = act & (self.rw >= self.w_on); isH = self.rsrc >= C * M                  # slot from a hold cell
         u8 = lambda x: x.view(np.uint8).sum(3, dtype=np.uint8)
         n_on = u8(strong); n_act = u8(act)
         sH, aH = u8(strong & isH), u8(act & isH)
         pred = np.ones((L, C, M), bool); match = np.ones((L, C, M), bool)
-        for (son, sact), na in (((n_on - sH, n_act - aH), self.cells.reshape(L, -1).sum(1)), ((sH, aH), self.hold.reshape(L, -1).sum(1))):
+        for (son, sact), na in (((n_on - sH, n_act - aH), prevc.reshape(L, -1).sum(1)), ((sH, aH), self.hold.reshape(L, -1).sum(1))):
             na = (np.minimum(na, self.n_grow) if self.n_grow else na)[:, None, None]      # each part (previous byte, hold) must match on its own
             pred &= son >= self.th_on * na
             match &= sact >= self.th_match * na
-        anyp = (self.cells.reshape(L, -1).sum(1) > 0)[:, None, None]                     # the previous byte must be there
+        anyp = (prevc.reshape(L, -1).sum(1) > 0)[:, None, None]                     # the previous byte must be there
         pred &= anyp & (n_on > 0); match &= anyp & (n_act > 0)
         pcol = pred.any(2)                                                                # [L, C]
         npc = pcol.sum(1); hit = (pcol & (cols > 0)).sum(1)
@@ -71,7 +76,8 @@ class Tissue:
         surprise = ((npc > 0) & (hit < self.s_th * npc)) | (relw < self.s_th)            # predicted more than happened, or unreliably
         score = np.where(pred, 1e6 + n_on, np.where(match, 1e3 + n_act, -self.use))
         choice = np.argmax(score, 2)
-        pick = np.where(surprise[:, None], 0, choice)
+        pick = choice if self.ctx_mode else np.where(surprise[:, None], 0, choice)          # ctx=1: no default cell (the order is bounded anyway)
+        if self.burst: pick = np.where(pcol, pick, 0)                                     # burst=1: a column with no predicted cell fires its default cell
         cells = np.zeros((L, C, M)); np.put_along_axis(cells, pick[:, :, None], 1.0, 2); cells *= cols[:, :, None]
         if learn:
             ip = np.nonzero(pred); came = (choice[ip[0], ip[1]] == ip[2]) & (cols[ip[0], ip[1]] > 0)
@@ -82,7 +88,7 @@ class Tissue:
             i2 = np.nonzero(pred & ~f); r = self.rw[i2]; self.rw[i2] = np.where(act[i2], r - self.eta_minus * r, r)
             self.grow(f, act, ctx)
             self.use += np.where(f, 1.0, 0.0)
-        self.hold = np.where(surprise[:, None, None], cells, self.hold)
+        if self.use_hold: self.hold = np.where(surprise[:, None, None], cells, self.hold)   # hold=0: no hold (it stays empty)
         wc = cols > 0
         self.predicted = float(pcol[wc].mean()) if wc.any() else 0.0
         self.surprise = surprise
