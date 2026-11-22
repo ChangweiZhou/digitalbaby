@@ -46,3 +46,10 @@ The loss is in the holders' output strengths: put back, the first text returns a
 cause (putting the context cells' connections back does not help). Some of the holders' expansion cells fire in both languages, and
 their reading is rewritten, as between two English texts. Next: a sparser and wider holders' expansion, where the two languages'
 holder states should differ much more than two English texts do.
+
+**A sparser, wider holders' expansion** (`h_g_k=0.005 h_g_fan=16`; seed 1): N1 Chinese -> English 0.327 -> 0.286 (kept 87%; before 76%);
+N1 English -> Chinese 0.377 -> 0.355 (94%; before 86%); N1 with 0.2% firing, Chinese -> English 0.325 -> 0.287 (88%); K8 Chinese -> English
+0.335 -> 0.315 (94%; before 93%). Between two very different languages the sparser holders' expansion separates them and keeps N1's first
+language much better (+8 to +11 points), at a small cost in learning it (0.327 against 0.335); K8 was already at 93% and hardly changes.
+What is left of the loss is then shared between the context outputs and the holders' outputs. (Between two English texts and within
+letters, the same change did nothing: there the holder states differ too little.)
