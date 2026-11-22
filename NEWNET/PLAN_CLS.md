@@ -211,3 +211,10 @@ and again); ties are now broken at random (noise in the competition).
 
 Yes/no carries one bit an answer where teaching tells every output cell; learning is slower, and not finished at these lengths.
 Longer lives (G=8 60,000; G=16 120,000) and seeds 2-3 for `life=ctx` are running.
+
+**Step 7, longer lives and seeds.** `life=ctx` with yes/no (A 20,000 bytes): A after B 0.990 / 1.000 / 1.000 on seeds 1 / 2 / 3 (after
+the return 1.000 on all). Context G=8, 60,000 bytes: all bytes 0.854, after the gap 0.898 (with 10% of answers tried at random the
+ceiling is about 0.86 and 0.90: learned). G=16, 120,000 bytes: all bytes 0.853 (at the ceiling), after the gap 0.466 (online).
+`t16_split.py` (learning off after the life, choosing between the two end bytes): G=12, 60,000 bytes, yes/no: right from the slow
+compartment alone 1.00, the fast alone 0.52, the sum 1.00 (teach the same); the fast compartment gives the two end bytes the same value
+(difference 0.000), so it does not drown the slow one. G=16 and G=24 frozen splits are running.
