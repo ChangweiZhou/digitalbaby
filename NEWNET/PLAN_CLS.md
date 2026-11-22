@@ -260,3 +260,16 @@ f_L regions code the last f_L + 1 bytes. **Predictions.** (P8a) A on letters wit
 through text with f_L = 2 or 4 unless the slow stage carries it. (P8b) A with G=4 is kept with f_L = 4 (A after B 0.9 or more).
 (P8c) Text held-out with f_L = 4 is within 0.01 of f_L = 8 (0.350). **Refuted if** text falls by more than 0.02 at f_L = 4 (longer
 hierarchies matter for text) or A with G=4 at f_L = 4 is below 0.75 (keeping does not come from the hierarchy reaching A's start).
+
+## Outcome of step 8 (entered 22 November 2026; teach, seed 1)
+
+| f_L (bytes coded) | A with G=4: after A / after B | A with G=8: after A / after B | text held-out |
+|---|---|---|---|
+| 2 (3) | 1.000 / **0.000** | 0.560 / 0.470 | 0.361 |
+| 4 (5) | 1.000 / **1.000** | 0.560 / 0.470 | 0.361 |
+| 8 (9) (step 5) | | 1.000 / 1.000 | 0.350 |
+
+P8a held (with G=8, hierarchies of 3 and 5 bytes do not reach A's start: A is learned only by the slow stage, and in 4,000 bytes not
+even learned, 0.56). P8b held (G=4 with 5 bytes: kept 1.000; with 3 bytes learned by the slow stage and lost through text, 0.000).
+P8c held, and more: text is 0.361 with 3 or 5 bytes against 0.350 with 9. So a context is kept exactly when the fast hierarchy reaches
+the byte that tells it apart; text needs only the last 3-5 bytes; the slow stage holds longer gaps but not through later text.

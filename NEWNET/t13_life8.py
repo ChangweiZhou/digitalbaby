@@ -77,4 +77,4 @@ if putback:                                          # which compartment holds t
     pb = f" | A after B with the fast compartment of after A put back {pf:.3f}, the slow one {ps:.3f}"
 A1(TR) if life == "ctx" else run(SH[TA:TA + TR + 1], True)
 m3 = test()
-print(f"life={life} rho={rho} warm={warm} NT={NT} {' '.join(f'{k}={v}' for k, v in a.items())} TA={TA} TB={TB}: tests A / B   after A {m1[0]:.3f} / {m1[1]:.3f}   after B {m2[0]:.3f} / {m2[1]:.3f}   after the return {m3[0]:.3f} / {m3[1]:.3f}" + pb)
+print(f"life={life} G={G} rho={rho} warm={warm} NT={NT} {' '.join(f'{k}={v}' for k, v in a.items())} TA={TA} TB={TB}: tests A / B   after A {m1[0]:.3f} / {m1[1]:.3f}   after B {m2[0]:.3f} / {m2[1]:.3f}   after the return {m3[0]:.3f} / {m3[1]:.3f}" + pb)
