@@ -273,3 +273,15 @@ P8a held (with G=8, hierarchies of 3 and 5 bytes do not reach A's start: A is le
 even learned, 0.56). P8b held (G=4 with 5 bytes: kept 1.000; with 3 bytes learned by the slow stage and lost through text, 0.000).
 P8c held, and more: text is 0.361 with 3 or 5 bytes against 0.350 with 9. So a context is kept exactly when the fast hierarchy reaches
 the byte that tells it apart; text needs only the last 3-5 bytes; the slow stage holds longer gaps but not through later text.
+
+## Step 9 (before its runs): a cascade of timescales inside each output synapse
+
+The owner's question (why two systems and not ten) taken at the level of the synapse, as in cascade models of synaptic memory (Benna
+and Fusi; recalled, not checked): each output strength u1 has hidden variables u2..uK, each slower; plasticity changes u1 only; each
+time the synapse's sender is active, neighbouring variables move towards each other: u_k gets c / r^(k-1) times (u_{k-1} - u_k) and
+gives back the same divided by r (a chain whose capacities grow by r). After a second text the visible u1 has followed it, and the
+slow variables, which hold the long-run value, pull it back. Activity-gated (only synapses of active senders move), so a synapse not in
+use is unchanged. `chain=K`, `chain_c`, `chain_r`; both compartments.
+
+**H9.** With K = 3 (c 0.1, r 4), in `life=texts` with 10,000-byte tests, the kept share of A's own part after B rises above 0.64 (seed 1),
+and B after B is within 0.01 of 0.409. **Refuted if** the kept share does not rise or B falls by more than 0.01.

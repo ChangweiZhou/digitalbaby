@@ -17,7 +17,7 @@ from net7 import Tissue as Fast
 
 
 class Tissue:
-    def __init__(self, seed=1, n_values=128, eta_f=0.5, f_C=128, f_M=8, f_lines=16, fast=1, f_eta_minus=0.05, f_nodef=1, f_slow=0, f_skip0=0, f_mode="chain", f_L=8, f_S=64, fbm="teach", eps=0.1, noise=0.0, **kw):
+    def __init__(self, seed=1, n_values=128, eta_f=0.5, f_C=128, f_M=8, f_lines=16, fast=1, f_eta_minus=0.05, f_nodef=1, f_slow=0, f_skip0=0, f_mode="chain", f_L=8, f_S=64, fbm="teach", eps=0.1, noise=0.0, chain=0, chain_c=0.1, chain_r=4.0, **kw):
         kw.setdefault("eta_o", 0.1)
         self.slow = Slow(seed=seed, n_values=n_values, **kw)
         self.V = n_values; self.eta_f = eta_f; self.use_fast = fast
@@ -31,6 +31,10 @@ class Tissue:
             self.Af = np.zeros((n_values, nf)); self.xf = np.zeros(nf); self.Of = np.zeros(n_values)
         self.replaying = False; self.byte = None
         self.fbm, self.eps, self.gave, self.learning = fbm, eps, None, False             # fbm=yesno: only the answer given is told right or wrong;
+        self.chain, self.cc, self.cr = chain, chain_c, chain_r                            # chain=K: hidden slower variables in every output strength
+        if chain:
+            self.Hs = [np.zeros_like(self.slow.A) for _ in range(chain - 1)]
+            self.Hf = [np.zeros_like(self.Af) for _ in range(chain - 1)] if fast else []
         self.noise = noise                                                                  # noise > 0: while learning, the competition among outputs is noisy
         self.arng = np.random.default_rng(seed + 900)                                     # eps: share of answers tried at random while learning
         self.skip0 = f_skip0                                                                 # f_skip0=1: the fast compartment reads only cells that carry context
@@ -44,13 +48,25 @@ class Tissue:
                 g = self.gave; e = np.zeros(self.V); e[g] = (1.0 if g == byte else 0.0) - self.Of[g]
             act = np.flatnonzero(self.xf)
             if len(act): self.Af[:, act] += (self.eta_f / len(act)) * e[:, None]
+            if self.chain and len(act): self._flow(self.Af, self.Hf, act)
         yes = self.fbm == "yesno" and not self.replaying                                  # replayed episodes are the system's own: their bytes are known
         self.slow.fbm = "yesno" if yes else "teach"; self.slow.gave = self.gave if yes else None
+        zprev = np.flatnonzero(self.slow.z) if (self.chain and learn and self.slow.byte is not None) else None
         self.slow.step(byte, learn); self.learning = learn; self.gave = None
+        if zprev is not None and len(zprev): self._flow(self.slow.A, self.Hs, zprev)
         if self.use_fast:
             cells, _ = self.fast.step(byte, learn and not self.replaying)
             self.xf = cells.reshape(-1) * self.keep_mask; act = np.flatnonzero(self.xf); self.Of = self.Af[:, act].sum(1)
         self.byte = byte
+
+    def _flow(self, W, H, cols):
+        """One step of the chain for the strengths from the active senders cols (u1 = W, u2.. = H): between neighbours a flow
+        d = c / r^(k-1) (u_{k-1} - u_k); u_{k-1} loses d, u_k gains d / r (each deeper variable moves r times less)."""
+        U = [W] + H
+        for k in range(1, len(U)):
+            a = U[k - 1][:, cols]; b = U[k][:, cols]; d = (self.cc / self.cr ** (k - 1)) * (a - b)
+            U[k - 1][:, cols] = a - d
+            U[k][:, cols] = b + d / self.cr
 
     def answer(self):
         O = self.slow.O + (self.Of if self.use_fast else 0)
