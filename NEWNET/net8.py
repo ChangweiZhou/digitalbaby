@@ -18,7 +18,7 @@ Traces: each strength keeps a trace of how it has shaped its own cell's state, r
     trace(t) = g trace(t-1) + d(h)/d(strength) through this byte's candidate or gate, with the sending activity at this byte;
 a strength changes by eta_t d_i trace. A strength whose sender has not been active has no trace and does not change. learn_gate=0:
 the gate strengths stay as at birth. tau_max > 0: cells are born with different clocks, the gate's constant set so that the time
-constants are log-uniform from 1 to tau_max bytes.
+constants are log-uniform from tau_min (default 1) to tau_max bytes.
 rec=R: after a wrong answer (a regional signal) the R cells of least use take the present conjunction: their F sources
 become the cells most active at the byte before (strengths in proportion, the context term equal to rec_ctx there), a strong line from
 the present byte (rec_line), a threshold (rec_bias) and a fast gate (rec_gate); use is the running mean of a cell's activity times its
@@ -34,7 +34,7 @@ def sig(x): return 1.0 / (1.0 + np.exp(-x))
 
 class Tissue:
     def __init__(self, seed=1, N=256, F=16, n_values=32, eta_o=0.5, eta_t=0.05, lam=1e-4, fb="kp", rule="gated",
-                 learn_gate=1, g_bias=0.0, w_in=1.0, w_rec=1.0, tau_max=0.0, center=0, k=0, rec=0, rec_line=4.0, rec_ctx=4.0, rec_bias=-6.0, rec_gate=-2.0, use_tau=2000, grace=2000, send_y=0, norm_rec=0, novel=0, out_var=0, gran=0, g_fan=4, g_k=0.02, fbm="teach"):
+                 learn_gate=1, g_bias=0.0, w_in=1.0, w_rec=1.0, tau_max=0.0, center=0, k=0, rec=0, rec_line=4.0, rec_ctx=4.0, rec_bias=-6.0, rec_gate=-2.0, use_tau=2000, grace=2000, send_y=0, norm_rec=0, novel=0, out_var=0, gran=0, g_fan=4, g_k=0.02, fbm="teach", tau_min=1.0):
         r = np.random.default_rng(seed)
         self.N, self.F, self.V = N, F, n_values
         self.eta_o, self.eta_t, self.lam, self.fb, self.rule, self.learn_gate = eta_o, eta_t, lam, fb, rule, learn_gate
@@ -44,7 +44,7 @@ class Tissue:
         self.bc = np.zeros(N); self.bg = np.full(N, g_bias)
         self.Wd = np.zeros((N, n_values)); self.prev_byte = None                           # strengths from the line of the byte before (one byte's delay)
         if tau_max:                                                                        # cells born with different clocks: time constants
-            tau = np.exp(r.uniform(0, np.log(tau_max), N))                                 # log-uniform from 1 to tau_max bytes (gate 1 - 1/tau)
+            tau = np.exp(r.uniform(np.log(tau_min), np.log(tau_max), N))                                 # log-uniform from 1 to tau_max bytes (gate 1 - 1/tau)
             self.bg = np.log((1 - 1 / tau + 1e-6) / (1 / tau + 1e-6))
         self.A = np.zeros((n_values, N)); self.B = r.normal(0, 0.1, (N, n_values))
         self.h = np.zeros(N)
