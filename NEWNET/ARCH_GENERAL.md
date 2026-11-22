@@ -85,3 +85,9 @@ region just before (a path through all) and K-1 random earlier ones (paths of ma
 
 Joint beats own mismatch everywhere; the holders are what carries memory across a gap (without them 0.507); only the chain keeps A, and
 the graphs are better on both never-used streams (+0.013 to +0.039). The score is dominated by keep (nearly 1.0 or 0.47).
+
+**Batch 2** (chain plus random earlier sources, `mesh_dag=2`): A8 K=2: moby 0.397, code 0.391, keep 0.470, mem 1.000 (score 0.565); A9 K=3:
+0.393 / 0.392 / 0.470 / 1.000 (0.564); A10 L=12 M=12: 0.385 / 0.369 / 0.470 / 1.000 (0.556). A path through all regions is not enough
+to keep A: a region that reads the region before and a shorter one takes the union as its context, and the shorter context (common in
+text) undoes the separation. Keeping seems to need a pure long chain somewhere. Next: two pathways of different plan (`mesh_dag=5`): a
+pure serial chain (as the hippocampal trisynaptic path) beside a random graph without loops (as the neocortex), joined at the output.

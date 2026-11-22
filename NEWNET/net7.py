@@ -41,7 +41,11 @@ class Tissue:
         if mesh:
             mr = np.random.default_rng(seed + 55)
             if mesh_dag:                                                                   # mesh_dag=1: a random graph without loops: region d reads only
-                if mesh_dag == 3:                                                          # mesh_dag=3: K parallel chains (streams), each from the byte before
+                if mesh_dag == 5:                                                          # mesh_dag=5: two pathways: the first half a pure chain, the second
+                    h = L // 2                                                             # half a random graph without loops among its own regions (K sources)
+                    self.msrc = [np.array([d - 1]) if 0 < d < h else np.zeros(0, int) if d in (0, h) else
+                                 (h + mr.choice(d - h, min(mesh, d - h), replace=False)).astype(int) for d in range(L)]
+                elif mesh_dag == 3:                                                          # mesh_dag=3: K parallel chains (streams), each from the byte before
                     per = max(1, L // mesh)
                     self.msrc = [np.array([d - 1]) if d % per else np.zeros(0, int) for d in range(L)]
                 elif mesh_dag == 4:                                                        # mesh_dag=4: feedforward and feedback: region d reads d-1 and d+1
