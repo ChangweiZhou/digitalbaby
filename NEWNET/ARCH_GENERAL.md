@@ -91,3 +91,18 @@ the graphs are better on both never-used streams (+0.013 to +0.039). The score i
 to keep A: a region that reads the region before and a shorter one takes the union as its context, and the shorter context (common in
 text) undoes the separation. Keeping seems to need a pure long chain somewhere. Next: two pathways of different plan (`mesh_dag=5`): a
 pure serial chain (as the hippocampal trisynaptic path) beside a random graph without loops (as the neocortex), joined at the output.
+
+**Batch 5** (architectures from biological principles):
+
+| | architecture | moby | code | keep | mem | score |
+|---|---|---|---|---|---|---|
+| E6 | chain + one random earlier source, **sparser (4 winning columns a region, not 8)** | 0.385 | **0.394** | **1.000** | 1.000 | **0.695** |
+| E4 | chain, sparser (4) | 0.375 | 0.384 | 1.000 | 1.000 | 0.690 |
+| E5 | chain, denser (16) | 0.382 | 0.353 | 1.000 | 1.000 | 0.684 |
+| E2 | two parallel chains of 8 (L=16, half-size regions) | 0.377 | 0.349 | 1.000 | 1.000 | 0.681 |
+| E3 | feedforward and feedback (d reads d-1 and d+1: loops) | 0.378 | 0.339 | 1.000 | 1.000 | 0.679 |
+| E1 | two parallel chains of 4 | 0.393 | 0.389 | 0.470 | 1.000 | 0.563 |
+
+Sparser codes give both: with 4 winning columns the chain with shortcuts (A8 in batch 2: keep 0.470) keeps A, and reads code best so far
+(as the dentate gyrus' sparse code separates similar contexts). Structured feedback loops do not break keeping (unlike random loops).
+Parallel pathways keep only when each is long enough.
