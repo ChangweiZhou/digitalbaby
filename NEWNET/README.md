@@ -328,3 +328,36 @@ cells that stand for conjunctions. (2) The traces are right (finite differences 
 every kind of strength), so the rule does what it is meant to: a slow, gradient-like change against the present mismatch. In one pass
 over 16,000 bytes it is too slow to build conjunctions, and at a larger rate it follows noise and spoils the states, with exact
 feedback as well. On the context stream it worked because the same pattern came a thousand times.
+
+## net8 with an expansion layer like the cerebellum's granule cells (22 November 2026)
+
+Recruitment of conjunction cells after wrong answers was tried first and measured, then set aside: recruited cells bound to the
+most active cells did not fire again (their context never recurred: 1% of their byte's arrivals) and were recycled after a median
+1,013 bytes; bound to the delayed line and to other recruited cells, and only when nothing recruited was active, it still gave
+0.28. The instrument then showed why: **2,048 random cells that do not learn already hold the two-byte conjunction** (best
+linear readout fitted offline 0.384, the two-byte table 0.378), and the online output end reached only 0.277. The bottleneck was the
+output end learning online from many correlated cells, not the tissue.
+
+Principle taken (Marr-Albus-Ito): the tissue's output is spread into many sparse cells (`gran=NG`), each reading `g_fan=4` random
+tissue cells and the present byte's line; inhibition lets the share `g_k` with the largest input fire; the output end reads them with
+the delta rule (normalised step over the active cells). Each tissue cell's output is scaled by its own running standard deviation
+before the expansion (`out_var=1000`; gain control by the sender's own history); without it the line dominated and the expansion
+coded the present byte only (0.23). With the expansion the tissue's own learning is not run (the output end reads the expansion).
+`OMP_NUM_THREADS=1` for parallel runs (four processes had shared the cores' threads: 260 s became 26 s).
+
+| Text, 16,000 bytes, N=1024, last quarter | seed 1 | seed 2 | seed 3 |
+|---|---|---|---|
+| no expansion, delta output | 0.27 | | |
+| per-sender step only (no expansion) | 0.306 | | |
+| expansion 8,192 cells, 2% firing | 0.339 | 0.340 | 0.326 |
+| expansion 32,768 cells, 1% firing (66 s) | 0.357 | | |
+| count tables, reference: last 1 / 2 / 3 bytes | 0.257 / 0.378 / 0.410 | | |
+
+| Context stream, no tissue learning, expansion 8,192 | seed 1 | seed 2 | seed 3 |
+|---|---|---|---|
+| G=16, 40,000 bytes | 1.000 | 1.000 | 1.000 |
+| G=32, 40,000 bytes, 64 values (tau_max 150 / 300) | 1.000 / 1.000 | | |
+
+So random cells with clocks of many lengths, adaptation, gain control by the sender's variance and a sparse expansion read by the
+delta rule hold a branch across 32 bytes and reach between the one- and two-byte tables on text, with nothing learned in the tissue.
+Not yet shown: keeping (A -> B -> A), never-shown combinations, yes/no, and anything the tissue's own learning adds on this design.
