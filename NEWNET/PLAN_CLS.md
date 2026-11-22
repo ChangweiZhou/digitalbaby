@@ -310,3 +310,9 @@ cells (whose state differs between texts) with recent bytes fire only in one tex
 **Step 10, seed 1** (10,000-byte tests): tau_max 1000: control 0.325, A 0.352 -> 0.344, kept 0.70, B 0.402; g_fan 8: control 0.323,
 A 0.350 -> 0.344, kept 0.78, B 0.411 (step 6 without change: 0.64, B 0.409). A's own part is about 0.027 and each test has a standard
 error of about 0.005, so a kept share from one seed is uncertain by about +-0.25: not decidable on one seed. g_fan 8 is run on seeds 2-3.
+
+**Outcome of step 10** (g_fan 8, 10,000-byte tests): seeds 1 / 2 / 3: control 0.323 / 0.322 / 0.319; A after A 0.350 / 0.346 / 0.345;
+A after B 0.344 / 0.345 / 0.343; kept share 0.78 / 0.96 / 0.92; B after B 0.411 / 0.413 / 0.408. The kept share is higher than step 6's
+(0.64 / 0.75), but in absolute terms nothing changed: A after B 0.344 / 0.345 against 0.346 / 0.342, B 0.411 / 0.413 against 0.409 /
+0.414; the share rose because A after A and the control are a little lower (a smaller denominator). **H10 refuted in the terms that
+matter** (A after B is not higher). Lesson for the measure: a kept share must be read beside the absolute scores.
