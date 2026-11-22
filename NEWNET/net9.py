@@ -8,7 +8,8 @@ f_slow=TAU: the fast cells' context also requires a slowly drifting context code
 the columns whose slow trace is most above its long-term mean), so episodes are bound to the context they happened in.
 Each output cell has one compartment for each stage; each learns by the delta rule on its own output (target - that compartment's
 output; a silent wrong compartment is not taught); the answer is the byte with the largest sum. fbm=yesno: only the answer given (the largest sum, or with chance eps a random byte while learning) is told right or wrong,
-and only that byte's output cell learns, in both compartments. replaying=True: only the slow stage
+and only that byte's output cell learns, in both compartments. noise=S (with eps=0): exploration by noise of standard
+deviation S in the competition among outputs, so that answers close to the best are tried and far ones hardly. replaying=True: only the slow stage
 learns (replay from the episode store goes to the slow stage)."""
 import numpy as np
 from net8 import Tissue as Slow
@@ -16,7 +17,7 @@ from net7 import Tissue as Fast
 
 
 class Tissue:
-    def __init__(self, seed=1, n_values=128, eta_f=0.5, f_C=128, f_M=8, f_lines=16, fast=1, f_eta_minus=0.05, f_nodef=1, f_slow=0, f_skip0=0, f_mode="chain", f_L=8, f_S=64, fbm="teach", eps=0.1, **kw):
+    def __init__(self, seed=1, n_values=128, eta_f=0.5, f_C=128, f_M=8, f_lines=16, fast=1, f_eta_minus=0.05, f_nodef=1, f_slow=0, f_skip0=0, f_mode="chain", f_L=8, f_S=64, fbm="teach", eps=0.1, noise=0.0, **kw):
         kw.setdefault("eta_o", 0.1)
         self.slow = Slow(seed=seed, n_values=n_values, **kw)
         self.V = n_values; self.eta_f = eta_f; self.use_fast = fast
@@ -30,6 +31,7 @@ class Tissue:
             self.Af = np.zeros((n_values, nf)); self.xf = np.zeros(nf); self.Of = np.zeros(n_values)
         self.replaying = False; self.byte = None
         self.fbm, self.eps, self.gave, self.learning = fbm, eps, None, False             # fbm=yesno: only the answer given is told right or wrong;
+        self.noise = noise                                                                  # noise > 0: while learning, the competition among outputs is noisy
         self.arng = np.random.default_rng(seed + 900)                                     # eps: share of answers tried at random while learning
         self.skip0 = f_skip0                                                                 # f_skip0=1: the fast compartment reads only cells that carry context
         if fast: self.keep_mask = (np.arange(len(self.xf)) % f_M != 0) if f_skip0 else np.ones(len(self.xf), bool)   # (not a column's default cell)
@@ -52,6 +54,7 @@ class Tissue:
 
     def answer(self):
         O = self.slow.O + (self.Of if self.use_fast else 0)
+        if self.noise and self.learning: O = O + self.arng.normal(0, self.noise, len(O))   # (instead of eps: answers near the best are tried)
         top = np.flatnonzero(O == O.max())                                                 # a tie is broken at random (noise in the competition)
         g = int(top[0]) if len(top) == 1 else int(self.arng.choice(top))
         if self.fbm == "yesno" and self.learning and self.arng.random() < self.eps: g = int(self.arng.integers(self.V))
