@@ -52,3 +52,7 @@ does. My reading, to be tested: the context cells' capacity (2,048 a region) is 
 **Capacity of the context cells** (Moby Dick 64,000, L=8, graph without loops): as above 0.419; columns doubled (cC=256) 0.431; the
 same with half the holders 0.429; **cells a column doubled (M=32) 0.444**; no holders at all 0.415 (three-byte table 0.452). The reading
 was right: the context cells were full. More cells for the same byte in different contexts is the size that pays.
+
+**Size that pays, further** (64,000 bytes, L=8, graph without loops, joint=1): Moby Dick M=16 0.419, M=32 0.444 (seed 2: 0.446),
+M=32 with cC=256 0.448, **M=64 0.455** (three-byte table 0.452). Code, M=32: **0.445** (three-byte table 0.420). Each doubling of the
+cells a column holds raises the held-out share; at M=64 the learner is above the three-byte table on a text never used in design.
