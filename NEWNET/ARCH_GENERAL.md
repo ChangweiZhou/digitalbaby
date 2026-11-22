@@ -118,3 +118,18 @@ an equal-size comparison); G1 E6 with 2 winners: 0.378 / 0.392 / 1.000 / 1.000 (
 **A fault of the battery.** A's start is 9 bytes before the answer, so `keep` can only be passed by an architecture with a path of at
 least 8 regions: the test rewards a depth matched to it (the trap of choosing 8 regions for this test, again). From batch 8 on,
 `keep4` and `keep2` (the same life with G=4 and G=2) are run beside it, and the score is read with all three.
+
+**Batch 8** (keeping at G = 8, 4, 2; score = mean of the six):
+
+| | architecture | moby | code | keep8 | keep4 | keep2 | mem | score |
+|---|---|---|---|---|---|---|---|---|
+| H1 | E6, seed 2 | 0.388 | 0.395 | 1.000 | 1.000 | 1.000 | 1.000 | 0.797 |
+| H3 | E6 + stricter thresholds (0.9 / 0.75) | 0.382 | 0.389 | 1.000 | 1.000 | 1.000 | 1.000 | 0.795 |
+| H4 | E6 with L=12, M=11 | 0.382 | 0.366 | 1.000 | 1.000 | 1.000 | 1.000 | 0.791 |
+| H2 | E6, seed 3 | 0.379 | 0.385 | **0.540** | 1.000 | 1.000 | 1.000 | 0.717 |
+| H5 | graph without loops, L=6 M=21, 4 winners | **0.396** | **0.402** | 0.470 | 1.000 | 1.000 | 1.000 | 0.711 |
+| H6 | graph without loops (baseline) | 0.394 | 0.392 | 0.470 | 1.000 | 1.000 | 1.000 | 0.709 |
+
+Keeping at gaps of 2 and 4 is general (every candidate); only G=8 separates them, and it is passed only by architectures with a long
+serial path, and not on every seed (E6 seed 3: 0.540). A fixed depth keeps no context longer than its paths; beyond them the context is
+only in the holders, which do not keep it through later text. The graphs without loops remain the best on the never-used streams.
