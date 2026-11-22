@@ -285,3 +285,16 @@ use is unchanged. `chain=K`, `chain_c`, `chain_r`; both compartments.
 
 **H9.** With K = 3 (c 0.1, r 4), in `life=texts` with 10,000-byte tests, the kept share of A's own part after B rises above 0.64 (seed 1),
 and B after B is within 0.01 of 0.409. **Refuted if** the kept share does not rise or B falls by more than 0.01.
+
+## Outcome of step 9 (entered 22 November 2026; 10,000-byte tests)
+
+| | A after A | A after B | B after B | B-only control: A / B | kept share |
+|---|---|---|---|---|---|
+| no chain (step 6), seed 1 | 0.356 | 0.346 | 0.409 | 0.328 / 0.403 | 0.64 |
+| chain K=3, c 0.1, seed 1 | 0.323 | 0.308 | 0.353 | 0.282 / 0.341 | 0.63 |
+| chain K=3, c 0.3, seed 1 | 0.301 | 0.293 | 0.327 | | |
+| chain K=3, c 0.1, seed 2 | 0.312 | 0.307 | 0.347 | | |
+
+**H9 refuted**: the kept share does not rise (0.63 against 0.64) and B falls by 0.056. The hidden variables lag and pull the visible
+strength back, which here acts as a smaller step: every score falls, and the share kept stays the same. Not tried: hidden variables
+born at the visible value, or flows independent of the plasticity step; a cascade that does not slow learning would need either.
