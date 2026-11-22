@@ -10,16 +10,18 @@ Each output cell has one compartment for each stage; each learns by the delta ru
 output; a silent wrong compartment is not taught); the answer is the byte with the largest sum. fbm=yesno: only the answer given (the largest sum, or with chance eps a random byte while learning) is told right or wrong,
 and only that byte's output cell learns, in both compartments. noise=S (with eps=0): exploration by noise of standard
 deviation S in the competition among outputs, so that answers close to the best are tried and far ones hardly. replaying=True: only the slow stage
-learns (replay from the episode store goes to the slow stage)."""
+learns (replay from the episode store goes to the slow stage). slow_c=1: the slow stage is net8c (net8 with its step in C;
+same definition, check_net8c.py)."""
 import numpy as np
 from net8 import Tissue as Slow
 from net7 import Tissue as Fast
 
 
 class Tissue:
-    def __init__(self, seed=1, n_values=128, eta_f=0.5, f_C=128, f_M=8, f_lines=16, fast=1, f_eta_minus=0.05, f_nodef=1, f_slow=0, f_skip0=0, f_mode="chain", f_L=8, f_S=64, fbm="teach", eps=0.1, noise=0.0, chain=0, chain_c=0.1, chain_r=4.0, **kw):
+    def __init__(self, seed=1, n_values=128, eta_f=0.5, f_C=128, f_M=8, f_lines=16, fast=1, f_eta_minus=0.05, f_nodef=1, f_slow=0, f_skip0=0, f_mode="chain", f_L=8, f_S=64, fbm="teach", eps=0.1, noise=0.0, chain=0, chain_c=0.1, chain_r=4.0, slow_c=0, **kw):
         kw.setdefault("eta_o", 0.1)
-        self.slow = Slow(seed=seed, n_values=n_values, **kw)
+        if slow_c: from net8c import Tissue as SlowC
+        self.slow = (SlowC if slow_c else Slow)(seed=seed, n_values=n_values, **kw)
         self.V = n_values; self.eta_f = eta_f; self.use_fast = fast
         if fast:
             if f_mode == "order":                                                          # a hierarchy of temporal receptive windows: region d reads
