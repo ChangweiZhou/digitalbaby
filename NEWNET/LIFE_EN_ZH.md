@@ -18,3 +18,17 @@ Readings: (1) between texts that share almost no bytes, little is lost (K8 98% a
 K8 keeps much better than N1 in both orders, the first difference found between the two leaders; (3) the first text neither helps nor
 hinders the second (-0.012 to +0.003 against the second alone); (4) 2,000 bytes of the first text bring it back to or above its level.
 Seeds 2 and 3 are running.
+
+## Seeds 2 and 3
+
+| kept share of the first text through the second | seed 1 | seed 2 | seed 3 | mean |
+|---|---|---|---|---|
+| English -> Chinese, K8 | 0.98 | 0.96 | 0.99 | **0.98** |
+| English -> Chinese, N1 | 0.86 | 0.88 | 0.88 | 0.87 |
+| Chinese -> English, K8 | 0.93 | 0.91 | 0.91 | **0.91** |
+| Chinese -> English, N1 | 0.76 | 0.79 | 0.81 | 0.79 |
+
+(Seeds 2 / 3: first text after it and after the second: English->Chinese K8 0.371 -> 0.358, 0.359 -> 0.356; N1 0.368 -> 0.325, 0.363 ->
+0.321; Chinese->English K8 0.341 -> 0.311, 0.337 -> 0.305; N1 0.344 -> 0.272, 0.335 -> 0.271. The second text after it: K8 0.333 /
+0.331 and 0.360 / 0.348, N1 0.345 / 0.335 and 0.367 / 0.355. After the return: within 0.01 of the first text's level, or above.)
+K8 keeps better than N1 on every seed and in both orders: confirmed.
