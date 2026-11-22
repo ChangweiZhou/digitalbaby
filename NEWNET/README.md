@@ -361,3 +361,20 @@ coded the present byte only (0.23). With the expansion the tissue's own learning
 So random cells with clocks of many lengths, adaptation, gain control by the sender's variance and a sparse expansion read by the
 delta rule hold a branch across 32 bytes and reach between the one- and two-byte tables on text, with nothing learned in the tissue.
 Not yet shown: keeping (A -> B -> A), never-shown combinations, yes/no, and anything the tissue's own learning adds on this design.
+
+**Keeping with the expansion design (`t13_life8.py`, N=1024, expansion 8,192, no tissue learning; tests with learning off).**
+
+| Life | A after A | A after B | A after the return | B after B |
+|---|---|---|---|---|
+| ctx: A = context stream on letters (G=8), B = 16,000 bytes of text | 1.000 | **0.000** | 1.000 | 0.175 |
+| the same, B = 32,000 | 1.000 | 0.000 | 1.000 | 0.181 |
+| the same, rehearsal from a store of 1,000 episodes, rho 1/100 / 1/20 (seed 2: 1/20) | 1.000 | 0.160 / 0.360 (0.500) | 1.000 | 0.17 |
+| texts: A = Shakespeare 16,000, B = Emma 16,000 (control, B only: A test 0.251) | 0.230 | 0.268 | 0.260 | 0.308 |
+| the same, rehearsal 1/20 | 0.233 | 0.267 | 0.260 | 0.303 |
+
+Readings: (1) A on letters is lost completely through text (0.000, not 0.5: at the gap it now answers text's successor of the letter);
+A's expansion cells for the gap are mostly those of the same letter in text, and their output strengths are rewritten. The
+hand-built NEWNET with 8 order regions kept this case (1.000). (2) Rehearsal at these doses does not keep it: at the end of B a fifth
+of the store is A, so at 1/20 about 1% of the bytes learned are A's. (3) On text read with learning off, never-read Shakespeare is
+0.23 after 16,000 bytes of it, below the online share (0.34) and below a learner that read only Emma (0.251): much of the online
+share is local repetition; NEWNET's order areas gave 0.33-0.37 on the same kind of test.
