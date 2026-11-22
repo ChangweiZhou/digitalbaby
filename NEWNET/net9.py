@@ -1,7 +1,8 @@
 """Two stages, one output end (22 November 2026; PLAN_CLS.md step 3).
 Slow stage: net8 (cells with clocks of many lengths, adaptation, a sparse expansion), its output compartment learning slowly.
 Fast stage: a minicolumn tissue (net7 with ctx=0 hold=0: a cell's context is the cells that fired at the byte before; codes separate by
-history and repeat where a sequence repeats), its output compartment learning fast.
+history and repeat where a sequence repeats; f_nodef=1: surprise never resets it to the default cells), its output compartment
+learning fast.
 Each output cell has one compartment for each stage; each learns by the delta rule on its own output (target - that compartment's
 output; a silent wrong compartment is not taught); the answer is the byte with the largest sum. replaying=True: only the slow stage
 learns (replay from the episode store goes to the slow stage)."""
@@ -11,12 +12,12 @@ from net7 import Tissue as Fast
 
 
 class Tissue:
-    def __init__(self, seed=1, n_values=128, eta_f=0.5, f_C=128, f_M=8, f_lines=16, fast=1, **kw):
+    def __init__(self, seed=1, n_values=128, eta_f=0.5, f_C=128, f_M=8, f_lines=16, fast=1, f_eta_minus=0.05, f_nodef=1, **kw):
         kw.setdefault("eta_o", 0.1)
         self.slow = Slow(seed=seed, n_values=n_values, **kw)
         self.V = n_values; self.eta_f = eta_f; self.use_fast = fast
         if fast:
-            self.fast = Fast(seed=seed + 300, L=1, C=f_C, M=f_M, lines_in=f_lines, n_values=n_values, ctx=0, hold=0, n_grow=8)
+            self.fast = Fast(seed=seed + 300, L=1, C=f_C, M=f_M, lines_in=f_lines, n_values=n_values, ctx=0, hold=0, n_grow=8, eta_minus=f_eta_minus, nodef=f_nodef)
             self.Af = np.zeros((n_values, f_C * f_M)); self.xf = np.zeros(f_C * f_M); self.Of = np.zeros(n_values)
         self.replaying = False; self.byte = None
 

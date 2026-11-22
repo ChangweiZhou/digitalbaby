@@ -9,7 +9,7 @@ static uint64_t rs = 88172645463325252ULL;
 void seed_rng(uint64_t s) { rs = s * 2654435761ULL + 1; if (!rs) rs = 1; }
 static inline uint64_t xr(void) { rs ^= rs << 13; rs ^= rs >> 7; rs ^= rs << 17; return rs; }
 
-typedef struct { double eta, eta_minus, w_on, w_new, th_on, th_match, s_th, lam; int n_grow, burst, ctx_mode, learn, recall; } P;
+typedef struct { double eta, eta_minus, w_on, w_new, th_on, th_match, s_th, lam; int n_grow, burst, ctx_mode, learn, recall, nodef; } P;
 
 /* arrays: gsrc, rsrc [L*C*M*S] int64; rw [L*C*M*S] double; ctx [L*2CM] uint8; cols [L*C] uint8;
    use, rel [L*C*M] double; out: cells [L*C*M] uint8, surprise [L] uint8; stats[0] = predicted share of winning columns */
@@ -59,7 +59,7 @@ void step(int L, int C, int M, int S, int64_t *gsrc, int64_t *rsrc, double *rw, 
                 double sc = pred[i] ? 1e6 + n_on[i] : (match[i] ? 1e3 + n_act[i] : -use[base + i]);
                 if (sc > bs) { bs = sc; best = m; }
             }
-            int pick = p->ctx_mode ? best : (sur ? 0 : best);
+            int pick = (p->ctx_mode || p->nodef) ? best : (sur ? 0 : best);                  /* nodef: surprise never forces the default cell */
             if (p->burst && !pc) pick = 0;
             for (int m = 0; m < M; m++) cells[base + c * M + m] = cl[c] && m == pick;
             if (p->learn) {

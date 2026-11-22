@@ -92,3 +92,21 @@ memory at G=16 stays at 1.000. **Refuted if** A after B is below 0.75, or text f
 else: (1) with `ctx=0` the fast tissue fires its default cells when a prediction is broad, so A's start and first bytes are coded as
 text codes the same letters, and the chain that would separate A begins from a code text shares; (2) the fast compartment learns at 0.5
 on codes that do repeat in text (the default codes, one per byte value), so it adds a noisy one-byte vote to every answer.
+
+## Diagnosis of step 3 (22 November 2026; `t15_fastcode.py`, seed 1)
+
+1. My first reading was wrong in its first half: after A, the fast stage's codes for A are separated (default cells at A's start
+   only; A's gap code, 8 cells, never active at the same letter in 4,000 bytes of text; their output strengths unchanged after B).
+2. After B, A no longer reaches those cells: at A's gap the fast compartment votes 0.018 for the right byte and 0.429 for a wrong one,
+   and from the first middle byte on, A's fast cells are not those of before B (share the same: 1.00 at the start, 0.00 after).
+3. Why (probe at the first middle byte): A's cell there still has all 8 of its active slots strong, so it is predicted; but the region
+   signals surprise, because after text the start letter's code predicts many columns (text's successors of that letter), and the
+   surprise rule of net5 makes every column fire its default cell. Without the weakening of failed predictions (`f_eta_minus=0`) the
+   same happens: it is not that weakening.
+4. `f_nodef=1` (surprise never forces the default cell; added to net7 C and checked identical where off): text with the fast stage
+   recovers (held-out 0.284, against 0.185 with the reset and 0.302 for the slow stage alone), but A itself is learned less well
+   (0.87 / 0.89 on seeds 1 / 2) and is lost through B (0.000 / 0.280): without resets the fast codes split by the whole past (the start's
+   code depends on the sequence before), so A does not take one path each time.
+
+So the fast stage meets a dilemma of its own: reset at uncertain bytes, and its chains start from codes text shares and are rerouted;
+no reset, and its codes split by the whole past and do not recur.
