@@ -69,3 +69,19 @@ each compartment alone. The chain gives long paths, the random graph many length
 region just before (a path through all) and K-1 random earlier ones (paths of many lengths).
 
 ## Search, batch 1 (running): A0-A7, same size (L=8, M=16); results in `search_results.tsv`
+
+**Batch 1** (L=8, M=16; score = mean of moby, code, keep, mem):
+
+| | architecture | moby | code | keep | mem | score |
+|---|---|---|---|---|---|---|
+| A0 | chain, joint | 0.381 | 0.359 | 1.000 | 1.000 | **0.685** |
+| A2 | graph without loops K=1, joint | 0.395 | 0.398 | 0.470 | 1.000 | 0.566 |
+| A1 | graph without loops K=2, joint | 0.394 | 0.392 | 0.470 | 1.000 | 0.564 |
+| A6 | graph without loops K=4, joint | 0.390 | 0.392 | 0.470 | 1.000 | 0.563 |
+| A3 | graph without loops K=2, own mismatch | 0.363 | 0.354 | 0.470 | 0.977 | 0.541 |
+| A7 | graph with loops and own base, joint | 0.350 | 0.335 | 0.470 | 1.000 | 0.539 |
+| A4 | chain, own mismatch | 0.336 | 0.297 | 0.470 | 0.977 | 0.520 |
+| A5 | graph without loops K=2, joint, no holders | 0.396 | 0.398 | 0.470 | 0.507 | 0.443 |
+
+Joint beats own mismatch everywhere; the holders are what carries memory across a gap (without them 0.507); only the chain keeps A, and
+the graphs are better on both never-used streams (+0.013 to +0.039). The score is dominated by keep (nearly 1.0 or 0.47).
