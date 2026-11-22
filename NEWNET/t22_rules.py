@@ -12,7 +12,7 @@ items met for the first time under the rule in force are scored. Each such byte 
 Reported: right share and bits (p from the outputs: max(O,0) normalised, mixed 0.99/0.01 with uniform over 128) in each layer and phase,
 and the right share in windows of 250 lines after each change of rule. Baseline (net=store): storage with the same window, an n-gram
 table of every context up to 8 bytes with back-off to the longest one seen.
-Usage: python3 t22_rules.py net=10|11|store [seed lines S1 S2 GROW ...net options] [struct=K8|N1]"""
+Usage: python3 t22_rules.py net=10|12|store [seed lines S1 S2 GROW ...net options] [struct=K8|N1]"""
 import sys, json, time, numpy as np
 from collections import defaultdict
 def num(v):

@@ -1,60 +1,65 @@
-"""net10 with holders that take part in the network (22 November 2026). Plan: MESHHOLD_PLAN.md.
-As net10 (defaults here: joint=1 mesh=2 mesh_base=0 mesh_dag=1), with one change, the same for every module: the holding cells of
-module m also read the context cells of module m at the present byte (net10's holders read only the byte's lines).
-  - order within a byte: the context cells read the byte first (net7 step), then the holders (net8c step), so the holders of module
-    m see module m's context cells of this byte (which answer to bytes up to and including this one: no look-ahead);
-  - input: each holder i has, at birth, two strengths from every context cell j of its module, Xc[j, i] and Xg[j, i], drawn N(0, wx);
-    holder i's candidate input gains sum_{j active} Xc[j, i] / sqrt(n_active) and its gate input sum_{j active} Xg[j, i] / sqrt(n_active)
-    (gain by the number of active senders, so the added input has the size of one byte line whether 8 or 128 cells fire); fixed,
-    like the byte lines (the holders' strengths do not learn: fb=none);
-  - hin=add: the byte's line and the context cells; hin=ctx: the context cells in place of the byte's line (the holders' own
-    candidate and gate lines Wc, Wg set to zero; their expansion still reads the byte's line, as in net10); hin=none: net10 exactly.
-Implementation: net8c's C step reads a constant per holder (bc, bg) and does not learn it (fb=none), so the added input is passed as
-that constant for this one byte (bc + added, bg + added) and the constants are put back after: the C step is used unchanged
-(no numpy port needed). With hin=none this is net10 byte for byte."""
+"""net12: net10 with a short window of lag cells and two compartments that read it (22 November 2026).
+Owner, 22 Nov: "我们可以允许细胞层面的一个短窗口，但很难想象细胞能够记录长文本。一切从生物学原理出发。"
+Diagnosis it answers (t21_answers.py): every net10 code is a conjunction of the bytes on a path, so an answer is right on a never-shown
+item only when a seen sub-conjunction fixes it; nothing in it says "the byte j back, whatever it was".
+Lag cells: X[j, u] = 1 when byte u was read j bytes ago (j = 0 .. W-1; j = 0 is the byte just read): one cell per byte line and lag,
+a delay line of W bytes (a cell-level short window), nothing longer.
+Compartments (on the same shared mismatch as net10's when joint=1; each adds to the number of compartments that share one step):
+  lagro=1  a direct readout: O[v] = sum_{j,u} B[v, j, u] X[j, u] (delta rule). Factorised: a strength for each (lag, byte) -> answer,
+           not for their conjunctions.
+  relay=1  a gated relay: lag j's lines project topographically to the answer lines (line u of lag j drives answer line u: a fixed
+           map, as a sensory map keeps its order, not learned); a gate a_j, set by the lag cells through strengths G[j, j', u]
+           (a_j = mean of the active cells' strengths), says how strongly lag j is relayed. O[v] = sum_j a_j X[j, v].
+           The gate learns locally: synapse (j', u) -> gate j changes by its presynaptic activity times the mismatch on the line that
+           lag j carries now (delta rule of the gate: e[byte at lag j]).
+W (window), eta_l and eta_r are the same for every stream. Nothing in it is set for a task."""
 import numpy as np
-from net10 import Tissue as _Net10
+from net10 import Tissue as Net10
 
 
-class Tissue(_Net10):
-    def __init__(self, seed=1, hin="add", wx=1.0, joint=1, mesh=2, mesh_base=0, mesh_dag=1, **kw):
-        super().__init__(seed=seed, joint=joint, mesh=mesh, mesh_base=mesh_base, mesh_dag=mesh_dag, **kw)
-        self.hin = hin
-        if hin != "none" and self.use_hold:
-            r = np.random.default_rng(seed + 1200)
-            nH = self.holds[0].N
-            self.Xc = [r.normal(0, wx, (self.nc, nH)) for _ in range(self.L)]          # [context cell, holder]: rows gathered by active cells
-            self.Xg = [r.normal(0, wx, (self.nc, nH)) for _ in range(self.L)]
-            if hin == "ctx":
-                for h in self.holds: h.Wc[...] = 0.0; h.Wg[...] = 0.0                 # in place: the views net8c's C step reads
+class Tissue(Net10):
+    def __init__(self, W=8, lagro=0, relay=0, eta_l=0.2, eta_r=0.2, **kw):
+        super().__init__(**kw)
+        V = self.V; self.W, self.lagro, self.relay, self.eta_l, self.eta_r = W, lagro, relay, eta_l, eta_r
+        self.lagb = [-1] * W                                                               # bytes at lags 0..W-1 (-1: none yet)
+        extra = (1 if lagro else 0) + (1 if relay else 0)
+        if self.joint:
+            old = self.ncomp; self.ncomp = old + extra
+            for h in self.holds: h.eta_o = h.eta_o * old / self.ncomp
+        if lagro: self.B = np.zeros((V, W * V)); self.Ob = np.zeros(V)
+        if relay: self.G = np.zeros((W, W * V)); self.a = np.zeros(W); self.Or = np.zeros(V)
+
+    def _act(self): return np.array([j * self.V + u for j, u in enumerate(self.lagb) if u >= 0], int)
+
+    def _osum(self):
+        O = self.Oc.sum(0) + sum(h.O for h in self.holds)
+        if self.lagro: O = O + self.Ob
+        if self.relay: O = O + self.Or
+        return O
 
     def step(self, byte, learn=True):
-        if learn and self.byte is not None:                                               # context compartments (as net10)
-            tgt = np.zeros(self.V); tgt[byte] = 1.0
-            Osum = self.Oc.sum(0) + sum(h.O for h in self.holds)
-            for m in range(self.L):
-                act = np.flatnonzero(self.xc[m])
-                if not len(act): continue
-                O = Osum if self.joint else self.Oc[m]
-                if self.fbm == "yesno" and self.gave is not None:
-                    e = np.zeros(self.V); g = self.gave; e[g] = (1.0 if g == byte else 0.0) - O[g]
-                else:
-                    e = np.where((tgt > 0) | (O > 0), tgt - O, 0.0)
-                self.Ac[m][:, act] += (self.eta_c / len(act) / self.ncomp) * e[:, None]
-        if learn and self.joint and self.byte is not None:
-            for h in self.holds: h.O = Osum.copy()
-        cells, _ = self.ctx.step(byte, learn)                                             # context cells first: this byte
-        xc = cells.reshape(self.L, -1)
-        for m, h in enumerate(self.holds):
-            h.gave = self.gave if self.fbm == "yesno" else None
-            act = np.flatnonzero(xc[m]) if self.hin != "none" else ()
-            if len(act):
-                s = 1.0 / np.sqrt(len(act)); bc, bg = h.bc, h.bg
-                h.bc = bc + self.Xc[m][act].sum(0) * s; h.bg = bg + self.Xg[m][act].sum(0) * s
-                h.step(byte, learn); h.bc, h.bg = bc, bg
-            else:
-                h.step(byte, learn)
-        self.xc = xc
-        for m in range(self.L):
-            act = np.flatnonzero(self.xc[m]); self.Oc[m] = self.Ac[m][:, act].sum(1)
-        self.byte = byte; self.learning = learn; self.gave = None
+        if learn and self.byte is not None and (self.lagro or self.relay):
+            O = self._osum(); tgt = np.zeros(self.V); tgt[byte] = 1.0
+            if self.fbm == "yesno" and self.gave is not None:
+                e = np.zeros(self.V); g = self.gave; e[g] = (1.0 if g == byte else 0.0) - O[g]
+            else: e = np.where((tgt > 0) | (O > 0), tgt - O, 0.0)
+            if not self.joint: raise ValueError("net11 compartments need joint=1")
+            act = self._act()
+            if self.lagro and len(act): self.B[:, act] += (self.eta_l / len(act) / self.ncomp) * e[:, None]
+            if self.relay and len(act):
+                el = np.array([e[u] if u >= 0 else 0.0 for u in self.lagb])               # the mismatch on the line each lag carries
+                self.G[:, act] += (self.eta_r / len(act) / self.ncomp) * el[:, None]
+        super().step(byte, learn)                                                          # net10's compartments (their shared mismatch is
+        self.lagb = [byte] + self.lagb[:-1]                                                # over every compartment: _osum)
+        act = self._act()
+        if self.lagro: self.Ob = self.B[:, act].sum(1)
+        if self.relay:
+            self.a = self.G[:, act].mean(1) if len(act) else np.zeros(self.W); self.Or = np.zeros(self.V)
+            for j, u in enumerate(self.lagb):
+                if u >= 0: self.Or[u] += self.a[j]
+
+    def answer(self):
+        O = self._osum()
+        if self.noise and self.learning: O = O + self.arng.normal(0, self.noise, len(O))
+        top = np.flatnonzero(O == O.max()); g = int(top[0]) if len(top) == 1 else int(self.arng.choice(top))
+        self.gave = g; return g
