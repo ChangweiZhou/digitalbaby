@@ -229,3 +229,10 @@ frozen 1.00, slow alone 1.00; with 64: 0.905 / 0.96 / 0.96; with 128 (the defaul
 0.48, and the fast compartment now gives the two end bytes very different values (0.600) although it cannot see the start. So the
 failure is with 128 byte values, not with yes/no as such; and every context-stream result with teaching so far used 32 or 64 values,
 while text uses 128. Whether the slow stage carries a gap of 16 with 128 values when taught is being measured.
+
+**128 byte values** (`t16_split.py`): teach, G=16, 60,000 bytes: online 0.998, frozen 1.00, slow alone 1.00; teach, G=8, 40,000: 1.000 /
+1.00; teach, G=16 without the fast stage: online 1.000; yes/no, G=16, 120,000, seed 2: online 0.906 (the ceiling), frozen 0.99, slow
+alone 0.99. So 128 values are not the cause; yes/no fails at G=16 with 128 values on seed 1 only. There the fast compartment gives the
+two end bytes very different values without seeing the start (0.600), which steers the answer; under yes/no only the answer given is
+taught, and exploration at random over 128 values tries the other end byte at the gap about once in a thousand answers (my reading,
+not checked). Exploration in proportion to the outputs, not uniform over all bytes, would be the general remedy to test if this recurs.
