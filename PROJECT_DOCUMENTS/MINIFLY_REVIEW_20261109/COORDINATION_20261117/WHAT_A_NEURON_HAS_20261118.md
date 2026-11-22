@@ -192,3 +192,18 @@ What follows.
 5. An earlier correction of the same session, recorded here so that it is not repeated: section 8 says "未必能够读到已有的字节" ("not necessarily able to read the bytes already read"). The translation above renders it "cannot in general", and later documents strengthened it to "cannot"; the ruling of this section, not those translations, is what stands.
 
 Open, and not decided by this ruling: whether one number shared by all cells of a kind counts as local (the "shared trusts" of the outside session's systems, about which Mr. Xu said on 21 November "我们反复强调是local learning"); how a strength is fixed when a connection runs through several cells (section 17); and whether rule parameters may be set by an offline search such as evolution or meta-learning.
+
+## 21. Mr. Xu's ruling of 22 November 2026: a short window at the level of a cell
+
+His words, to session `session_017dSEpWqUVkyw5SyyeE6M13`: "我们可以允许细胞层面的一个短窗口，但很难想象细胞能够记录长文本。一切从生物学原理出发。"
+
+Translation (mine): "We can allow a short window at the level of a cell, but it is hard to imagine a cell recording a long text.
+Everything starts from biological principles."
+
+Asked of: whether cells that together code the last several bytes exactly (in `NEWNET`, region d of the order areas reads region
+d - 1's cells one byte late, so that region 7 codes the last 9 bytes) amount to the long window excluded in section 20.
+
+The session's reading (its own, not his words): a cell may read its inputs over a short span (its present inputs and others' state one
+byte before, as a synaptic delay gives); a longer span may come only from a hierarchy of such cells, as temporal receptive windows
+lengthen along the cortical hierarchy; no single cell holds a long stretch of text. How long a span a hierarchy may reach is not
+settled by this ruling.
