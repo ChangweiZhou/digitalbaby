@@ -12,6 +12,11 @@ Compartments (on the same shared mismatch as net10's when joint=1; each adds to 
            (a_j = mean of the active cells' strengths), says how strongly lag j is relayed. O[v] = sum_j a_j X[j, v].
            The gate learns locally: synapse (j', u) -> gate j changes by its presynaptic activity times the mismatch on the line that
            lag j carries now (delta rule of the gate: e[byte at lag j]).
+  relay=2  the same gate, but no fixed map: the bytes are carried on their distributed code (16 lines: the byte's 8 bits and their
+           complements, the sensory code), z = sum_j a_j M code(byte at lag j), with M a learned map (16 x 16, delta rule on the code
+           mismatch code(target) - z); answer line v reads z through its own code (dec(v) = 2 code(v) - 1, as a cell tuned to v):
+           O[v] = relu(dec(v).z / 8 - 0.5) * 2 (1 for an exact match). What carries over to symbols never given as answers is then
+           what M learned on the code, not a wired map.
   ctxg=NG  context-gated readout (both compartments): their strengths come in NG groups (as synapses on NG dendritic branches);
            a slow trace of the bytes read (time constant ctxg_tau bytes, one value per byte line) is projected at random onto the
            groups, and the ctxg_k groups it drives most are the ones open (k winners); the output is the mean over the open groups,
@@ -26,7 +31,7 @@ from net10 import Tissue as Net10
 
 
 class Tissue(Net10):
-    def __init__(self, W=8, lagro=0, relay=0, eta_l=0.2, eta_r=0.2, ctxg=0, ctxg_k=2, ctxg_tau=30.0, ctxg_err=0.0, **kw):
+    def __init__(self, W=8, lagro=0, relay=0, eta_l=0.2, eta_r=0.2, ctxg=0, ctxg_k=2, ctxg_tau=30.0, ctxg_err=0.0, eta_m=0.05, **kw):
         super().__init__(**kw)
         V = self.V; self.W, self.lagro, self.relay, self.eta_l, self.eta_r = W, lagro, relay, eta_l, eta_r
         self.ng, self.gk, self.gtau = max(ctxg, 1), (ctxg_k if ctxg else 1), ctxg_tau
@@ -41,6 +46,9 @@ class Tissue(Net10):
             for h in self.holds: h.eta_o = h.eta_o * old / self.ncomp
         if lagro: self.B = np.zeros((self.ng, V, W * V)); self.Ob = np.zeros(V)
         if relay: self.G = np.zeros((self.ng, W, W * V)); self.a = np.zeros(W); self.Or = np.zeros(V)
+        if relay == 2:
+            self.code = np.array([np.r_[b, 1 - b] for b in ((np.arange(V)[:, None] >> np.arange(8)) & 1)], float)   # V x 16
+            self.dec = 2 * self.code - 1; self.M = np.zeros((16, 16)); self.eta_m = eta_m; self.z = np.zeros(16)
 
     def _act(self): return np.array([j * self.V + u for j, u in enumerate(self.lagb) if u >= 0], int)
 
@@ -63,6 +71,10 @@ class Tissue(Net10):
                 if self.relay and len(act):
                     el = np.array([e[u] if u >= 0 else 0.0 for u in self.lagb])           # the mismatch on the line each lag carries
                     self.G[g][:, act] += (self.eta_r / len(act) / self.ncomp) * el[:, None]
+            if self.relay == 2:                                                            # the map, on the code mismatch
+                ez = self.code[byte] - self.z
+                for j, u in enumerate(self.lagb):
+                    if u >= 0 and self.a[j] > 0: self.M += (self.eta_m * self.a[j]) * np.outer(ez, self.code[u])
         super().step(byte, learn)                                                          # net10's compartments (their shared mismatch is
         self.lagb = [byte] + self.lagb[:-1]                                                # over every compartment: _osum)
         if self.ng > 1:                                                                    # the slow trace and the open groups
@@ -77,8 +89,12 @@ class Tissue(Net10):
         if self.lagro: self.Ob = self.B[self.grp][:, :, act].sum(2).mean(0)
         if self.relay:
             self.a = self.G[self.grp][:, :, act].mean(2).mean(0) if len(act) else np.zeros(self.W); self.Or = np.zeros(self.V)
-            for j, u in enumerate(self.lagb):
-                if u >= 0: self.Or[u] += self.a[j]
+            if self.relay == 2:
+                self.z = sum(self.a[j] * (self.M @ self.code[u]) for j, u in enumerate(self.lagb) if u >= 0) + np.zeros(16)
+                self.Or = np.maximum(self.dec @ self.z / 8 - 0.5, 0) * 2
+            else:
+                for j, u in enumerate(self.lagb):
+                    if u >= 0: self.Or[u] += self.a[j]
 
     def answer(self):
         O = self._osum()
