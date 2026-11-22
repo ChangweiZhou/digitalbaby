@@ -394,3 +394,7 @@ Each text occurrence shares few cells with A's gap code, but over many occurrenc
 tell its branches apart, are taught by text. Wider or sparser expansion does not separate A from text much: the tissue's states at
 a letter inside A and at the same letter in text differ mainly in its slow cells, by about 0.02, and a random expansion cannot make
 them more different than they are. Keeping therefore needs the tissue itself to represent a sequence's context distinctly.
+
+**Tissue learning in the expansion design** (`fb=random`: the mismatch reaches the tissue through feedback strengths fixed at birth;
+three-factor change as before), seed 1: context G=32, 40,000 bytes: 1.000 (as without); text 16,000: 0.325 (0.339 without);
+ctx life: A after B 0.000 at eta_t 0.05 and 0.5 (as without). It does not separate A's contexts from text's.

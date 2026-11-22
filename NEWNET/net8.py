@@ -116,8 +116,13 @@ class Tissue:
             dA = np.outer(e, h / (self.N * self.vy + 1e-3)) * self.eta_o
         else:
             dA = np.outer(e, h) * (self.eta_o / (h @ h + 1.0))
-        if self.gran:
-            if self.fb == "kp": self.A *= 1 - self.lam
+        if self.gran:                                                                      # the tissue learns from the mismatch through its own
+            if self.fb == "random":                                                         # feedback strengths, fixed at birth (the expansion lies
+                d = self.B @ e                                                              # between it and the output end)
+                for k, E in self.E.items():
+                    if k in ("Wg", "Ug", "bg") and not self.learn_gate: continue
+                    W = getattr(self, k)
+                    W += self.eta_t * (d[:, None] * E if E.ndim == 2 else d * E)
             return
         if self.fb != "none":
             d = (self.A.T @ e) if self.fb == "exact" else self.B @ e                     # exact: a measuring instrument only (uses the output end's
