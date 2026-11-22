@@ -20,6 +20,11 @@ Compartments (on the same shared mismatch as net10's when joint=1; each adds to 
   match=K  match cells: m[k, j] = 1 when the byte k back equals the byte k+j back (k = 0..K-1, j = 1..W-1): coincidence detectors
            on the delay line ("the same as j bytes before"), content-free relations; they are inputs of both compartments (with the
            lag cells), so a gate can learn "relay lag j when the last answer repeated lag j'", whatever the symbols.
+  xdg=NG   context-gated cells (all of net10's output compartments: the context cells' and the holders' expansion cells): each of
+           NG groups opens a fixed random share xdg_f of those cells; one group is open at a time, the one a slow trace of the bytes
+           (time constant xdg_tau) drives most through fixed random strengths. A closed cell neither sends to the outputs nor learns.
+           Situations with different statistics (a text, a rule stream) use partly different cells, so learning in one rewrites
+           less of the other; similar situations open the same group.
   ctxg=NG  context-gated readout (both compartments): their strengths come in NG groups (as synapses on NG dendritic branches);
            a slow trace of the bytes read (time constant ctxg_tau bytes, one value per byte line) is projected at random onto the
            groups, and the ctxg_k groups it drives most are the ones open (k winners); the output is the mean over the open groups,
@@ -34,7 +39,7 @@ from net10 import Tissue as Net10
 
 
 class Tissue(Net10):
-    def __init__(self, W=8, lagro=0, relay=0, eta_l=0.2, eta_r=0.2, ctxg=0, ctxg_k=2, ctxg_tau=30.0, ctxg_err=0.0, eta_m=0.05, match=0, **kw):
+    def __init__(self, W=8, lagro=0, relay=0, eta_l=0.2, eta_r=0.2, ctxg=0, ctxg_k=2, ctxg_tau=30.0, ctxg_err=0.0, eta_m=0.05, match=0, xdg=0, xdg_f=0.5, xdg_tau=200.0, **kw):
         super().__init__(**kw)
         V = self.V; self.W, self.lagro, self.relay, self.eta_l, self.eta_r = W, lagro, relay, eta_l, eta_r
         self.ng, self.gk, self.gtau = max(ctxg, 1), (ctxg_k if ctxg else 1), ctxg_tau
@@ -43,6 +48,11 @@ class Tissue(Net10):
         if ctxg:
             gr = np.random.default_rng(kw.get("seed", 1) + 1234); self.P = gr.normal(0, 1, (ctxg, V)); self.Q = gr.normal(0, 1, (ctxg, W))
         self.lagb = [-1] * W                                                               # bytes at lags 0..W-1 (-1: none yet)
+        self.xdg, self.xtau = xdg, xdg_tau
+        if xdg:
+            xr = np.random.default_rng(kw.get("seed", 1) + 777); self.Px = xr.normal(0, 1, (xdg, V)); self.xtrace = np.zeros(V); self.xg = 0
+            self.cmask = xr.random((xdg, self.L, self.nc)) < xdg_f
+            self.hmask = [xr.random((xdg, h.gran)) < xdg_f for h in self.holds]
         self.match = match; self.nin = W * V + match * (W - 1)                             # inputs: lag cells, then match cells
         extra = (1 if lagro else 0) + (1 if relay else 0)
         if self.joint:
@@ -86,6 +96,14 @@ class Tissue(Net10):
                     if u >= 0 and self.a[j] > 0: self.M += (self.eta_m * self.a[j]) * np.outer(ez, self.code[u])
         super().step(byte, learn)                                                          # net10's compartments (their shared mismatch is
         self.lagb = [byte] + self.lagb[:-1]                                                # over every compartment: _osum)
+        if self.xdg:                                                                       # the open group and the closed cells
+            self.xtrace *= 1 - 1 / self.xtau; self.xtrace[byte] += 1 / self.xtau
+            g = self.xg = int(np.argmax(self.Px @ self.xtrace))
+            self.xc = self.xc * self.cmask[g]
+            for m in range(self.L):
+                act = np.flatnonzero(self.xc[m]); self.Oc[m] = self.Ac[m][:, act].sum(1)
+            for h, hm in zip(self.holds, self.hmask):
+                h.z = h.z * hm[g]; act = np.flatnonzero(h.z); h.O = h.A[:, act].sum(1)
         if self.ng > 1:                                                                    # the slow trace and the open groups
             self.trace *= 1 - 1 / self.gtau; self.trace[byte] += 1 / self.gtau
             drive = self.P @ self.trace                                                   # (the trace sums to about 1)
