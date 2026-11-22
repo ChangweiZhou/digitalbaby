@@ -160,3 +160,8 @@ back: the length of a context kept is the length of the pure chain.
 0.429 (0.396, +0.033); E6 chain + random earlier source, 4 winners 0.425 (0.385, +0.040); F2 two pathways 0.413 (0.388, +0.025); A0
 chain 0.400 (0.381, +0.019); three-byte table 0.452. The sparse architectures gain about twice as much from more reading; H5 and E6 are
 not told apart here.
+
+**Columns against cells a column, at equal size** (4 winners): E6 with 64 x 32 (N1): moby 0.392, code 0.392, keep8/4/2 1.000, mem 1.000
+(0.797); E6 with 256 x 8 (N2): 0.375 / 0.363 / 1.000 (0.790); H5 with 64 x 42 (N3): **0.398 / 0.415** / keep8 0.470 (0.714); H5 with
+256 x 10 (N4): 0.370 / 0.377 / 0.470 (0.703). (128 x 16: E6 0.385 / 0.394, H5 0.396 / 0.402.) Fewer columns with more cells each is
+better: more cells for the same byte in different contexts, as before.
