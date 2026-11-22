@@ -106,3 +106,7 @@ pure serial chain (as the hippocampal trisynaptic path) beside a random graph wi
 Sparser codes give both: with 4 winning columns the chain with shortcuts (A8 in batch 2: keep 0.470) keeps A, and reads code best so far
 (as the dentate gyrus' sparse code separates similar contexts). Structured feedback loops do not break keeping (unlike random loops).
 Parallel pathways keep only when each is long enough.
+
+**Batch 6** (two pathways of different plan, `mesh_dag=5`, L=16 half-size): F2 (graph half K=1): moby 0.388, code 0.378, keep 1.000, mem
+1.000 (0.692); F1 (K=2): 0.382 / 0.364 / 1.000 / 1.000 (0.686); F3 (full-size regions, M=8): 0.374 / 0.345 / 1.000 / 1.000 (0.680). A pure
+chain beside a graph keeps A and reads new streams nearly as well as the graph alone; E6 (one graph, sparser) is as good and simpler.
