@@ -155,3 +155,8 @@ architectures a long context is separated only by long paths of context cells; t
 **Two pathways with 12 regions** (chain of 6 + graph of 6, 4 winners, M=11): M1 (graph K=1): moby 0.395, code 0.402, keep8 0.470, keep4,
 keep2, mem 1.000 (0.711); M2 (K=2): 0.389 / 0.391 / 0.470 (0.708). As predicted, a chain of 6 regions does not reach A's start 9 bytes
 back: the length of a context kept is the length of the pure chain.
+
+**Reading longer, the leaders** (Moby Dick, 64,000 bytes; at 16,000 in brackets; seed 1): H5 graph without loops L=6 M=21, 4 winners
+0.429 (0.396, +0.033); E6 chain + random earlier source, 4 winners 0.425 (0.385, +0.040); F2 two pathways 0.413 (0.388, +0.025); A0
+chain 0.400 (0.381, +0.019); three-byte table 0.452. The sparse architectures gain about twice as much from more reading; H5 and E6 are
+not told apart here.
