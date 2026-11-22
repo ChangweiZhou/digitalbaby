@@ -12,7 +12,7 @@ def num(v):
     return v
 a = {k: num(v) for k, v in (x.split("=") for x in sys.argv[1:])}
 life, G = a.pop("life", "ctx"), a.pop("G", 8)
-warm = a.pop("warm", 0); NT = a.pop("NT", 2000)   # NT: bytes in each text test                     # ctx: sequences of A read with learning off before each A test (time for a slow context to return)
+putback = a.pop("putback", 0); warm = a.pop("warm", 0); NT = a.pop("NT", 2000)   # NT: bytes in each text test                     # ctx: sequences of A read with learning off before each A test (time for a slow context to return)
 rho, K, EP = a.pop("rho", 0.0), a.pop("K", 1000), 40   # rehearsal: a store of K episodes of 40 bytes (each read episode has the same chance to be kept); rho bytes rehearsed a byte read
 TA, TB, TR = a.pop("TA", 4000 if life == "ctx" else 16000), a.pop("TB", 16000), a.pop("TR", 2000)
 netn = a.pop("net", 8)
@@ -67,7 +67,14 @@ else:
 test = lambda: (test_a(), run(Bt, False).mean())
 if TA: A1(TA) if life == "ctx" else run(SH[:TA + 1], True)
 m1 = test()
+if putback: Af1, As1 = net.Af.copy(), net.slow.A.copy()
 run(B1[:TB + 1], True); m2 = test()
+pb = ""
+if putback:                                          # which compartment holds the loss: put each back as it was after A
+    Af2, As2 = net.Af.copy(), net.slow.A.copy()
+    net.Af[...] = Af1; pf = test_a(); net.Af[...] = Af2
+    net.slow.A[...] = As1; ps = test_a(); net.slow.A[...] = As2
+    pb = f" | A after B with the fast compartment of after A put back {pf:.3f}, the slow one {ps:.3f}"
 A1(TR) if life == "ctx" else run(SH[TA:TA + TR + 1], True)
 m3 = test()
-print(f"life={life} rho={rho} warm={warm} NT={NT} {' '.join(f'{k}={v}' for k, v in a.items())} TA={TA} TB={TB}: tests A / B   after A {m1[0]:.3f} / {m1[1]:.3f}   after B {m2[0]:.3f} / {m2[1]:.3f}   after the return {m3[0]:.3f} / {m3[1]:.3f}")
+print(f"life={life} rho={rho} warm={warm} NT={NT} {' '.join(f'{k}={v}' for k, v in a.items())} TA={TA} TB={TB}: tests A / B   after A {m1[0]:.3f} / {m1[1]:.3f}   after B {m2[0]:.3f} / {m2[1]:.3f}   after the return {m3[0]:.3f} / {m3[1]:.3f}" + pb)

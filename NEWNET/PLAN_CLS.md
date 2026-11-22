@@ -189,3 +189,8 @@ about two thirds to three quarters of what A adds over the control is kept throu
 A than alone (0.409 against 0.403, 0.414 against 0.399): reading Shakespeare first transfers to Emma.
 Not yet known: where the lost third is (fast or slow compartment); why replay at this dose does nothing (the slow stage's rate times
 1/20 may simply be too small to matter).
+
+**Where the lost part is** (`putback=1`, 10,000-byte tests): A after A / after B / after B with the fast compartment of after A put back /
+with the slow one put back: seed 1 0.356 / 0.346 / 0.358 / 0.357; seed 2 0.349 / 0.342 / 0.349 / 0.354. Either compartment put back
+restores A fully: the tissue (fast cells, slow states) keeps everything, and both compartments' readings of the contexts the two texts
+share have moved towards B. The loss is the reading of shared contexts following the latest text, in both compartments.
