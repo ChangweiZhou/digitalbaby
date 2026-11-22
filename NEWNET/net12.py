@@ -17,18 +17,23 @@ Compartments (on the same shared mismatch as net10's when joint=1; each adds to 
            groups, and the ctxg_k groups it drives most are the ones open (k winners); the output is the mean over the open groups,
            and only they learn. Similar situations (traces) open the same groups (shared, so what is learned carries over);
            different ones open different groups (what one learned is not overwritten by the other). ctxg=0: one group, always open.
+  ctxg_err=E  the groups are also driven (weight E) by a slow trace (the same time constant) of which lags matched: m_j = 1 when the
+           byte read equals the byte lag j held (a coincidence each relay line can detect; it is the signal it learns by). The trace
+           says which rule has been working, whatever the bytes, so a rule that returns can open the groups it used before.
 W (window), eta_l, eta_r and the ctxg sizes are the same for every stream. Nothing in it is set for a task."""
 import numpy as np
 from net10 import Tissue as Net10
 
 
 class Tissue(Net10):
-    def __init__(self, W=8, lagro=0, relay=0, eta_l=0.2, eta_r=0.2, ctxg=0, ctxg_k=2, ctxg_tau=30.0, **kw):
+    def __init__(self, W=8, lagro=0, relay=0, eta_l=0.2, eta_r=0.2, ctxg=0, ctxg_k=2, ctxg_tau=30.0, ctxg_err=0.0, **kw):
         super().__init__(**kw)
         V = self.V; self.W, self.lagro, self.relay, self.eta_l, self.eta_r = W, lagro, relay, eta_l, eta_r
         self.ng, self.gk, self.gtau = max(ctxg, 1), (ctxg_k if ctxg else 1), ctxg_tau
         self.grp = np.arange(self.gk); self.trace = np.zeros(V)
-        if ctxg: self.P = np.random.default_rng(kw.get("seed", 1) + 1234).normal(0, 1, (ctxg, V))
+        self.gerr = ctxg_err; self.mtrace = np.zeros(W)
+        if ctxg:
+            gr = np.random.default_rng(kw.get("seed", 1) + 1234); self.P = gr.normal(0, 1, (ctxg, V)); self.Q = gr.normal(0, 1, (ctxg, W))
         self.lagb = [-1] * W                                                               # bytes at lags 0..W-1 (-1: none yet)
         extra = (1 if lagro else 0) + (1 if relay else 0)
         if self.joint:
@@ -62,7 +67,12 @@ class Tissue(Net10):
         self.lagb = [byte] + self.lagb[:-1]                                                # over every compartment: _osum)
         if self.ng > 1:                                                                    # the slow trace and the open groups
             self.trace *= 1 - 1 / self.gtau; self.trace[byte] += 1 / self.gtau
-            self.grp = np.argpartition(-(self.P @ self.trace), self.gk - 1)[: self.gk]
+            drive = self.P @ self.trace                                                   # (the trace sums to about 1)
+            if self.gerr:                                                                  # which lags j >= 1 held the byte just read
+                m = np.array([0.0] + [1.0 if u == byte else 0.0 for u in self.lagb[1:]])
+                self.mtrace += (m - self.mtrace) / self.gtau
+                drive = drive + self.gerr * (self.Q @ (self.mtrace / (np.linalg.norm(self.mtrace) + 1e-9)))
+            self.grp = np.argpartition(-drive, self.gk - 1)[: self.gk]
         act = self._act()
         if self.lagro: self.Ob = self.B[self.grp][:, :, act].sum(2).mean(0)
         if self.relay:
