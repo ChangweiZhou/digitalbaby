@@ -4,7 +4,7 @@ Tests with learning off at the end of each phase: the A test (ctx: right share a
 texts: right share on 2,000 bytes of A never read, from 600,000) and the B test (2,000 bytes of B never read, from 600,000).
 Control: TA=0 (B only). Usage: python3 t13_life8.py [life=ctx|texts TA TB TR G seed ...net8 parameters]"""
 import sys, numpy as np
-from net8 import Tissue
+import importlib
 def num(v):
     for f in (int, float):
         try: return f(v)
@@ -14,8 +14,9 @@ a = {k: num(v) for k, v in (x.split("=") for x in sys.argv[1:])}
 life, G = a.pop("life", "ctx"), a.pop("G", 8)
 rho, K, EP = a.pop("rho", 0.0), a.pop("K", 1000), 40   # rehearsal: a store of K episodes of 40 bytes (each read episode has the same chance to be kept); rho bytes rehearsed a byte read
 TA, TB, TR = a.pop("TA", 4000 if life == "ctx" else 16000), a.pop("TB", 16000), a.pop("TR", 2000)
+netn = a.pop("net", 8)
 kw = dict(n_values=128, N=1024, tau_max=150, center=1000, fb="none", gran=8192, out_var=1000); kw.update(a)
-net = Tissue(**kw); rng = np.random.default_rng(kw.get("seed", 1) + 1000)
+net = importlib.import_module("net%d" % netn).Tissue(**kw); rng = np.random.default_rng(kw.get("seed", 1) + 1000)
 here = "/home/user/digitalbaby/"
 SH = np.frombuffer(open(here + "PROJECT_DOCUMENTS/MINIFLY_OUTSIDE_ADVICE_20261118/nano/data/tinyshakespeare.txt", "rb").read(), np.uint8).astype(int)
 EM = np.frombuffer(open(here + "minifly_v155_keys_dev_v1_20261026/data/austen-emma.txt", "rb").read(), np.uint8).astype(int)
@@ -30,6 +31,10 @@ srng = np.random.default_rng(kw.get("seed", 1) + 77); every = int(round((EP - 10
 STATE = ("h", "y", "z", "O", "byte", "prev_byte", "yprev", "hprev_byte", "m")
 def rehearse():
     ep = store[int(srng.integers(len(store)))]
+    if hasattr(net, "get_state"):
+        keep = net.get_state(); net.replaying = True; net.byte = None; net.slow.byte = None
+        for t in range(EP): net.step(int(ep[t]), t >= 10)
+        net.replaying = False; net.set_state(keep); return
     keep = {k: (getattr(net, k).copy() if hasattr(getattr(net, k), "copy") else getattr(net, k)) for k in STATE if hasattr(net, k)}
     net.byte = None                                                    # nothing is learned from the stream's last answer here
     for t in range(EP):
@@ -62,4 +67,4 @@ m1 = test()
 run(B1[:TB + 1], True); m2 = test()
 A1(TR) if life == "ctx" else run(SH[TA:TA + TR + 1], True)
 m3 = test()
-print(f"life={life} {' '.join(f'{k}={v}' for k, v in a.items())} TA={TA} TB={TB}: tests A / B   after A {m1[0]:.3f} / {m1[1]:.3f}   after B {m2[0]:.3f} / {m2[1]:.3f}   after the return {m3[0]:.3f} / {m3[1]:.3f}")
+print(f"life={life} rho={rho} {' '.join(f'{k}={v}' for k, v in a.items())} TA={TA} TB={TB}: tests A / B   after A {m1[0]:.3f} / {m1[1]:.3f}   after B {m2[0]:.3f} / {m2[1]:.3f}   after the return {m3[0]:.3f} / {m3[1]:.3f}")
