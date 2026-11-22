@@ -22,3 +22,24 @@ Moby Dick 0.292 / 0.368 / 0.379 for the last 1 / 2 / 3 bytes; code 0.255 / 0.349
 Readings: (1) with compartments that each learn alone, more modules were worse (votes of many self-confident compartments add up);
 (2) the general rule, one delta rule over all of them with one step, removes that: on a never-used text it is above the three-byte
 table at every size; (3) size neither helps nor hurts at 16,000 bytes read. Longer reading (64,000) at L=2, 4, 8 is running.
+
+**Reading longer** (64,000 bytes, joint=1; count tables 0.294 / 0.390 / 0.452): L=2 0.409, L=4 0.418, L=8 0.400. Code (16,000, L=4, joint):
+0.384 (tables 0.255 / 0.349 / 0.386; own-mismatch form 0.347). More reading helps; more modules beyond 4 still do not.
+
+## A mesh instead of a chain (owner: the nervous system is a net, not layers)
+
+`net7 mesh=K`: each region takes its columns from the byte's lines (its own wiring) and its context from K other regions' cells at the
+byte before. Moby Dick, 16,000 bytes, joint=1, L=8 unless stated:
+
+| Graph | held-out |
+|---|---|
+| chain (net10 as above) | 0.381 |
+| random graph with loops, plus each region's own columns of the byte before (`mesh_base=1`), K = 2 / 4 | 0.350 / 0.355 |
+| random graph with loops, no own base, K = 1 / 2 (K=2 also L=4: 0.333; L=16 half-size: 0.319) | 0.317 / 0.324 |
+| **random graph without loops** (`mesh_dag=1`: region d reads regions before it; a region with none reads the byte before), K = 1 / 2 | **0.395 / 0.394** |
+| the same, K = 2, L = 16 half-size modules | 0.385 |
+
+Readings: with loops and no base the codes depend on the whole past (they do not recur: held-out falls); with the base, the byte
+before dominates every region's context (128 of its active sources against 8 from each other region), so every region codes about
+two bytes (predicted share 0.57 against 0.18 for the chain, yet worse held-out). Without loops the paths of a random graph have many
+lengths, so contexts of many lengths, bounded: better than the chain.
