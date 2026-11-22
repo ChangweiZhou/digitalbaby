@@ -61,6 +61,13 @@ if life == "ctx":
         if warm: run(seqs(warm)[0], False)
         s, d = seqs(100); return run(s, False)[d].mean()
     A1 = lambda n: run(seqs(n // (G + 2))[0], True); B1 = SH; Bt = SH[600000:600000 + NT + 1]
+elif life in ("enzh", "zhen"):                        # English (tinyshakespeare) and Chinese (Hong Lou Meng, UTF-8, from a Gutenberg mirror:
+    ZH = np.frombuffer(open(here + "NEWNET/data/hongloumeng.txt", "rb").read(), np.uint8).astype(int)   # gutenberg.pglaf.org/2/4/2/6/24264/24264-0.txt)
+    EN_r, EN_t, ZH_r, ZH_t = SH, SH[600000:600000 + NT + 1], ZH[100000:], ZH[1500000:1500000 + NT + 1]
+    if life == "enzh": Ar, At, B1, Bt = EN_r, EN_t, ZH_r, ZH_t
+    else: Ar, At, B1, Bt = ZH_r, ZH_t, EN_r, EN_t
+    def test_a(): return run(At, False).mean()
+    A1 = None; SH = Ar                                   # A is read from Ar's start (the code below reads SH[:TA] for A)
 else:
     def test_a(): return run(SH[600000:600000 + NT + 1], False).mean()
     A1 = None; B1 = EM[50000:]; Bt = EM[600000:600000 + NT + 1]
