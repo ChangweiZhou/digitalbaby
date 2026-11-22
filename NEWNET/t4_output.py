@@ -67,11 +67,13 @@ if kind == "context":
     extra += f" | at the byte after C (last quarter): {right[dec].mean():.3f} (1/NB={1/NB:.3f} without context; G={G} NB={NB})"
 if kind == "text":                                       # yardsticks (count tables of the whole past; reference only, not learners)
     from collections import Counter, defaultdict
-    t1, t2 = defaultdict(Counter), defaultdict(Counter); r1 = np.zeros(T, bool); r2 = np.zeros(T, bool)
+    t1, t2, t3 = defaultdict(Counter), defaultdict(Counter), defaultdict(Counter); r1, r2, r3 = np.zeros(T, bool), np.zeros(T, bool), np.zeros(T, bool)
     for t in range(T):
         x, y = stream[t], stream[t + 1]; k2 = (stream[t - 1], x) if t else None
         r1[t] = bool(t1[x]) and t1[x].most_common(1)[0][0] == y
         r2[t] = bool(t2[k2]) and t2[k2].most_common(1)[0][0] == y if t2[k2] else r1[t]
-        t1[x][y] += 1; t2[k2][y] += 1
-    extra = f" | last quarter, count tables (reference): last byte {r1[3*q:].mean():.3f}, last two {r2[3*q:].mean():.3f}"
+        k3 = (stream[t - 2], stream[t - 1], x) if t > 1 else None
+        r3[t] = t3[k3].most_common(1)[0][0] == y if t3[k3] else r2[t]
+        t1[x][y] += 1; t2[k2][y] += 1; t3[k3][y] += 1
+    extra = f" | last quarter, count tables (reference): last byte {r1[3*q:].mean():.3f}, last two {r2[3*q:].mean():.3f}, last three {r3[3*q:].mean():.3f}"
 print(f"{mode:5s} {kind:7s} regions={net.L}: right share by quarter " + " ".join(f"{right[i*q:(i+1)*q].mean():.3f}" for i in range(4)) + extra)

@@ -19,6 +19,8 @@ Context part, per region:
   restarts at every unpredicted byte and grows only along predicted paths (bounded, variable order).
   ctx=1: the previous-byte part is the previous byte's columns (every cell of a winning column counts), so a cell codes
   (present byte, previous byte), order 2, and no default cell is forced on surprise; the hold still takes the code on surprise.
+  ctx=2: as ctx=1 in region 0; region d > 0 takes region d-1's cells at the previous byte, so region d codes the last d + 2
+  bytes (order fixed by depth, no chain).
   The hold persists between surprises: through bytes the region predicts, the code of the last uncertain byte is kept."""
 import numpy as np
 
@@ -56,6 +58,7 @@ class Tissue:
         L, C, M, S = self.L, self.C, self.M, self.S
         cols = self.forward(byte)
         prevc = np.repeat(self.cols[:, :, None], M, 2) if self.ctx_mode else self.cells      # ctx=1: every cell of a column that won counts
+        if self.ctx_mode == 2: prevc = np.concatenate([prevc[:1], self.cells[:-1]], 0)    # ctx=2: region d > 0 reads region d-1's previous cells
         ctx = np.concatenate([prevc.reshape(L, -1), self.hold.reshape(L, -1)], 1)          # [L, 2*C*M]
         act = (ctx > 0).ravel()[self.gsrc] & (self.rw > 0)
         strong = act & (self.rw >= self.w_on); isH = self.rsrc >= C * M                  # slot from a hold cell

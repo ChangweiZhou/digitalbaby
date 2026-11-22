@@ -148,3 +148,17 @@ cells at 1.00 (chance 0.12; 11-13 codes for a present byte), and
 
 So the tissue now reaches the two-byte table on text. Open: beyond order 2 (more context than the previous byte without the chain
 coming back); one tissue that does both the context stream (needs the hold) and text (the hold must not be required); yes/no on text.
+
+**Beyond order 2: the order set by depth (`ctx=2`).** Region 0 takes the previous byte's columns as its previous-byte context;
+region d > 0 takes region d-1's cells at the previous byte. Region d then codes the last d + 2 bytes, and since a region's context
+never depends on itself the chain cannot come back. Text, T=8000, teach, delta, `hold=0`, last quarter (count tables, reference:
+last byte 0.289, last two 0.407, last three 0.458):
+
+| Setting | seed 1 | seed 2 | seed 3 |
+|---|---|---|---|
+| 3 regions, M=16, S=64 | 0.440 | 0.433 | 0.426 |
+| 2 regions, M=8 | 0.426 | | |
+| 3 regions, M=32 (200 s) | 0.441 | | |
+| 4 regions, M=16 | 0.425 | | |
+
+Above the two-byte table on three seeds, below the three-byte table; more cells or a fourth region did not add.
