@@ -110,3 +110,23 @@ on codes that do repeat in text (the default codes, one per byte value), so it a
 
 So the fast stage meets a dilemma of its own: reset at uncertain bytes, and its chains start from codes text shares and are rerouted;
 no reset, and its codes split by the whole past and do not recur.
+
+## Step 4 (22 November 2026): the fast stage bound to a slowly drifting context (seed 1)
+
+Fast cells' context also requires the slow context code (`f_slow`, net7 `slow`), resets as before (`f_nodef=0`). The A test was also
+run after a warm-up of A sequences read with learning off (`warm`), so that a slow context could return before A is scored.
+
+| Arm | A after A | A after B | text held-out |
+|---|---|---|---|
+| slow stage only (warm 100) | 0.990 | 0.400 | 0.302 |
+| fast, context tau 300 / 1,000 (no warm) | 0.800 / 0.920 | 0.000 / 0.000 | 0.202 / 0.204 |
+| fast, context tau 300 (warm 50 / 100) | 0.760 / 0.720 | 0.000 / 0.000 | |
+| fast, context tau 1,000 (warm 100) | 0.880 | 0.000 | |
+| fast reads only cells with context (`f_skip0=1`), no slow context (warm 100) | 1.000 | 0.400 | 0.302 |
+| the same with slow context tau 300 | 0.740 | 0.000 | 0.202 |
+
+Readings: (1) the fast compartment's default cells (context-free, one code per byte, taught fast in text) cast a strong wrong vote at
+A's gap; reading only cells with context removes the harm (text back to 0.302, A learned 1.000) but the fast stage then adds nothing
+(A after B 0.400, as the slow stage alone). (2) Binding to the slow context hurts in every form tried: A is learned less well and text
+falls to 0.20 (my reading, not checked: contexts split by the slow code are each learned once at a fast rate, and loose matching lets
+a cell fire, with its vote, in contexts close to the one it was taught in). No form of the fast stage tried keeps A.

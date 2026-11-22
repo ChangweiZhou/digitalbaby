@@ -12,6 +12,7 @@ def num(v):
     return v
 a = {k: num(v) for k, v in (x.split("=") for x in sys.argv[1:])}
 life, G = a.pop("life", "ctx"), a.pop("G", 8)
+warm = a.pop("warm", 0)                     # ctx: sequences of A read with learning off before each A test (time for a slow context to return)
 rho, K, EP = a.pop("rho", 0.0), a.pop("K", 1000), 40   # rehearsal: a store of K episodes of 40 bytes (each read episode has the same chance to be kept); rho bytes rehearsed a byte read
 TA, TB, TR = a.pop("TA", 4000 if life == "ctx" else 16000), a.pop("TB", 16000), a.pop("TR", 2000)
 netn = a.pop("net", 8)
@@ -56,7 +57,9 @@ def run(stream, learn):
         net.step(int(stream[t]), learn); r[t] = net.answer() == stream[t + 1]
     return r
 if life == "ctx":
-    def test_a(): s, d = seqs(100); return run(s, False)[d].mean()
+    def test_a():
+        if warm: run(seqs(warm)[0], False)
+        s, d = seqs(100); return run(s, False)[d].mean()
     A1 = lambda n: run(seqs(n // (G + 2))[0], True); B1 = SH; Bt = SH[600000:602001]
 else:
     def test_a(): return run(SH[600000:602001], False).mean()
@@ -67,4 +70,4 @@ m1 = test()
 run(B1[:TB + 1], True); m2 = test()
 A1(TR) if life == "ctx" else run(SH[TA:TA + TR + 1], True)
 m3 = test()
-print(f"life={life} rho={rho} {' '.join(f'{k}={v}' for k, v in a.items())} TA={TA} TB={TB}: tests A / B   after A {m1[0]:.3f} / {m1[1]:.3f}   after B {m2[0]:.3f} / {m2[1]:.3f}   after the return {m3[0]:.3f} / {m3[1]:.3f}")
+print(f"life={life} rho={rho} warm={warm} {' '.join(f'{k}={v}' for k, v in a.items())} TA={TA} TB={TB}: tests A / B   after A {m1[0]:.3f} / {m1[1]:.3f}   after B {m2[0]:.3f} / {m2[1]:.3f}   after the return {m3[0]:.3f} / {m3[1]:.3f}")
