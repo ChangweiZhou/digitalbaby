@@ -306,3 +306,7 @@ cells (whose state differs between texts) with recent bytes fire only in one tex
 **H10.** Slower clocks (`tau_max=1000`) or wider expansion cells (`g_fan=8`) raise the kept share of A's own part after B above 0.64
 (seed 1, 10,000-byte tests, each arm with its own B-only control), with B after B within 0.01 of its arm without the change.
 **Refuted if** neither arm raises the kept share.
+
+**Step 10, seed 1** (10,000-byte tests): tau_max 1000: control 0.325, A 0.352 -> 0.344, kept 0.70, B 0.402; g_fan 8: control 0.323,
+A 0.350 -> 0.344, kept 0.78, B 0.411 (step 6 without change: 0.64, B 0.409). A's own part is about 0.027 and each test has a standard
+error of about 0.005, so a kept share from one seed is uncertain by about +-0.25: not decidable on one seed. g_fan 8 is run on seeds 2-3.
