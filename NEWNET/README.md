@@ -378,3 +378,19 @@ hand-built NEWNET with 8 order regions kept this case (1.000). (2) Rehearsal at 
 of the store is A, so at 1/20 about 1% of the bytes learned are A's. (3) On text read with learning off, never-read Shakespeare is
 0.23 after 16,000 bytes of it, below the online share (0.34) and below a learner that read only Emma (0.251): much of the online
 share is local repetition; NEWNET's order areas gave 0.33-0.37 on the same kind of test.
+
+**Why A is lost: pattern separation measured (`t14_overlap.py`; after A and 4,000 bytes of text, learning off).** Share of the
+expansion cells active at A's gap that are also active where the same letter comes in text:
+
+| Expansion | active at the gap | per text occurrence | ever, over 50 occurrences | of the cells only one branch has, ever | shared by A's two branches |
+|---|---|---|---|---|---|
+| 8,192, fan 4, 2% | 160 | 0.14 | 0.81 | 0.97 | 0.81 |
+| 8,192, fan 8, 2% | 163 | 0.09 | | | 0.70 |
+| 8,192, fan 16, 0.5% | 37 | 0.02 | 0.43 | 0.43 | 0.62 |
+| 8,192, fan 32 / 64, 0.5% | 32 / 37 | 0.05 / 0.05 | 0.59 / 0.73 | 0.64 / 0.65 | 0.66 / 0.54 |
+| 32,768, fan 32 / 64, 0.2% | 58 / 56 | 0.04 / 0.03 | 0.50 / 0.50 | 0.38 / 0.29 | 0.64 / 0.57 |
+
+Each text occurrence shares few cells with A's gap code, but over many occurrences most of A's cells, and nearly all of those that
+tell its branches apart, are taught by text. Wider or sparser expansion does not separate A from text much: the tissue's states at
+a letter inside A and at the same letter in text differ mainly in its slow cells, by about 0.02, and a random expansion cannot make
+them more different than they are. Keeping therefore needs the tissue itself to represent a sequence's context distinctly.
