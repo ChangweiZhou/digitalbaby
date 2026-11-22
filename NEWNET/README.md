@@ -162,3 +162,21 @@ last byte 0.289, last two 0.407, last three 0.458):
 | 4 regions, M=16 | 0.425 | | |
 
 Above the two-byte table on three seeds, below the three-byte table; more cells or a fourth region did not add.
+
+## One tissue for both streams (`net6.py`), 22 November 2026
+
+Two kinds of area given at birth, side by side on the same input lines, read by one output end (fixed architecture, reported
+apart from what is learned): order areas (`ctx=2, hold=0`, 3 regions, M=16, S=64) and hold areas (net5's surprise-gated hold,
+`burst=1`, 6 regions). Output end: delta rule, teach, all cells of both. Last quarter:
+
+| Case | seed 1 | seed 2 | seed 3 |
+|---|---|---|---|
+| order areas alone, text, eta_out 0.2 (count tables, reference: 0.289 / 0.407 / 0.458) | 0.453 | 0.447 | 0.441 |
+| both, context stream G=16, at the byte after the gap | 1.000 (eta 0.1) | 1.000 | 1.000 |
+| both, context stream G=8 / G=32 (64 values), seed 1 | 1.000 / 1.000 | | |
+| both, text, eta_out 0.1 / 0.2 / 0.3 | 0.393 / 0.405 / 0.404 | 0.393 (0.1) | |
+| both with 12 hold regions, no burst, text, eta 0.1 | 0.381 | | |
+
+One tissue now carries a branch across 32 predictable bytes and passes the two-byte table on text, but on text the hold areas
+cost 0.04-0.05 against the order areas alone; a larger output rate does not recover it, so it is interference of the hold
+areas' activity at the output end, not its rate. Cost: about 190 s for 8,000 bytes of text with both (too slow for the 2-minute rule).
