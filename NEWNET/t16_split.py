@@ -12,7 +12,7 @@ a = {k: num(v) for k, v in (x.split("=") for x in sys.argv[1:])}
 G, T = a.pop("G", 12), a.pop("T", 60000)
 kw = dict(f_mode="order", eta_f=0.2, f_M=16, n_values=64, N=1024, tau_max=150, center=1000, fb="none", gran=8192, out_var=1000); kw.update(a)
 net = Tissue(**kw); rng = np.random.default_rng(kw.get("seed", 1) + 1000)
-u = rng.choice(64, G + 4, replace=False); mid = list(u[:G]); st, en = u[G:G + 2], u[G + 2:]
+u = rng.choice(net.V, G + 4, replace=False); mid = list(u[:G]); st, en = u[G:G + 2], u[G + 2:]
 s = []; dec = []
 while len(s) < T + 1: b = rng.integers(2); s += [st[b]] + mid + [en[b]]; dec.append(len(s) - 2)
 on = np.zeros(T, bool)
