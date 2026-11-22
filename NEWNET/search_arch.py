@@ -21,7 +21,7 @@ res = {}
 for t, (p, t0) in procs.items():
     out = p.communicate()[0]; m = re.search(pat[t], out)
     res[t] = float(m.group(1)) if m else float("nan")
-    with open(os.path.join(here, "search_results.tsv"), "a") as f:
+    with open(os.path.join(here, os.environ.get("SEARCH_OUT", "search_results.tsv")), "a") as f:
         f.write(f"{name}\t{opts}\t{t}\t{res[t]:.3f}\t{time.time() - t0:.0f}\n")
     if not m: print(f"{name} {t}: no result\n{out[-600:]}")
 score = sum(res.values()) / len(res)
