@@ -174,3 +174,18 @@ the B test within 0.01 of step 5. **Refuted if** the kept share does not rise or
 
 Not decidable at this size: a 2,000-byte test has a standard error of about 0.011 at 0.34, and A's own part is 0.02-0.04. The step is
 repeated with 10,000-byte tests (standard error about 0.005).
+
+## Outcome of step 6 (entered 22 November 2026; 10,000-byte tests, standard error about 0.005; seeds 1-2)
+
+| | seed 1 | seed 2 |
+|---|---|---|
+| B-only control: A test / B test | 0.328 / 0.403 | 0.321 / 0.399 |
+| no replay: A after A -> after B (kept share of A's own part) | 0.356 -> 0.346 (0.64) | 0.349 -> 0.342 (0.75) |
+| replay 1/20 to the slow stage | 0.357 -> 0.345 (0.59) | 0.348 -> 0.343 (0.81) |
+| B after B: no replay / replay | 0.409 / 0.410 | 0.414 / 0.412 |
+
+**H6 refuted**: replay to the slow stage changes the kept share by -0.05 and +0.06, within the noise. Two facts measured at this size:
+about two thirds to three quarters of what A adds over the control is kept through 16,000 bytes of B; and B is learned better after
+A than alone (0.409 against 0.403, 0.414 against 0.399): reading Shakespeare first transfers to Emma.
+Not yet known: where the lost third is (fast or slow compartment); why replay at this dose does nothing (the slow stage's rate times
+1/20 may simply be too small to matter).
