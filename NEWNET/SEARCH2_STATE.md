@@ -50,3 +50,6 @@ life27 0.594 / 0.607 / 0.616, code 0.406 / 0.419 / 0.430, moby 0.399 / 0.406 / 0
 saturation yet). Columns saturate: cC=64 / 128 / 256 -> life23 0.609 / 0.613 / 0.611 (keeping zhen 0.949 / 0.986 / 0.989).
 Best held-out: E6 cC=128 M=64 (8x): lives 0.631 / 0.617, code 0.432, zhen 0.981, held 0.677. Not a plateau along M: the next
 batch (after S3a seeds) should continue cells per column (M=128 with cC=64 and cC=128), seeds for E3/E6.
+
+23:20 owner approved continuing along cells per column. S4 launched: a F1 M=128 (claude/newnet-s5a-sei232), b F2 cC=128 M=128
+(s5b), c seeds 2-3 of E3 M=64 (s5c), d seeds 2-3 of E6 cC=128 M=64 (s5d). Then the plateau decision and the held-out log-perplexity.
