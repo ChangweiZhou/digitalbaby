@@ -51,3 +51,18 @@ K8 0.06 and 0.38.
    all three 0.93. The full-size lives with xdg are run by a helper (claude/newnet-xdg-sei232).
 5. Battery (helper claude/newnet-battery12-sei232, in progress): net12's new compartments change Moby Dick / code by at most 0.002 at
    seed 1 and keep every keeping/memory test at 1.0: they cost nothing on natural text, and gain nothing there either.
+
+## Addendum (23 November): the small-test gains do not hold at full size (seed 1, helper claude/newnet-xdg-sei232)
+
+| t23, cue=1 unless noted | bits | text probe after text -> end | succ after succ -> end | first-met P0 copy b / c |
+|---|---|---|---|---|
+| net12 relay (baseline) | 828,527 | 0.35 -> 0.24 | 0.98 -> 0.07 | 0.98 / 0.73 |
+| + xdg=8 lag_xdg=1 | 889,862 | 0.34 -> 0.21 | 0.33 -> 0.02 | 0.92 / 0.65 |
+| + xdg=8 lag_xdg=1, cue=0 | 900,181 | 0.35 -> 0.22 | 0.53 -> 0.02 | 0.92 / 0.65 |
+| + xdg=8 | 847,565 | 0.33 -> 0.22 | 0.96 -> 0.09 | 0.98 / 0.73 |
+| + lagro_gate=1 | 826,281 | 0.35 -> 0.24 | 0.99 -> 0.07 | 0.98 / 0.73 |
+
+Context-gated cells and per-group lag strengths keep neither the text nor the learned mapping at full size, and they learn less
+(the 4-region test's 0.85 -> 0.945 is refuted here). Pair cells (pairs=32768) in the 4-region test: succ kept 0.68 after copy
+(without 0.58) but copy learned far more slowly (0.17 against 0.73 in the first 200 lines) and suffered more from succ (0.44 against
+0.53); not taken further. E2 for a learned mapping and for text remains open.
