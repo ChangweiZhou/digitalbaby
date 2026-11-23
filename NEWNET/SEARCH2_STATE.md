@@ -40,3 +40,7 @@ S2c, S2d merged (19:59): seeds 1-3 means (+- sd):
 | cC=128 | 0.395+-0.006 | 0.406+-0.008 | 0.613+-0.000 | 0.598+-0.000 | 1.003+-0.011 | 0.979+-0.006 |
 | M=32 | 0.400+-0.007 | 0.416+-0.005 | 0.622+-0.001 | 0.606+-0.001 | 0.989+-0.015 | 0.963+-0.020 |
 Both widenings hold on three seeds: M=32 mainly prediction (lives, code), cC=128 mainly keeping (zhen +0.04, enzh +0.02).
+
+21:08 S2 partial (seed 1): cC=128 M=32 0.624 / 0.609 (lives), code 0.426; + rc_all=1 0.631 / 0.615 (best lives); cC=256 0.611 / 0.598
+(columns saturate on prediction, keeping 0.989); cC=256 M=32 0.622 / -, moby 0.407, enzh 1.021. Diminishing returns from 4x to 8x size.
+S3a launched early (branch claude/newnet-s4a-sei232): seeds 2-3 of E4 (cC=128 M=32 rc_all=1) and E1 (cC=128 M=32).
