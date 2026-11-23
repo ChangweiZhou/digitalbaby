@@ -26,3 +26,9 @@ same branch to: fetch its branch, `git merge origin/claude/magical-albattani-sei
 `bash search2_batch.sh search2_cands_s1X.txt search2_results_s1X.tsv`.
 
 Owner (17:45): measure held-out log-perplexity (bits/nats per byte, t26_calib.py) of the final architectures at the end, when the search is done - not as a search criterion now.
+
+Serial depth (owner, 23 Nov ~18:45; the real-time argument: a reaction allows only a few serial steps, so prefer width): the summary
+now records each candidate's depth (regions on the longest source path of the context tissue). In S1 the two deeper candidates were
+the worse ones (L=24: depth 12; mesh=2 mesh_dag=2: depth 16; all others 8). Rule for the search: widen, keep depth <= 8.
+Next direction after the search (general, not a device): learning state carried over time (computation spread across steps rather
+than deeper per step) - to be designed and judged on the whole battery.
