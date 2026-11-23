@@ -46,3 +46,30 @@ Run 7's multiplier m (mean per window): 0.97-0.98 while stable; after copy -> re
   it (window 11, 0.89). P0 b/c 0.993/0.836 (not below 0.97/0.75; it does not cost layers b/c). The mechanism as specified barely
   acts: the slow mean (2,000 bytes, ~220 lines) catches up with the raised error within about one window, so m returns to ~1 while
   the error stays high for ~1,750 lines.
+
+## Post-hoc runs (after seeing the planned results; diagnostic, not used for the verdicts above)
+
+| run | feedback | P0 copy b | P0 copy c | P1 rev b | P1 rev c | P2 copy b | P2 copy c |
+|---|---|---|---|---|---|---|---|
+| 6a' unc=1, unc_noise 0.2 | yes/no | 0.051 | 0.036 | 0.024 | 0.000 | 0.061 | 0.000 |
+| 7b surp=1, slow mean 50,000 bytes | teach | 0.994 | 0.855 | **0.842** | 0.750 | 0.910 | 0.857 |
+
+7b copy -> rev: 0.34 0.34 0.35 0.35 0.39 0.55 0.76 0.88 **0.95** 0.98 0.99 0.99 (0.9 reached in window 9, against 11 without it);
+rev -> copy: 0.61 0.66 0.69 0.70 0.72 0.80 0.85 0.91 0.94 0.98 0.99 1.00 (about the same as without it). m: 1.13-1.16 just before
+the change (the slow mean still settling from the start of the life), 1.71 in the first rev window, then falling slowly (1.64,
+1.54, ... 1.10 by window 18); 1.23 after the return to copy.
+
+What they add:
+- 6a is fragile: doubling the uncertainty noise (0.1 -> 0.2) destroys learning (P0 b 0.051, 95% of answers wrong early on).
+  The 0.1 setting was the first one tried at full size; at 6,000 lines 0.3 was also bad. So 6a's gain sits in a narrow noise range.
+- The reading of idea 7's failure holds: with a slower mean the multiplier stays raised for the whole switch, and the switch is
+  faster (0.9 in window 9 instead of 11; P1 rev b 0.84 instead of 0.77), with no loss on P0 b/c (0.994/0.855). It still does not
+  meet the planned criterion (window 4). The ~1,250-line plateau at 0.34 is shortened by only ~500 lines: with m below 2, a rise of
+  the rates cannot undo the copy gate quickly.
+
+## Plain verdict (seed 1)
+- Idea 6: not met. Uncertainty-scaled noise raised P0 copy b from 0.14 to 0.498 (criterion 0.5), in a narrow noise range;
+  inhibition of return made things worse in both forms tried.
+- Idea 7: not met. As planned it did nothing measurable (m returned to ~1 within one window). With a slower mean (post hoc) it sped
+  the switch from 11 to 9 windows without cost to layers b/c, still far from 4 windows.
+Limits: one seed; layer c has 14-55 bytes; the post-hoc settings were chosen after seeing the results; no repeat with other seeds.
