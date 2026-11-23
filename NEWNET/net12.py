@@ -55,7 +55,7 @@ from net10 import Tissue as Net10
 
 
 class Tissue(Net10):
-    def __init__(self, W=8, lagro=0, relay=0, eta_l=0.2, eta_r=0.2, ctxg=0, ctxg_k=2, ctxg_tau=30.0, ctxg_err=0.0, eta_m=0.05, match=0, xdg=0, xdg_f=0.5, xdg_tau=200.0, lag_xdg=0, xvig=0.0, xvig_tau=30.0, xdg_nov=0, lagro_gate=0, eta_bg=0.2, pairs=0, pairs_gate=0, **kw):
+    def __init__(self, W=8, lagro=0, relay=0, eta_l=0.2, eta_r=0.2, ctxg=0, ctxg_k=2, ctxg_tau=30.0, ctxg_err=0.0, eta_m=0.05, match=0, xdg=0, xdg_f=0.5, xdg_tau=200.0, lag_xdg=0, xvig=0.0, xvig_tau=30.0, xdg_nov=0, lagro_gate=0, eta_bg=0.2, pairs=0, pairs_gate=0, pairs_only=0, **kw):
         super().__init__(**kw)
         V = self.V; self.W, self.lagro, self.relay, self.eta_l, self.eta_r = W, lagro, relay, eta_l, eta_r
         self.lag_xdg = lag_xdg                                                             # lag_xdg=1: the lag compartments' groups are the xdg
@@ -75,6 +75,7 @@ class Tissue(Net10):
         self.xnov = xdg_nov; self.xlt = np.full(V, 1e-3)
         if xvig: self.Ef = np.zeros(xdg); self.Es = np.ones(xdg); self.sup = np.zeros(xdg); self.nreset = 0
         self.match = match; self.npair = pairs; self.nin = W * V + match * (W - 1) + pairs # inputs: lag cells, match cells, pair cells
+        self.pairs_only = pairs_only                                                       # pairs_only=1: the direct readout reads pair cells only
         self.pairs_gate = pairs_gate                                                       # pairs_gate=0: pair cells feed the direct readout only
         self.poff = W * V + match * (W - 1); self.hseed = (kw.get("seed", 1) * 2654435761) % (2 ** 32)
         extra = (1 if lagro else 0) + (1 if relay else 0)
@@ -116,12 +117,15 @@ class Tissue(Net10):
             act = self._act()
             if self.bgate and len(act):                                                    # the readout's gates, by agreement
                 self.H[:, act] += (self.eta_bg / len(act) / self.ncomp) * (self.cj @ e)[:, None]
+            bact = act[act >= self.poff] if (self.pairs_only and self.npair) else act
             for g in self.grp:                                                             # only the open groups learn
-                if self.lagro and len(act):
+                if self.lagro and len(bact):
+                    act_, act = act, bact
                     if self.bgate:
                         sc = np.array([self.bj[i // self.V] if i < self.W * self.V else 1.0 for i in act])
                         self.B[g][:, act] += (self.eta_l / len(act) / self.ncomp) * e[:, None] * sc[None, :]
                     else: self.B[g][:, act] += (self.eta_l / len(act) / self.ncomp) * e[:, None]
+                    act = act_
                 if self.relay and len(act):
                     el = np.array([e[u] if u >= 0 else 0.0 for u in self.lagb])           # the mismatch on the line each lag carries
                     ga = act if (self.pairs_gate or not self.npair) else act[act < self.poff]
@@ -165,7 +169,9 @@ class Tissue(Net10):
             for i in act:
                 if i < self.W * self.V: self.cj[i // self.V] += Bm[:, i]
             self.Ob = (self.bj[:, None] * self.cj).sum(0) + sum(Bm[:, i] for i in act if i >= self.W * self.V) + np.zeros(self.V)
-        elif self.lagro: self.Ob = self.B[self.grp][:, :, act].sum(2).mean(0)
+        elif self.lagro:
+            bact = act[act >= self.poff] if (self.pairs_only and self.npair) else act
+            self.Ob = self.B[self.grp][:, :, bact].sum(2).mean(0)
         if self.relay:
             ga = act if (self.pairs_gate or not self.npair) else act[act < self.poff]
             self.a = self.G[self.grp][:, :, ga].mean(2).mean(0) if len(ga) else np.zeros(self.W); self.Or = np.zeros(self.V)
