@@ -19,7 +19,7 @@ learning on; every pair new), old length (1-4 digits) / new length (5-8). Free: 
 | net12 lagro=1 relay=1 (ADD_REPORT.md) | col | 0.466 / 0.031 | 0.00 | - | 1628 s |
 | **net13** (rc=64, k=3, tau=8, vig=0.4) | col | 0.462 / **0.031** | 0.00 | 0.734 / 0.501 | 1294 s |
 | net13, rule cells also read match cells (rc_match=4) | col | 0.467 / **0.033** | 0.00 | 0.738 / 0.508 | 1302 s |
-| net13, rule cells also read pair cells (rc_pairs=32768) | col | PAIRS_FULL |
+| net13, rule cells also read pair cells (rc_pairs=32768) | col | 0.465 / **0.030** | 0.00 | 0.736 / 0.501 | 2950 s |
 | storage (ADD_REPORT.md) | colc | 0.967 / 0.867 | 0.90 | - | - |
 | net12 lagro=1 relay=1 (ADD_REPORT.md) | colc | 0.919 / 0.739 | 0.48 | - | 1831 s |
 | **net13** | colc | 0.926 / **0.759** | 0.50 | 0.988 / 0.951 | 1668 s |
@@ -48,7 +48,7 @@ in the jsonl (`carry_diag.*.all_corr`).
 |---|---|---|---|---|---|---|---|
 | full net13 col | 35,692 | 0.151 / 0.168 | 0 | 0.585 / 0.511 | 1.00 | 0.628 | 6,570 |
 | full rc_match=4 col | 35,692 | 0.186 / 0.187 | 0 | 0.619 / 0.511 | 1.00 | 0.696 | 28,467 |
-| full rc_pairs col | PAIRS_DIAG |
+| full rc_pairs=32768 col | 35,692 | 0.082 / 0.070 | 0 | 0.524 / 0.511 | 1.00 | 0.578 | 108,070 |
 | small net13 col (rc_ro=1: identical cells) | 17,869 | 0.145 / 0.157 | 0 | 0.590 / 0.510 | 1.00 | 0.621 | 4,070 |
 | small rc_match=4 col | 17,869 | 0.183 / 0.194 | 0 | 0.613 / 0.510 | 1.00 | 0.686 | 14,068 |
 | small rc_pairs col | 17,869 | 0.082 / 0.069 | 0 | 0.519 / 0.510 | 1.00 | 0.580 | 55,357 |
@@ -58,7 +58,7 @@ Top cells, full net13 col (P1): cell 6 +0.151, 36 +0.126, 48 +0.120, 25 -0.113, 
 (c_i at lag 2 when s_i is predicted), so the rule cells that see it correlate with it; there they do not form it, they read it.
 
 ## What it shows (seed 1)
-1. **The hypothesis fails.** Full-size fmt=col new-length lines: net13 0.031, with match inputs 0.033, with pair inputs PAIRS_NEW;
+1. **The hypothesis fails.** Full-size fmt=col new-length lines: net13 0.031, with match inputs 0.033, with pair inputs 0.030;
    needed >= 0.30. Exactly the net12 value (0.031); storage 0.376. Carry-1 s bytes at new lengths stay at chance-like 0.50 against
    0.73 for carry 0.
 2. **No rule cell is a carry cell.** The largest |corr| with the carry is 0.15-0.19 (full); no cell above 0.2 in phase N1. The
@@ -69,7 +69,7 @@ Top cells, full net13 col (P1): cell 6 +0.151, 36 +0.126, 48 +0.120, 25 -0.113, 
    s byte (1.00): tau = 8 and k = 3 keep the last three winners on. The cells persist; they persist the wrong thing - a cluster of the
    8-byte window by overlap (vigilance 0.4: >= 4 shared (lag, byte) pairs), not the one bit that is a function of three bytes jointly.
    Wider inputs do not change this: match cells add a little (max corr 0.19, probe 0.70); pair cells (28 active of 36 inputs) dilute
-   the clustering further (small: 0.07, purity at base rate) while recruiting 55k times.
+   the clustering further (full: max corr 0.08, purity 0.52 at base rate 0.51) while recruiting 108k times.
 4. **The variation (rc_ro=1, rule cells also feed the direct readout) changes nothing**: small new-length lines 0.017 against
    0.019; the cells are identical (they depend on the stream only). By the plan's rule (gain >= 0.02 needed), its full run is NOT_RUN.
 5. **colc is not worse**: net13 new-length lines 0.759 against net12 0.739 (full), 0.621 against 0.536 (small); free test at 8 digits
@@ -84,7 +84,7 @@ Top cells, full net13 col (P1): cell 6 +0.151, 36 +0.126, 48 +0.120, 25 -0.113, 
 
 ## Verdict
 Rule cells, as net13 has them (competitive clustering of the lag window, persistent for a column), **do not form a carry-like state and
-do not generalise column addition to new lengths** when the carry is not written (0.031-0.033 against the 0.30 criterion; no cell with
+do not generalise column addition to new lengths** when the carry is not written (0.030-0.033 against the 0.30 criterion; no cell with
 |corr| > 0.2 to the carry). Widening only their input set (match or pair cells) does not change this, and neither does letting them
 feed the direct readout. With the carry written, net13 is not worse than net12 (0.759 vs 0.739). The carry is not a context that
 recurs as a pattern of the window; it is a computed bit, and a recruit-by-overlap state cannot find it. Learning such a hidden quantity
