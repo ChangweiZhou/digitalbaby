@@ -20,3 +20,5 @@ at a time around the best; seeds 2-3 for the leaders.
 Resume procedure (for the monitor): if a helper died or stopped without its summary, tell it (send_message) or a new helper on the
 same branch to: fetch its branch, `git merge origin/claude/magical-albattani-sei232` (for the resume-capable batch script), and rerun
 `bash search2_batch.sh search2_cands_s1X.txt search2_results_s1X.tsv`.
+
+Owner (17:45): measure held-out log-perplexity (bits/nats per byte, t26_calib.py) of the final architectures at the end, when the search is done - not as a search criterion now.
