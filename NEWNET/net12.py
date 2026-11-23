@@ -51,6 +51,13 @@ Compartments (on the same shared mismatch as net10's when joint=1; each adds to 
            output mismatch through fixed random strengths Bh (no weights carried back), and a synapse changes by its presynaptic
            activity times that signal while its cell is active (three factors, local; eta_w). Wh starts random. So cells can come to
            stand for intermediate quantities that no single input or pair gives (a carry).
+  apical=1 the relay's gate reads context, not content (as context reaches a pyramidal cell's apical tuft, and the senses its basal
+           dendrites): its inputs are the slow traces of the byte lines (time constant apical_tau bytes; one value per byte), not the
+           lag cells. A delimiter recurring in every line stands out in the traces; symbols, each one rare, are spread thin. The gate
+           a_j = sum_u Ga[j, u] tr[u] (delta rule by the mismatch on lag j's line, step eta_r, scaled by the trace).
+           apical=2: traces and lag cells both (the lag cells as before), added.
+           apical=3: multiplied (as an apical input gates a cell's firing): a_j = l_j * m_j, l_j the basal gate from the lag cells as
+           before, m_j = relu(1 + sum_u Ga[j, u] tr[u]) (1 at birth); Ga learns by e_j * l_j * tr, l by e_j * m_j * x.
   xdg_nov=1  the groups are driven by what is unusual, not what is frequent: each byte's trace over its long-term mean (time
            constant 100 x xdg_tau; as net7's slow code), normalised; a byte rare until lately (a new delimiter) stands out.
   lag_xdg=1  the lag compartments (lagro, relay) take their strength groups from the xdg group (one open), not from ctxg.
@@ -68,7 +75,7 @@ from net10 import Tissue as Net10
 
 
 class Tissue(Net10):
-    def __init__(self, W=8, lagro=0, relay=0, eta_l=0.2, eta_r=0.2, ctxg=0, ctxg_k=2, ctxg_tau=30.0, ctxg_err=0.0, eta_m=0.05, match=0, xdg=0, xdg_f=0.5, xdg_tau=200.0, lag_xdg=0, xvig=0.0, xvig_tau=30.0, xdg_nov=0, lagro_gate=0, eta_bg=0.2, pairs=0, pairs_gate=0, pairs_only=0, relay_inh=0, eta_i=0.2, gate_rate=0, hid=0, eta_h2=0.05, eta_w=0.01, **kw):
+    def __init__(self, W=8, lagro=0, relay=0, eta_l=0.2, eta_r=0.2, ctxg=0, ctxg_k=2, ctxg_tau=30.0, ctxg_err=0.0, eta_m=0.05, match=0, xdg=0, xdg_f=0.5, xdg_tau=200.0, lag_xdg=0, xvig=0.0, xvig_tau=30.0, xdg_nov=0, lagro_gate=0, eta_bg=0.2, pairs=0, pairs_gate=0, pairs_only=0, relay_inh=0, eta_i=0.2, gate_rate=0, hid=0, eta_h2=0.05, eta_w=0.01, apical=0, apical_tau=40.0, **kw):
         super().__init__(**kw)
         V = self.V; self.W, self.lagro, self.relay, self.eta_l, self.eta_r = W, lagro, relay, eta_l, eta_r
         self.lag_xdg = lag_xdg                                                             # lag_xdg=1: the lag compartments' groups are the xdg
@@ -108,6 +115,8 @@ class Tissue(Net10):
             if self.joint:
                 old = self.ncomp; self.ncomp = old + 1
                 for h in self.holds: h.eta_o = h.eta_o * old / self.ncomp
+        self.apical, self.atau = apical, apical_tau
+        if apical: self.atr = np.zeros(V); self.Ga = np.zeros((W, V)); self.lb = np.zeros(W); self.mj = np.ones(W)
         self.grate = gate_rate; self.prate = np.zeros(self.nin); self.gw = None
         if relay_inh: self.Gi = np.zeros((W, self.nin)); self.lin = np.zeros(W); self.Ii = np.zeros(W)
         if relay == 2:
@@ -160,6 +169,7 @@ class Tissue(Net10):
                     ga = act if (self.pairs_gate or not self.npair) else act[act < self.poff]
                     if len(ga):
                         sc = 1 / (1 + self.Ii) if self.rinh else 1.0                        # the excitatory part's gradient under the shunt
+                        if self.apical == 3: sc = sc * self.mj
                         wv = self.gw if (self.grate and self.gw is not None and len(self.gw) == len(ga)) else np.full(len(ga), 1 / len(ga))
                         self.G[g][:, ga] += (self.eta_r / self.ncomp) * (el * sc)[:, None] * wv[None, :]
                         if self.rinh and g == self.grp[0]:
@@ -169,6 +179,11 @@ class Tissue(Net10):
                 ez = self.code[byte] - self.z
                 for j, u in enumerate(self.lagb):
                     if u >= 0 and self.a[j] > 0: self.M += (self.eta_m * self.a[j]) * np.outer(ez, self.code[u])
+        if self.apical and learn and self.byte is not None and self.relay:               # the apical gate's strengths
+            el = np.array([e[u] if u >= 0 else 0.0 for u in self.lagb])
+            nt = self.atr.sum() + 1e-9
+            if self.apical == 3: self.Ga += (self.eta_r / self.ncomp) * (el * self.lb * (self.mj > 0))[:, None] * (self.atr / nt)[None, :]
+            else: self.Ga += (self.eta_r / self.ncomp) * el[:, None] * (self.atr / nt)[None, :]
         super().step(byte, learn)                                                          # net10's compartments (their shared mismatch is
         self.lagb = [byte] + self.lagb[:-1]                                                # over every compartment: _osum)
         if self.xdg:                                                                       # the open group and the closed cells
@@ -218,6 +233,11 @@ class Tissue(Net10):
                 self.a = (self.G[self.grp][:, :, ga] * self.gw).sum(2).mean(0) if len(ga) else np.zeros(self.W)
             else: self.a = self.G[self.grp][:, :, ga].mean(2).mean(0) if len(ga) else np.zeros(self.W)
             self.Or = np.zeros(self.V)
+            if self.apical:                                                                # the trace, then the gate from it
+                self.atr *= 1 - 1 / self.atau; self.atr[byte] += 1 / self.atau
+                ga_ap = self.Ga @ (self.atr / (self.atr.sum() + 1e-9))
+                if self.apical == 3: self.lb = self.a.copy(); self.mj = np.maximum(1 + ga_ap, 0); self.a = self.lb * self.mj
+                else: self.a = ga_ap if self.apical == 1 else self.a + ga_ap
             if self.rinh:
                 wv = self.gw * len(ga) if self.grate else np.ones(len(ga))
                 self.lin = self.a.copy(); self.Ii = (self.Gi[:, ga] * wv).sum(1) if len(ga) else np.zeros(self.W); self.a = self.lin / (1 + self.Ii)
