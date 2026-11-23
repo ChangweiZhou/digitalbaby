@@ -13,4 +13,4 @@ for s in 2 3; do for c in 1 0; do
  echo "net=12 lagro=1 relay=1 cue=$c seed=$s :n12_c${c}_s$s"
  echo "net=12rc rc=64 rc_gate=1 lagro=1 relay=1 cue=$c seed=$s :n12rc_c${c}_s$s"
 done; done
-} | xargs -P 4 -I{} bash -c 'spec="{}"; o=${spec% :*}; n=${spec##*:}; /usr/bin/time -v python3 t28_learnset.py $o out=learnset_runs/res.jsonl > learnset_runs/$n.log 2> learnset_runs/$n.time'
+} | xargs -P 4 -I{} bash -c 'spec="{}"; o=${spec% :*}; n=${spec##*:}; { time python3 t28_learnset.py $o out=learnset_runs/res.jsonl > learnset_runs/$n.log ; } 2> learnset_runs/$n.time'
