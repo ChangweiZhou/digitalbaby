@@ -53,3 +53,5 @@ batch (after S3a seeds) should continue cells per column (M=128 with cC=64 and c
 
 23:20 owner approved continuing along cells per column. S4 launched: a F1 M=128 (claude/newnet-s5a-sei232), b F2 cC=128 M=128
 (s5b), c seeds 2-3 of E3 M=64 (s5c), d seeds 2-3 of E6 cC=128 M=64 (s5d). Then the plateau decision and the held-out log-perplexity.
+
+- 23:52 UTC: S3a stopped at 20/40 lines because its batch ran inside a 2-hour background task. The helper was told to restart it detached (nohup), so lines already done are skipped. S4 helpers were told to make sure their batches are detached too. Rule from now on: start batches with nohup or setsid from an ordinary Bash call, never as the background task itself.
