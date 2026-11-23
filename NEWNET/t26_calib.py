@@ -64,5 +64,5 @@ def ppm(ctx):
             p = lam * q + (1 - lam) * p
     return p
 tb = float(np.mean([-np.log2(ppm(list(test[max(0, t - K + 1):t + 1]))[test[t + 1]]) for t in range(K, NT)]))
-print(json.dumps(dict(stream=kind, T=T, net=netn, opts=a, beta=round(beta, 3),
+print(json.dumps(dict(stream=kind, T=T, net=netn, opts=a, eta_s=eta_s, eta_t=eta_t, beta=round(beta, 3),
                       bits={k: round(v / NT, 3) for k, v in B.items()}, right={k: round(v / NT, 3) for k, v in R.items()}, table_bits=round(tb, 3))), flush=True)
