@@ -63,6 +63,12 @@ Compartments (on the same shared mismatch as net10's when joint=1; each adds to 
            the present inputs (cosine) drives the gate and alone learns; when even the best match is below gbr_vig, the least-used
            branch (the most excitable) is recruited: its prototype is set to the present inputs and its strengths start from the
            best branch's. Situations that look different (another delimiter) then learn on other branches.
+  recall=S an episodic store and recall compartment (the hippocampus as a fast route to the answer, beside the slow tissue): S
+           episodes of rec_len bytes, a reservoir (every rec_len bytes read with learning on, the episode just read is kept with the
+           chance S / episodes seen); at each byte, every stored position is compared with the last rec_k bytes (how many of them
+           are equal, byte by byte), and the positions with the most matches (at least 2) vote for the byte that followed them. The
+           compartment adds g[m] x (vote share), m the best match count; g learns by the delta rule on the shared mismatch. The
+           store answers from episodes, so what other streams teach the tissue does not change it.
   xdg_nov=1  the groups are driven by what is unusual, not what is frequent: each byte's trace over its long-term mean (time
            constant 100 x xdg_tau; as net7's slow code), normalised; a byte rare until lately (a new delimiter) stands out.
   lag_xdg=1  the lag compartments (lagro, relay) take their strength groups from the xdg group (one open), not from ctxg.
@@ -80,7 +86,7 @@ from net10 import Tissue as Net10
 
 
 class Tissue(Net10):
-    def __init__(self, W=8, lagro=0, relay=0, eta_l=0.2, eta_r=0.2, ctxg=0, ctxg_k=2, ctxg_tau=30.0, ctxg_err=0.0, eta_m=0.05, match=0, xdg=0, xdg_f=0.5, xdg_tau=200.0, lag_xdg=0, xvig=0.0, xvig_tau=30.0, xdg_nov=0, lagro_gate=0, eta_bg=0.2, pairs=0, pairs_gate=0, pairs_only=0, relay_inh=0, eta_i=0.2, gate_rate=0, hid=0, eta_h2=0.05, eta_w=0.01, apical=0, apical_tau=40.0, gbr=0, gbr_vig=0.6, gbr_eta=0.02, **kw):
+    def __init__(self, W=8, lagro=0, relay=0, eta_l=0.2, eta_r=0.2, ctxg=0, ctxg_k=2, ctxg_tau=30.0, ctxg_err=0.0, eta_m=0.05, match=0, xdg=0, xdg_f=0.5, xdg_tau=200.0, lag_xdg=0, xvig=0.0, xvig_tau=30.0, xdg_nov=0, lagro_gate=0, eta_bg=0.2, pairs=0, pairs_gate=0, pairs_only=0, relay_inh=0, eta_i=0.2, gate_rate=0, hid=0, eta_h2=0.05, eta_w=0.01, apical=0, apical_tau=40.0, gbr=0, gbr_vig=0.6, gbr_eta=0.02, recall=0, rec_len=16, rec_k=4, eta_rec=0.2, **kw):
         super().__init__(**kw)
         V = self.V; self.W, self.lagro, self.relay, self.eta_l, self.eta_r = W, lagro, relay, eta_l, eta_r
         self.lag_xdg = lag_xdg                                                             # lag_xdg=1: the lag compartments' groups are the xdg
@@ -126,6 +132,14 @@ class Tissue(Net10):
         if gbr:
             self.Gb = np.zeros((gbr, W, self.nin)); self.proto = np.zeros((gbr, self.nin)); self.buse = np.zeros(gbr)
             self.bsel = 0; self.gbr_vig, self.gbr_eta = gbr_vig, gbr_eta; self.nrecruit = 0
+        self.recall = recall
+        if recall:
+            self.rlen, self.rk, self.eta_rec = rec_len, rec_k, eta_rec; self.rstore = np.full((0, rec_len), -1, int); self.rbuf = []
+            self.rseen = 0; self.rrng = np.random.default_rng(kw.get("seed", 1) + 999); self.rg = np.zeros(rec_k + 1)
+            self.rfrac = np.zeros(V); self.rm = 0; self.Orc = np.zeros(V)
+            if self.joint:
+                old = self.ncomp; self.ncomp = old + 1
+                for h in self.holds: h.eta_o = h.eta_o * old / self.ncomp
         self.grate = gate_rate; self.prate = np.zeros(self.nin); self.gw = None
         if relay_inh: self.Gi = np.zeros((W, self.nin)); self.lin = np.zeros(W); self.Ii = np.zeros(W)
         if relay == 2:
@@ -146,6 +160,7 @@ class Tissue(Net10):
         O = self.Oc.sum(0) + sum(h.O for h in self.holds)
         if self.lagro: O = O + self.Ob
         if self.hid: O = O + self.Oh
+        if self.recall: O = O + self.Orc
         if self.relay: O = O + self.Or
         return O
 
@@ -189,6 +204,16 @@ class Tissue(Net10):
                 ez = self.code[byte] - self.z
                 for j, u in enumerate(self.lagb):
                     if u >= 0 and self.a[j] > 0: self.M += (self.eta_m * self.a[j]) * np.outer(ez, self.code[u])
+        if self.recall and learn and self.byte is not None:                              # the recall gain, and the store
+            if self.rm >= 2:
+                Oall = self._osum(); tg = np.zeros(self.V); tg[byte] = 1.0; er = np.where((tg > 0) | (Oall > 0), tg - Oall, 0.0)
+                self.rg[self.rm] += (self.eta_rec / self.ncomp) * float(er @ self.rfrac)
+        if self.recall and learn:
+            self.rbuf.append(byte)
+            if len(self.rbuf) == self.rlen:
+                self.rseen += 1; ep = np.array(self.rbuf); self.rbuf = []
+                if len(self.rstore) < self.recall: self.rstore = np.vstack([self.rstore, ep[None]])
+                elif self.rrng.random() < self.recall / self.rseen: self.rstore[self.rrng.integers(self.recall)] = ep
         if self.apical and learn and self.byte is not None and self.relay:               # the apical gate's strengths
             el = np.array([e[u] if u >= 0 else 0.0 for u in self.lagb])
             nt = self.atr.sum() + 1e-9
@@ -224,6 +249,15 @@ class Tissue(Net10):
                 drive = drive + self.gerr * (self.Q @ (self.mtrace / (np.linalg.norm(self.mtrace) + 1e-9)))
             self.grp = np.argpartition(-drive, self.gk - 1)[: self.gk]
         act = self._act()
+        if self.recall:                                                                    # recall: stored positions like the last bytes
+            self.rm = 0; self.Orc = np.zeros(self.V); k = self.rk
+            if len(self.rstore) and all(u >= 0 for u in self.lagb[:k]):
+                R = self.rstore; n = self.rlen
+                M = sum((R[:, k - 1 - j:n - 1 - j] == self.lagb[j]).astype(int) for j in range(k))   # positions k-1 .. n-2
+                mx = int(M.max())
+                if mx >= 2:
+                    nxt = R[:, k:n][M == mx]; self.rfrac = np.bincount(nxt, minlength=self.V)[: self.V] / len(nxt)
+                    self.rm = mx; self.Orc = self.rg[mx] * self.rfrac
         if self.hid:
             u = self.Wh[:, act].sum(1) / max(len(act), 1) if len(act) else np.zeros(self.hid)
             self.hh = np.maximum(u - 0.5 * u.mean() - 0.5 * u.std(), 0); self.Oh = self.Ah @ self.hh; self.hact = act
