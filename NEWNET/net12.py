@@ -42,6 +42,10 @@ Compartments (on the same shared mismatch as net10's when joint=1; each adds to 
            inputs of inhibitory strengths Gi[j, .] >= 0. Gi grows where relaying lag j was wrong (its gradient: -e_j l_j / (1+I_j)^2,
            step eta_i, kept >= 0). One input (a delimiter) can then close the gate whatever else is active, and learning elsewhere
            (where that input is silent) does not reopen it.
+  gate_rate=1  each input of the relay's gate counts by its own rate: a presynaptic trace p_i of how often input i is active
+           (time constant 5,000 bytes); the gate is the p-weighted mean of the active inputs' strengths, and a strength learns
+           in proportion to its p. Inputs active in every line (delimiters, positions) dominate the gate; a symbol, each one
+           rarely active, counts little; a new symbol not at all. (The inhibition, with relay_inh, is weighted the same way.)
   xdg_nov=1  the groups are driven by what is unusual, not what is frequent: each byte's trace over its long-term mean (time
            constant 100 x xdg_tau; as net7's slow code), normalised; a byte rare until lately (a new delimiter) stands out.
   lag_xdg=1  the lag compartments (lagro, relay) take their strength groups from the xdg group (one open), not from ctxg.
@@ -59,7 +63,7 @@ from net10 import Tissue as Net10
 
 
 class Tissue(Net10):
-    def __init__(self, W=8, lagro=0, relay=0, eta_l=0.2, eta_r=0.2, ctxg=0, ctxg_k=2, ctxg_tau=30.0, ctxg_err=0.0, eta_m=0.05, match=0, xdg=0, xdg_f=0.5, xdg_tau=200.0, lag_xdg=0, xvig=0.0, xvig_tau=30.0, xdg_nov=0, lagro_gate=0, eta_bg=0.2, pairs=0, pairs_gate=0, pairs_only=0, relay_inh=0, eta_i=0.2, **kw):
+    def __init__(self, W=8, lagro=0, relay=0, eta_l=0.2, eta_r=0.2, ctxg=0, ctxg_k=2, ctxg_tau=30.0, ctxg_err=0.0, eta_m=0.05, match=0, xdg=0, xdg_f=0.5, xdg_tau=200.0, lag_xdg=0, xvig=0.0, xvig_tau=30.0, xdg_nov=0, lagro_gate=0, eta_bg=0.2, pairs=0, pairs_gate=0, pairs_only=0, relay_inh=0, eta_i=0.2, gate_rate=0, **kw):
         super().__init__(**kw)
         V = self.V; self.W, self.lagro, self.relay, self.eta_l, self.eta_r = W, lagro, relay, eta_l, eta_r
         self.lag_xdg = lag_xdg                                                             # lag_xdg=1: the lag compartments' groups are the xdg
@@ -91,6 +95,7 @@ class Tissue(Net10):
         if lagro_gate: self.H = np.zeros((W, self.nin)); self.bj = np.ones(W); self.cj = np.zeros((W, V))
         if relay: self.G = np.zeros((self.ng, W, self.nin)); self.a = np.zeros(W); self.Or = np.zeros(V)
         self.rinh, self.eta_i = relay_inh, eta_i
+        self.grate = gate_rate; self.prate = np.zeros(self.nin); self.gw = None
         if relay_inh: self.Gi = np.zeros((W, self.nin)); self.lin = np.zeros(W); self.Ii = np.zeros(W)
         if relay == 2:
             self.code = np.array([np.r_[b, 1 - b] for b in ((np.arange(V)[:, None] >> np.arange(8)) & 1)], float)   # V x 16
@@ -137,10 +142,11 @@ class Tissue(Net10):
                     ga = act if (self.pairs_gate or not self.npair) else act[act < self.poff]
                     if len(ga):
                         sc = 1 / (1 + self.Ii) if self.rinh else 1.0                        # the excitatory part's gradient under the shunt
-                        self.G[g][:, ga] += (self.eta_r / len(ga) / self.ncomp) * (el * sc)[:, None]
+                        wv = self.gw if (self.grate and self.gw is not None and len(self.gw) == len(ga)) else np.full(len(ga), 1 / len(ga))
+                        self.G[g][:, ga] += (self.eta_r / self.ncomp) * (el * sc)[:, None] * wv[None, :]
                         if self.rinh and g == self.grp[0]:
                             gi = -el * self.lin / (1 + self.Ii) ** 2
-                            self.Gi[:, ga] = np.maximum(self.Gi[:, ga] + (self.eta_i / self.ncomp) * gi[:, None], 0)
+                            self.Gi[:, ga] = np.maximum(self.Gi[:, ga] + (self.eta_i / self.ncomp) * gi[:, None] * (wv * len(ga))[None, :], 0)
             if self.relay == 2:                                                            # the map, on the code mismatch
                 ez = self.code[byte] - self.z
                 for j, u in enumerate(self.lagb):
@@ -185,9 +191,15 @@ class Tissue(Net10):
             self.Ob = self.B[self.grp][:, :, bact].sum(2).mean(0)
         if self.relay:
             ga = act if (self.pairs_gate or not self.npair) else act[act < self.poff]
-            self.a = self.G[self.grp][:, :, ga].mean(2).mean(0) if len(ga) else np.zeros(self.W); self.Or = np.zeros(self.V)
+            if self.grate:                                                                 # the inputs' rates, and their weights in the gate
+                self.prate *= 1 - 1 / 5000.0; self.prate[ga] += 1 / 5000.0
+                pw = self.prate[ga] + 1e-6; self.gw = pw / pw.sum()
+                self.a = (self.G[self.grp][:, :, ga] * self.gw).sum(2).mean(0) if len(ga) else np.zeros(self.W)
+            else: self.a = self.G[self.grp][:, :, ga].mean(2).mean(0) if len(ga) else np.zeros(self.W)
+            self.Or = np.zeros(self.V)
             if self.rinh:
-                self.lin = self.a.copy(); self.Ii = self.Gi[:, ga].sum(1) if len(ga) else np.zeros(self.W); self.a = self.lin / (1 + self.Ii)
+                wv = self.gw * len(ga) if self.grate else np.ones(len(ga))
+                self.lin = self.a.copy(); self.Ii = (self.Gi[:, ga] * wv).sum(1) if len(ga) else np.zeros(self.W); self.a = self.lin / (1 + self.Ii)
             if self.relay == 2:
                 self.z = sum(self.a[j] * (self.M @ self.code[u]) for j, u in enumerate(self.lagb) if u >= 0) + np.zeros(16)
                 self.Or = np.maximum(self.dec @ self.z / 8 - 0.5, 0) * 2
