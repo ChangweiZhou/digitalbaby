@@ -46,6 +46,11 @@ Compartments (on the same shared mismatch as net10's when joint=1; each adds to 
            (time constant 5,000 bytes); the gate is the p-weighted mean of the active inputs' strengths, and a strength learns
            in proportion to its p. Inputs active in every line (delimiters, positions) dominate the gate; a symbol, each one
            rarely active, counts little; a new symbol not at all. (The inhibition, with relay_inh, is weighted the same way.)
+  hid=H    a layer of H hidden cells over the window's inputs (lag, match and pair cells): h = relu(Wh x - 0.5 mean); a compartment
+           reads them (delta rule on the shared mismatch, eta_h2); Wh learns by direct feedback alignment: each hidden cell gets the
+           output mismatch through fixed random strengths Bh (no weights carried back), and a synapse changes by its presynaptic
+           activity times that signal while its cell is active (three factors, local; eta_w). Wh starts random. So cells can come to
+           stand for intermediate quantities that no single input or pair gives (a carry).
   xdg_nov=1  the groups are driven by what is unusual, not what is frequent: each byte's trace over its long-term mean (time
            constant 100 x xdg_tau; as net7's slow code), normalised; a byte rare until lately (a new delimiter) stands out.
   lag_xdg=1  the lag compartments (lagro, relay) take their strength groups from the xdg group (one open), not from ctxg.
@@ -63,7 +68,7 @@ from net10 import Tissue as Net10
 
 
 class Tissue(Net10):
-    def __init__(self, W=8, lagro=0, relay=0, eta_l=0.2, eta_r=0.2, ctxg=0, ctxg_k=2, ctxg_tau=30.0, ctxg_err=0.0, eta_m=0.05, match=0, xdg=0, xdg_f=0.5, xdg_tau=200.0, lag_xdg=0, xvig=0.0, xvig_tau=30.0, xdg_nov=0, lagro_gate=0, eta_bg=0.2, pairs=0, pairs_gate=0, pairs_only=0, relay_inh=0, eta_i=0.2, gate_rate=0, **kw):
+    def __init__(self, W=8, lagro=0, relay=0, eta_l=0.2, eta_r=0.2, ctxg=0, ctxg_k=2, ctxg_tau=30.0, ctxg_err=0.0, eta_m=0.05, match=0, xdg=0, xdg_f=0.5, xdg_tau=200.0, lag_xdg=0, xvig=0.0, xvig_tau=30.0, xdg_nov=0, lagro_gate=0, eta_bg=0.2, pairs=0, pairs_gate=0, pairs_only=0, relay_inh=0, eta_i=0.2, gate_rate=0, hid=0, eta_h2=0.05, eta_w=0.01, **kw):
         super().__init__(**kw)
         V = self.V; self.W, self.lagro, self.relay, self.eta_l, self.eta_r = W, lagro, relay, eta_l, eta_r
         self.lag_xdg = lag_xdg                                                             # lag_xdg=1: the lag compartments' groups are the xdg
@@ -95,6 +100,14 @@ class Tissue(Net10):
         if lagro_gate: self.H = np.zeros((W, self.nin)); self.bj = np.ones(W); self.cj = np.zeros((W, V))
         if relay: self.G = np.zeros((self.ng, W, self.nin)); self.a = np.zeros(W); self.Or = np.zeros(V)
         self.rinh, self.eta_i = relay_inh, eta_i
+        self.hid = hid
+        if hid:
+            hr = np.random.default_rng(kw.get("seed", 1) + 4321); self.eta_h2, self.eta_w = eta_h2, eta_w
+            self.Wh = hr.normal(0, 1, (hid, self.nin)); self.Bh = hr.normal(0, 1, (hid, V)) / np.sqrt(V)
+            self.Ah = np.zeros((V, hid)); self.hh = np.zeros(hid); self.Oh = np.zeros(V); self.hact = np.zeros(0, int)
+            if self.joint:
+                old = self.ncomp; self.ncomp = old + 1
+                for h in self.holds: h.eta_o = h.eta_o * old / self.ncomp
         self.grate = gate_rate; self.prate = np.zeros(self.nin); self.gw = None
         if relay_inh: self.Gi = np.zeros((W, self.nin)); self.lin = np.zeros(W); self.Ii = np.zeros(W)
         if relay == 2:
@@ -114,6 +127,7 @@ class Tissue(Net10):
     def _osum(self):
         O = self.Oc.sum(0) + sum(h.O for h in self.holds)
         if self.lagro: O = O + self.Ob
+        if self.hid: O = O + self.Oh
         if self.relay: O = O + self.Or
         return O
 
@@ -128,6 +142,10 @@ class Tissue(Net10):
             act = self._act()
             if self.bgate and len(act):                                                    # the readout's gates, by agreement
                 self.H[:, act] += (self.eta_bg / len(act) / self.ncomp) * (self.cj @ e)[:, None]
+            if self.hid and len(act):                                                      # hidden cells: readout, then feedback alignment
+                self.Ah += (self.eta_h2 / self.ncomp) * np.outer(e, self.hh) / (np.abs(self.hh).sum() + 1e-9)
+                d = (self.Bh @ e) * (self.hh > 0)
+                self.Wh[:, self.hact] += (self.eta_w / max(len(self.hact), 1)) * d[:, None]
             bact = act[act >= self.poff] if (self.pairs_only and self.npair) else act
             for g in self.grp:                                                             # only the open groups learn
                 if self.lagro and len(bact):
@@ -181,6 +199,9 @@ class Tissue(Net10):
                 drive = drive + self.gerr * (self.Q @ (self.mtrace / (np.linalg.norm(self.mtrace) + 1e-9)))
             self.grp = np.argpartition(-drive, self.gk - 1)[: self.gk]
         act = self._act()
+        if self.hid:
+            u = self.Wh[:, act].sum(1) / max(len(act), 1) if len(act) else np.zeros(self.hid)
+            self.hh = np.maximum(u - 0.5 * u.mean() - 0.5 * u.std(), 0); self.Oh = self.Ah @ self.hh; self.hact = act
         if self.lagro and self.bgate:
             Bm = self.B[self.grp].mean(0); self.bj = 1 + (self.H[:, act].mean(1) if len(act) else 0); self.cj = np.zeros((self.W, self.V))
             for i in act:
