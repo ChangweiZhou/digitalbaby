@@ -34,6 +34,10 @@ Compartments (on the same shared mismatch as net10's when joint=1; each adds to 
            inputs' gate strengths H[j, .] (open at birth); O[v] = sum_j b_j sum_u B[v, j, u] X[j, u]. The gate learns locally by
            the agreement of the pathway's contribution c_j with the mismatch: H[j, act] += eta_bg (e . c_j) / n; B learns with its
            input scaled by b_j. So a mapping learned under one context (a delimiter at some lag) is closed where it does harm.
+  pairs=NP  pair cells (mixed selectivity, as cerebellar granule cells): a pool of NP cells, each standing for "byte u j back and
+           byte v k back" (j < k < W; the pair is assigned to a cell by a fixed random hash); inputs of both compartments beside the
+           lag (and match) cells. A mapping learned under a delimiter is then held by pairs with that delimiter, which other
+           streams do not activate.
   xdg_nov=1  the groups are driven by what is unusual, not what is frequent: each byte's trace over its long-term mean (time
            constant 100 x xdg_tau; as net7's slow code), normalised; a byte rare until lately (a new delimiter) stands out.
   lag_xdg=1  the lag compartments (lagro, relay) take their strength groups from the xdg group (one open), not from ctxg.
@@ -51,7 +55,7 @@ from net10 import Tissue as Net10
 
 
 class Tissue(Net10):
-    def __init__(self, W=8, lagro=0, relay=0, eta_l=0.2, eta_r=0.2, ctxg=0, ctxg_k=2, ctxg_tau=30.0, ctxg_err=0.0, eta_m=0.05, match=0, xdg=0, xdg_f=0.5, xdg_tau=200.0, lag_xdg=0, xvig=0.0, xvig_tau=30.0, xdg_nov=0, lagro_gate=0, eta_bg=0.2, **kw):
+    def __init__(self, W=8, lagro=0, relay=0, eta_l=0.2, eta_r=0.2, ctxg=0, ctxg_k=2, ctxg_tau=30.0, ctxg_err=0.0, eta_m=0.05, match=0, xdg=0, xdg_f=0.5, xdg_tau=200.0, lag_xdg=0, xvig=0.0, xvig_tau=30.0, xdg_nov=0, lagro_gate=0, eta_bg=0.2, pairs=0, **kw):
         super().__init__(**kw)
         V = self.V; self.W, self.lagro, self.relay, self.eta_l, self.eta_r = W, lagro, relay, eta_l, eta_r
         self.lag_xdg = lag_xdg                                                             # lag_xdg=1: the lag compartments' groups are the xdg
@@ -70,7 +74,8 @@ class Tissue(Net10):
         self.xvig, self.vtau = xvig, xvig_tau
         self.xnov = xdg_nov; self.xlt = np.full(V, 1e-3)
         if xvig: self.Ef = np.zeros(xdg); self.Es = np.ones(xdg); self.sup = np.zeros(xdg); self.nreset = 0
-        self.match = match; self.nin = W * V + match * (W - 1)                             # inputs: lag cells, then match cells
+        self.match = match; self.npair = pairs; self.nin = W * V + match * (W - 1) + pairs # inputs: lag cells, match cells, pair cells
+        self.poff = W * V + match * (W - 1); self.hseed = (kw.get("seed", 1) * 2654435761) % (2 ** 32)
         extra = (1 if lagro else 0) + (1 if relay else 0)
         if self.joint:
             old = self.ncomp; self.ncomp = old + extra
@@ -88,6 +93,9 @@ class Tissue(Net10):
         if self.match:                                                                     # m[k, j]: lag k equals lag k + j
             L = self.lagb; o = self.W * self.V
             act += [o + k * (self.W - 1) + j - 1 for k in range(self.match) for j in range(1, self.W - k) if L[k] >= 0 and L[k] == L[k + j]]
+        if self.npair:
+            L = self.lagb
+            act += sorted({self.poff + hash((self.hseed, j, L[j], k, L[k])) % self.npair for j in range(self.W) for k in range(j + 1, self.W) if L[j] >= 0 and L[k] >= 0})
         return np.array(act, int)
 
     def _osum(self):
