@@ -44,3 +44,9 @@ Both widenings hold on three seeds: M=32 mainly prediction (lives, code), cC=128
 21:08 S2 partial (seed 1): cC=128 M=32 0.624 / 0.609 (lives), code 0.426; + rc_all=1 0.631 / 0.615 (best lives); cC=256 0.611 / 0.598
 (columns saturate on prediction, keeping 0.989); cC=256 M=32 0.622 / -, moby 0.407, enzh 1.021. Diminishing returns from 4x to 8x size.
 S3a launched early (branch claude/newnet-s4a-sei232): seeds 2-3 of E4 (cC=128 M=32 rc_all=1) and E1 (cC=128 M=32).
+
+22:40 S2a, S2b merged; SEARCH2_S2.md (seed 1). Cells per column keep scaling: M=16 / 32 / 64 -> life23 0.609 / 0.621 / 0.630,
+life27 0.594 / 0.607 / 0.616, code 0.406 / 0.419 / 0.430, moby 0.399 / 0.406 / 0.411 (about +0.01 on lives per doubling, no sign of
+saturation yet). Columns saturate: cC=64 / 128 / 256 -> life23 0.609 / 0.613 / 0.611 (keeping zhen 0.949 / 0.986 / 0.989).
+Best held-out: E6 cC=128 M=64 (8x): lives 0.631 / 0.617, code 0.432, zhen 0.981, held 0.677. Not a plateau along M: the next
+batch (after S3a seeds) should continue cells per column (M=128 with cC=64 and cC=128), seeds for E3/E6.
