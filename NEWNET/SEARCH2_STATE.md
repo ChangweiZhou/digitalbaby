@@ -6,7 +6,7 @@ resumes from them after any reset). Logs: `search2_logs/`. Working rule: MEMO_20
 | batch | candidates | helper branch | state |
 |---|---|---|---|
 | S1a | R0 net13, R1 net12 lagro relay, R2 net10 | claude/newnet-s2a-sei232 | **done, merged** (SEARCH2_S1A.md): net13 dev 0.8567 / held 0.6496; net12 0.8530 / 0.6429; net10 0.8287 / 0.5805 |
-| S1b | D1 rc=32, D2 rc=128, D3 rc_all=1 | claude/newnet-s2b-sei232 | running |
+| S1b | D1 rc=32, D2 rc=128, D3 rc_all=1 | claude/newnet-s2b-sei232 | **done, merged** (SEARCH2_S1B.md): rc_all=1 0.8577 / 0.6525; rc=32 0.8563 / 0.6497; rc=128 0.8555 / 0.6508 |
 | S1c | D4 W=6, D5 W=10, D6 M=32 | claude/newnet-s2c-sei232 | **done, merged** (SEARCH2_S1C.md): D6 M=32 dev 0.8603 / held 0.6614; W=10 0.8566 / 0.6478; W=6 0.8561 / 0.6495 |
 | S1d | D7 cC=128, D8 L=24, D9 mesh=2 mesh_dag=2, D10 eta_c=0.3 eta_h=0.15 | claude/newnet-s2d-sei232 | running |
 
