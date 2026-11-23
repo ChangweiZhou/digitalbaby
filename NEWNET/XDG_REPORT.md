@@ -101,8 +101,8 @@ No gate, seal or external review is claimed.
   one seed out of two shows one.
 - **Copy during text:** with xdg+lag_xdg (s1 cue=1) the copy probe falls from 0.994 at line 12000 to 0.50 at line 13000 and to 0.32 at line 17000.
   The baseline keeps 0.99, and on s2 xdg+lag_xdg keeps 0.89. Copy and rev come back to 1.00 in P4/P5 in every cue=1 run.
-- **Cost:** first-met shares are lower in every phase for xdg+lag_xdg. s1 cue=1: P0 b 0.915 vs 0.977, P1 b 0.621 vs 0.795, P3 b 0.314 vs 0.505,
-  P4 b 0.914 vs 0.991, P5 b 0.913 vs 1.000. On s2 cue=1 the losses are smaller (P0 0.934 vs 0.976, P1 0.700 vs 0.797, P3 0.524 vs 0.506, P4 0.959 vs 0.988,
+- **Cost:** first-met b shares are lower for xdg+lag_xdg in every phase except s2 P3. s1 cue=1: P0 b 0.915 vs 0.977, P1 b 0.621 vs 0.795, P3 b 0.314 vs 0.505,
+  P4 b 0.914 vs 0.991, P5 b 0.913 vs 1.000. On s2 cue=1 the losses are smaller and P3 is slightly higher (P0 0.934 vs 0.976, P1 0.700 vs 0.797, P3 0.524 vs 0.506, P4 0.959 vs 0.988,
   P5 0.988 vs 1.000). The first P4 windows are lower (s1: 0.87 0.78 0.97 0.72 vs 0.95 0.98 0.98 0.99). Bits of the whole life are higher:
   +61,335 (889,862 vs 828,527, s1 cue=1), +54,937 (900,181 vs 845,244, s1 cue=0) and +53,341 (882,755 vs 829,414, s2 cue=1). Most of the extra
   is in answer bytes (+41k, +33k, +24k), then input bytes, then text bytes (+3k, +4k, +6k).
