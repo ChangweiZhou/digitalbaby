@@ -7,10 +7,12 @@ resumes from them after any reset). Logs: `search2_logs/`. Working rule: MEMO_20
 |---|---|---|---|
 | S1a | R0 net13, R1 net12 lagro relay, R2 net10 | claude/newnet-s2a-sei232 | running (started 15:36 UTC 23 Nov) |
 | S1b | D1 rc=32, D2 rc=128, D3 rc_all=1 | claude/newnet-s2b-sei232 | running |
-| S1c | D4 W=6, D5 W=10, D6 M=32 | claude/newnet-s2c-sei232 | running |
+| S1c | D4 W=6, D5 W=10, D6 M=32 | claude/newnet-s2c-sei232 | **done, merged** (SEARCH2_S1C.md): D6 M=32 dev 0.8603 / held 0.6614; W=10 0.8566 / 0.6478; W=6 0.8561 / 0.6495 |
 | S1d | D7 cC=128, D8 L=24, D9 mesh=2 mesh_dag=2, D10 eta_c=0.3 eta_h=0.15 | claude/newnet-s2d-sei232 | running |
 
-Best so far (dev mean): - (no full batch finished)
+Best so far (dev mean): D6 M=32 0.8603 (held 0.6614) - awaiting the R0 net13 reference from S1a to compare.
+
+Fix 17:20: search2_batch.sh pooled only 1 job at a time (nproc honours OMP_NUM_THREADS=1); now counts cores with nproc --all.
 
 Next batch: decided when S1 is complete - combine the dimensions that improved dev without hurting held-out; one general dimension
 at a time around the best; seeds 2-3 for the leaders.
