@@ -1,5 +1,7 @@
 """t24_add.py with net=12rec (net12_rec.Tissue, error-driven recruitment); otherwise the same stream, scores and free test.
-Also a diagnostic (not used by the net): the correlation of each recruited cell's activity with the true carry, at the s bytes of phase N1.
+oracle=1 (a diagnostic ceiling, not a mechanism): one cell is recruited from the start and its activity is SET by the script to the
+true carry into the column at each s byte (0 elsewhere); only its second-level synapses learn. It asks whether the second level can use
+a carry cell if one existed. Also a diagnostic (not used by the net): the correlation of each recruited cell's activity with the true carry, at the s bytes of phase N1.
 Addition in one life, column by column (22 November 2026). Two numbers of n digits, lowest digit first; each column is written as
   fmt=col  : a_i b_i s_i            (s_i = (a_i + b_i + carry) mod 10; the carry is not written: it must be inferred - it is fixed by
                                      the column before: carry = 1 iff a + b >= s + 9 there - an intermediate quantity)
@@ -20,7 +22,7 @@ def num(v):
         except ValueError: pass
     return v
 a = {k: num(v) for k, v in (x.split("=", 1) for x in sys.argv[1:])}
-netn, sname, seed, fmt = a.pop("net", 10), a.pop("struct", "K8"), a.pop("seed", 1), a.pop("fmt", "col")
+ORACLE = a.pop("oracle", 0); netn, sname, seed, fmt = a.pop("net", 10), a.pop("struct", "K8"), a.pop("seed", 1), a.pop("fmt", "col")
 N0, N1, PROBE, out = a.pop("N0", 8000), a.pop("N1", 8000), a.pop("PROBE", 4000), a.pop("out", None)
 STRUCT = dict(K8=dict(L=16, cC=64, joint=1, mesh=1, mesh_base=0, mesh_dag=5, c_k_win=4, c_th_on=0.9, c_th_match=0.75),
               N1=dict(L=8, cC=64, M=32, joint=1, mesh=2, mesh_base=0, mesh_dag=2, c_k_win=4))
@@ -45,6 +47,10 @@ if netn == "store": net = Store()
 else:
     import importlib
     opts = dict(STRUCT[sname]); opts.update(a); net = importlib.import_module("net12_rec" if netn == "12rec" else "net%d" % netn).Tissue(seed=seed, n_values=128, **opts)
+if ORACLE:
+    net.state[0] = 2; net.order = [0]; net.conj[0] = None
+def set_oracle(v):
+    net.h[0] = v; net.y[0] = v * net.u[0]; net.Orec = net.y[net.state == 2].sum(0)
 def guess():
     if netn == "store": return int(np.argmax(net.probs()))
     return net.answer()
@@ -67,6 +73,7 @@ def free_test(ln):
         for _ in range(50):
             bs, tags = line(n, prng); good = True
             for b, tg in zip(bs, tags):
+                if ORACLE: set_oracle(float(tg[1]) if (tg is not None and tg[0] == "s") else 0.0)
                 if tg is not None:
                     g = guess(); good &= g == b; net.step(g, False)          # its own answer byte is its input
                 else: net.step(b, False)
@@ -77,6 +84,7 @@ for ln in range(N0 + N1):
     n = int(rng.integers(1, 5)) if ln < N0 else int(rng.integers(1, 9)); new = "new" if n > 4 else "old"
     bs, tags = line(n, rng); good = True
     for b, tg in zip(bs, tags):
+        if ORACLE: set_oracle(float(tg[1]) if (tg is not None and tg[0] == "s") else 0.0)
         g = guess()
         if tg is not None:
             ok = g == b; good &= ok
@@ -94,7 +102,7 @@ def carry_corr():
         rows = np.array([[r[0], r[k]] for r in CH if len(r) > k])
         out_.append(round(float(np.corrcoef(rows.T)[0, 1]), 3) if len(rows) > 10 and rows[:, 1].std() > 0 else None)
     return out_
-res = dict(net=netn, rec=net.rec_info() if hasattr(net, "rec_info") else None, carry_corr=carry_corr(), struct=sname if netn != "store" else None, fmt=fmt, seed=seed, opts=a, N0=N0, N1=N1, s=round(time.time() - t0),
+res = dict(oracle=ORACLE, net=netn, rec=net.rec_info() if hasattr(net, "rec_info") else None, carry_corr=carry_corr(), struct=sname if netn != "store" else None, fmt=fmt, seed=seed, opts=a, N0=N0, N1=N1, s=round(time.time() - t0),
            bytes={f"P{int(p)}_{k}_{l}_carry{c}": dict(n=v[0], right=round(v[1] / max(v[0], 1), 3)) for (p, k, l, c), v in sorted(R.items())},
            lines={f"P{int(p)}_{l}": dict(n=v[0], right=round(v[1] / max(v[0], 1), 3)) for (p, l), v in sorted(LINES.items())}, free=probes)
 print(json.dumps(res), flush=True)
