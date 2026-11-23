@@ -26,3 +26,21 @@ same branch to: fetch its branch, `git merge origin/claude/magical-albattani-sei
 `bash search2_batch.sh search2_cands_s1X.txt search2_results_s1X.tsv`.
 
 Owner (17:45): measure held-out log-perplexity (bits/nats per byte, t26_calib.py) of the final architectures at the end, when the search is done - not as a search criterion now.
+
+Serial depth (owner, 23 Nov ~18:45; the real-time argument: a reaction allows only a few serial steps, so prefer width): the summary
+now records each candidate's depth (regions on the longest source path of the context tissue). In S1 the two deeper candidates were
+the worse ones (L=24: depth 12; mesh=2 mesh_dag=2: depth 16; all others 8). Rule for the search: widen, keep depth <= 8.
+Next direction after the search (general, not a device): learning state carried over time (computation spread across steps rather
+than deeper per step) - to be designed and judged on the whole battery.
+
+S2c, S2d merged (19:59): seeds 1-3 means (+- sd):
+| | moby | code | life23 | life27 | enzh | zhen |
+|---|---|---|---|---|---|---|
+| net13 | 0.393+-0.006 | 0.400+-0.007 | 0.608+-0.000 | 0.593+-0.001 | 0.986+-0.009 | 0.941+-0.013 |
+| cC=128 | 0.395+-0.006 | 0.406+-0.008 | 0.613+-0.000 | 0.598+-0.000 | 1.003+-0.011 | 0.979+-0.006 |
+| M=32 | 0.400+-0.007 | 0.416+-0.005 | 0.622+-0.001 | 0.606+-0.001 | 0.989+-0.015 | 0.963+-0.020 |
+Both widenings hold on three seeds: M=32 mainly prediction (lives, code), cC=128 mainly keeping (zhen +0.04, enzh +0.02).
+
+21:08 S2 partial (seed 1): cC=128 M=32 0.624 / 0.609 (lives), code 0.426; + rc_all=1 0.631 / 0.615 (best lives); cC=256 0.611 / 0.598
+(columns saturate on prediction, keeping 0.989); cC=256 M=32 0.622 / -, moby 0.407, enzh 1.021. Diminishing returns from 4x to 8x size.
+S3a launched early (branch claude/newnet-s4a-sei232): seeds 2-3 of E4 (cC=128 M=32 rc_all=1) and E1 (cC=128 M=32).
