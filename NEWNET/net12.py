@@ -58,6 +58,11 @@ Compartments (on the same shared mismatch as net10's when joint=1; each adds to 
            apical=2: traces and lag cells both (the lag cells as before), added.
            apical=3: multiplied (as an apical input gates a cell's firing): a_j = l_j * m_j, l_j the basal gate from the lag cells as
            before, m_j = relu(1 + sum_u Ga[j, u] tr[u]) (1 at birth); Ga learns by e_j * l_j * tr, l by e_j * m_j * x.
+  gbr=R    the relay's gate has R dendritic branches, each with its own strengths and a prototype of the inputs it formed on
+           (a running mean of the input pattern while it was the active branch, rate gbr_eta). The branch whose prototype best matches
+           the present inputs (cosine) drives the gate and alone learns; when even the best match is below gbr_vig, the least-used
+           branch (the most excitable) is recruited: its prototype is set to the present inputs and its strengths start from the
+           best branch's. Situations that look different (another delimiter) then learn on other branches.
   xdg_nov=1  the groups are driven by what is unusual, not what is frequent: each byte's trace over its long-term mean (time
            constant 100 x xdg_tau; as net7's slow code), normalised; a byte rare until lately (a new delimiter) stands out.
   lag_xdg=1  the lag compartments (lagro, relay) take their strength groups from the xdg group (one open), not from ctxg.
@@ -75,7 +80,7 @@ from net10 import Tissue as Net10
 
 
 class Tissue(Net10):
-    def __init__(self, W=8, lagro=0, relay=0, eta_l=0.2, eta_r=0.2, ctxg=0, ctxg_k=2, ctxg_tau=30.0, ctxg_err=0.0, eta_m=0.05, match=0, xdg=0, xdg_f=0.5, xdg_tau=200.0, lag_xdg=0, xvig=0.0, xvig_tau=30.0, xdg_nov=0, lagro_gate=0, eta_bg=0.2, pairs=0, pairs_gate=0, pairs_only=0, relay_inh=0, eta_i=0.2, gate_rate=0, hid=0, eta_h2=0.05, eta_w=0.01, apical=0, apical_tau=40.0, **kw):
+    def __init__(self, W=8, lagro=0, relay=0, eta_l=0.2, eta_r=0.2, ctxg=0, ctxg_k=2, ctxg_tau=30.0, ctxg_err=0.0, eta_m=0.05, match=0, xdg=0, xdg_f=0.5, xdg_tau=200.0, lag_xdg=0, xvig=0.0, xvig_tau=30.0, xdg_nov=0, lagro_gate=0, eta_bg=0.2, pairs=0, pairs_gate=0, pairs_only=0, relay_inh=0, eta_i=0.2, gate_rate=0, hid=0, eta_h2=0.05, eta_w=0.01, apical=0, apical_tau=40.0, gbr=0, gbr_vig=0.6, gbr_eta=0.02, **kw):
         super().__init__(**kw)
         V = self.V; self.W, self.lagro, self.relay, self.eta_l, self.eta_r = W, lagro, relay, eta_l, eta_r
         self.lag_xdg = lag_xdg                                                             # lag_xdg=1: the lag compartments' groups are the xdg
@@ -117,6 +122,10 @@ class Tissue(Net10):
                 for h in self.holds: h.eta_o = h.eta_o * old / self.ncomp
         self.apical, self.atau = apical, apical_tau
         if apical: self.atr = np.zeros(V); self.Ga = np.zeros((W, V)); self.lb = np.zeros(W); self.mj = np.ones(W)
+        self.gbr = gbr
+        if gbr:
+            self.Gb = np.zeros((gbr, W, self.nin)); self.proto = np.zeros((gbr, self.nin)); self.buse = np.zeros(gbr)
+            self.bsel = 0; self.gbr_vig, self.gbr_eta = gbr_vig, gbr_eta; self.nrecruit = 0
         self.grate = gate_rate; self.prate = np.zeros(self.nin); self.gw = None
         if relay_inh: self.Gi = np.zeros((W, self.nin)); self.lin = np.zeros(W); self.Ii = np.zeros(W)
         if relay == 2:
@@ -171,7 +180,8 @@ class Tissue(Net10):
                         sc = 1 / (1 + self.Ii) if self.rinh else 1.0                        # the excitatory part's gradient under the shunt
                         if self.apical == 3: sc = sc * self.mj
                         wv = self.gw if (self.grate and self.gw is not None and len(self.gw) == len(ga)) else np.full(len(ga), 1 / len(ga))
-                        self.G[g][:, ga] += (self.eta_r / self.ncomp) * (el * sc)[:, None] * wv[None, :]
+                        if self.gbr: self.Gb[self.bsel][:, ga] += (self.eta_r / self.ncomp) * (el * sc)[:, None] * wv[None, :]
+                        else: self.G[g][:, ga] += (self.eta_r / self.ncomp) * (el * sc)[:, None] * wv[None, :]
                         if self.rinh and g == self.grp[0]:
                             gi = -el * self.lin / (1 + self.Ii) ** 2
                             self.Gi[:, ga] = np.maximum(self.Gi[:, ga] + (self.eta_i / self.ncomp) * gi[:, None] * (wv * len(ga))[None, :], 0)
@@ -231,6 +241,16 @@ class Tissue(Net10):
                 self.prate *= 1 - 1 / 5000.0; self.prate[ga] += 1 / 5000.0
                 pw = self.prate[ga] + 1e-6; self.gw = pw / pw.sum()
                 self.a = (self.G[self.grp][:, :, ga] * self.gw).sum(2).mean(0) if len(ga) else np.zeros(self.W)
+            elif self.gbr and len(ga):                                                     # the branch that matches the inputs
+                x = np.zeros(self.nin); x[ga] = 1.0 / np.sqrt(len(ga))
+                pn = np.linalg.norm(self.proto, axis=1) + 1e-9; m = (self.proto @ x) / pn
+                b = int(np.argmax(m))
+                if m[b] < self.gbr_vig:                                                    # nothing matches: recruit the least used
+                    nb = int(np.argmin(self.buse))
+                    if nb != b: self.Gb[nb] = self.Gb[b] if self.buse[b] > 0 else self.Gb[nb]
+                    self.proto[nb] = x; b = nb; self.nrecruit += 1
+                self.bsel = b; self.buse[b] += 1; self.proto[b] += self.gbr_eta * (x - self.proto[b])
+                self.a = self.Gb[b][:, ga].mean(1)
             else: self.a = self.G[self.grp][:, :, ga].mean(2).mean(0) if len(ga) else np.zeros(self.W)
             self.Or = np.zeros(self.V)
             if self.apical:                                                                # the trace, then the gate from it
