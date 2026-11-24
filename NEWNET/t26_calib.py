@@ -10,6 +10,7 @@ Reports bits per byte (no mixing with uniform except 1e-6 for safety) and right 
 normalised outputs (t25's, mixed with 1% uniform) and the back-off count table.
 Usage: python3 t26_calib.py stream=moby|code T=16000 NT=10000 net=10|12 ...net options"""
 import sys, glob, importlib, json, numpy as np
+import resume
 from collections import Counter, defaultdict
 def num(v):
     for f in (int, float):
@@ -41,7 +42,11 @@ def readouts():
     pt = sm(beta * O + ctemp); ps = sm(csoft + Wsoft[:, act].sum(1))
     Oc = np.maximum(O, 0); pc = Oc / Oc.sum() if Oc.sum() > 0 else np.ones(V) / V
     return O, act, pt, ps, 0.99 * pc + 0.01 / V
-for t in range(T):
+T0 = 0
+_s = resume.load()                                                                 # a state saved before a container restart (resume.py)
+if _s: net, Wsoft, csoft, beta, ctemp, T0 = _s['net'], _s['Wsoft'], _s['csoft'], _s['beta'], _s['ctemp'], _s['t']
+for t in range(T0, T):
+    resume.save(dict(net=net, Wsoft=Wsoft, csoft=csoft, beta=beta, ctemp=ctemp, t=t), f"byte {t}")
     net.step(int(s[t])); net.answer()
     if t + 1 < T:
         y = int(s[t + 1]); O, act, pt, ps, _ = readouts(); oh = np.zeros(V); oh[y] = 1.0
@@ -64,5 +69,6 @@ def ppm(ctx):
             p = lam * q + (1 - lam) * p
     return p
 tb = float(np.mean([-np.log2(ppm(list(test[max(0, t - K + 1):t + 1]))[test[t + 1]]) for t in range(K, NT)]))
-print(json.dumps(dict(stream=kind, T=T, net=netn, opts=a, eta_s=eta_s, eta_t=eta_t, beta=round(beta, 3),
-                      bits={k: round(v / NT, 3) for k, v in B.items()}, right={k: round(v / NT, 3) for k, v in R.items()}, table_bits=round(tb, 3))), flush=True)
+print(json.dumps(dict(stream=kind, T=T, NT=NT, stream_len=len(s), net=netn, opts=a, eta_s=eta_s, eta_t=eta_t, beta=round(beta, 3),
+                      bits={k: round(v / NT, 4) for k, v in B.items()}, nats={k: round(v / NT * np.log(2), 4) for k, v in B.items()}, right={k: round(v / NT, 3) for k, v in R.items()}, table_bits=round(tb, 3))), flush=True)
+resume.done()
