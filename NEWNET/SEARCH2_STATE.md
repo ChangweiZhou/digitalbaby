@@ -89,3 +89,16 @@ Reading: the gap between nets should grow with T if moby is limited by data. Com
 - 03:47 UTC: resets come about every 10 minutes on some helpers. A resumed test first reloads its checkpoint, then saves only after CKPT_EVERY=300 s, so resets that come sooner leave no progress (S4b: life23/life27/keep2 stuck). From the next restart on, every batch runs with CKPT_EVERY=90, which does not change results. Every session also keeps a tracked background waiter, because resets seemed to stop on S4d once it had one (not proven: S4c reset at 00:56 with one running).
   The parent's restart command: `CKPT_EVERY=90 setsid nohup bash datascale_batch.sh datascale_jobs_$p.txt datascale_results_$p.jsonl`.
 - 03:52 UTC: mem (t11_gate.py) is now resumable too, and search2.py gives it a checkpoint. Identity check (killed twice, resumed at bytes 1167 and 2274): IDENTICAL. resume_check.sh now leaves out the timing at the end of t11's line. Helpers pick this up by merging claude/magical-albattani-sei232. Not every test is checkpointed: moby and code (t17) are not.
+
+## Quick battery (24 Nov ~04:15 UTC; owner: fast iteration, each experiment ≤ ~16 min)
+QUICK=1 in search2.py:
+- t17 T=16000 NT=4000
+- keep TA=4000 TB=8000
+- mem T=20000
+- life23 N0=N1=N3=1200 N4=N5=600 TXT=8000 PROBE=600
+- life27 NB=600 TXT=8000 PROBE=600
+- lang TA=TB=8000 NT=2000
+Life scores use storage references recomputed at these sizes: life23 405,661 and life27 425,369 bits (net=store). Rows are tagged 'quick' and are comparable only with other quick rows.
+Validation: search2_cands_q1.txt (11 candidates with known full scores) runs on the S4a helper (claude/newnet-s5a-sei232), writing search2_results_q1.tsv and SEARCH2_Q1.md. It gives the Spearman agreement with the full battery, per test and dev/held, and the wall time per test.
+The quick battery is used to choose only if the agreement is good, especially on the lives. Otherwise its sizes are revised.
+English and Chinese generation samples are to be added to each round's report (owner, 24 Nov).
