@@ -4,6 +4,8 @@ Each net reads the first T bytes of Moby Dick or of the repository's Python code
 
 ![log-perplexity vs bytes read](DATASCALE.png)
 
+Chinese-labelled version: DATASCALE_zh.png
+
 ### moby
 
 | net | T=16k log-perplexity (nats/byte) / bits / right | T=64k log-perplexity (nats/byte) / bits / right | T=256k log-perplexity (nats/byte) / bits / right |
