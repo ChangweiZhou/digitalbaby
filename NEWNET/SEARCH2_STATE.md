@@ -44,3 +44,26 @@ Both widenings hold on three seeds: M=32 mainly prediction (lives, code), cC=128
 21:08 S2 partial (seed 1): cC=128 M=32 0.624 / 0.609 (lives), code 0.426; + rc_all=1 0.631 / 0.615 (best lives); cC=256 0.611 / 0.598
 (columns saturate on prediction, keeping 0.989); cC=256 M=32 0.622 / -, moby 0.407, enzh 1.021. Diminishing returns from 4x to 8x size.
 S3a launched early (branch claude/newnet-s4a-sei232): seeds 2-3 of E4 (cC=128 M=32 rc_all=1) and E1 (cC=128 M=32).
+
+22:40 S2a, S2b merged; SEARCH2_S2.md (seed 1). Cells per column keep scaling: M=16 / 32 / 64 -> life23 0.609 / 0.621 / 0.630,
+life27 0.594 / 0.607 / 0.616, code 0.406 / 0.419 / 0.430, moby 0.399 / 0.406 / 0.411 (about +0.01 on lives per doubling, no sign of
+saturation yet). Columns saturate: cC=64 / 128 / 256 -> life23 0.609 / 0.613 / 0.611 (keeping zhen 0.949 / 0.986 / 0.989).
+Best held-out: E6 cC=128 M=64 (8x): lives 0.631 / 0.617, code 0.432, zhen 0.981, held 0.677. Not a plateau along M: the next
+batch (after S3a seeds) should continue cells per column (M=128 with cC=64 and cC=128), seeds for E3/E6.
+
+23:20 owner approved continuing along cells per column. S4 launched: a F1 M=128 (claude/newnet-s5a-sei232), b F2 cC=128 M=128
+(s5b), c seeds 2-3 of E3 M=64 (s5c), d seeds 2-3 of E6 cC=128 M=64 (s5d). Then the plateau decision and the held-out log-perplexity.
+
+- 23:52 UTC: S3a stopped at 20/40 lines because its batch ran inside a 2-hour background task. The helper was told to restart it detached (nohup), so lines already done are skipped. S4 helpers were told to make sure their batches are detached too. Rule from now on: start batches with nohup or setsid from an ordinary Bash call, never as the background task itself.
+
+## Resumable long tests (24 November, 01:20-01:45 UTC)
+Container restarts every 30-45 minutes kill every process. A life test at M=128 runs 1-4 hours, so S4a/S4b's long tests could never
+finish. resume.py now saves a long test's whole state (net, numpy generators, the C library's xorshift state, counters, position) gzip-
+pickled every 5 minutes. t23 and t27 save between lines; t13 (keep, keep4, keep2, enzh, zhen) saves at stage ends. search2.py
+gives the long tests a file in NEWNET/search2_ckpt/ (git-ignored; not for SMOKE runs). Restarting the same search2_batch.sh line resumes
+them. The secs column then counts only the time since the last restart.
+Identity check (resume_check.sh: the same command run whole, and run killed twice and resumed; final results compared exactly):
+- t23 life (resumed at phase 1 line 138 and at phase 3): IDENTICAL.
+- t27 life (resumed mid-text at byte 1051 and at phase 4): IDENTICAL.
+- t13 keep/ctx (resumed at stages 2 and 3): IDENTICAL.
+The first t13 check, before the C generator was saved, differed in the 3rd decimal (0.292 vs 0.293). It was found and fixed (commit 7a531da1f).

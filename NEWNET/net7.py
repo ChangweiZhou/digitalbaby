@@ -15,8 +15,10 @@ import numpy as np
 _here = os.path.dirname(os.path.abspath(__file__))
 _so = os.path.join(_here, "libnet7.so")
 if not os.path.exists(_so) or os.path.getmtime(_so) < os.path.getmtime(os.path.join(_here, "net7.c")):
-    subprocess.check_call(["gcc", "-O3", "-march=native", "-shared", "-fPIC", "-o", _so, os.path.join(_here, "net7.c")])
+    _tmp = _so + ".%d.tmp" % os.getpid()                    # built to a temporary name and moved: jobs started together do not clash
+    subprocess.check_call(["gcc", "-O3", "-march=native", "-shared", "-fPIC", "-o", _tmp, os.path.join(_here, "net7.c")]); os.replace(_tmp, _so)
 _lib = ctypes.CDLL(_so)
+_lib.get_rng.restype = ctypes.c_uint64; _lib.set_rng.argtypes = [ctypes.c_uint64]
 
 
 class _P(ctypes.Structure):

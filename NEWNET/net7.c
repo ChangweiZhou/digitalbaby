@@ -7,6 +7,8 @@
 
 static uint64_t rs = 88172645463325252ULL;
 void seed_rng(uint64_t s) { rs = s * 2654435761ULL + 1; if (!rs) rs = 1; }
+uint64_t get_rng(void) { return rs; }                  /* for resume.py: the generator's state is saved with a test's state */
+void set_rng(uint64_t s) { rs = s; }
 static inline uint64_t xr(void) { rs ^= rs << 13; rs ^= rs >> 7; rs ^= rs << 17; return rs; }
 
 typedef struct { double eta, eta_minus, w_on, w_new, th_on, th_match, s_th, lam; int n_grow, burst, ctx_mode, learn, recall, nodef; } P;
