@@ -57,7 +57,7 @@ def parse(t, out):
     return None
 env = dict(os.environ, OMP_NUM_THREADS="1")
 def tenv(t):                                                       # long tests save their state and go on after a container restart (resume.py)
-    if sm or t not in ("life23", "life27", "enzh", "zhen", "keep", "keep4", "keep2"): return env
+    if sm or t not in ("life23", "life27", "enzh", "zhen", "keep", "keep4", "keep2", "mem"): return env
     return dict(env, CKPT=os.path.join(here, "search2_ckpt", f"{name}.{t}.pkl.gz"))
 procs = {t: (subprocess.Popen(cmd[t], shell=True, cwd=here, env=tenv(t), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True), time.time()) for t in tests}
 res = {}

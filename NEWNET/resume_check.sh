@@ -15,7 +15,7 @@ d = sys.argv[1]
 def last(f):
     for l in reversed(open(f).read().splitlines()):
         if l.startswith("{") and '"bits"' in l: j = json.loads(l); j.pop("s", None); return j
-    return open(f).read().splitlines()[-1]
+    import re; return re.sub(r' \| \d+ s$', '', open(f).read().splitlines()[-1])   # without the timing
 a, b = last(d + "/a.out"), last(d + "/b3.out")
 print("IDENTICAL" if a == b else "DIFFERENT", (a if a != b else ""), (b if a != b else ""))
 PY

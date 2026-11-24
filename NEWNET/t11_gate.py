@@ -4,6 +4,7 @@ Usage: python3 t11_gate.py [T=6000 G=2 NB=2 stream=context seed=1 ...net8 parame
 import sys, time
 import numpy as np
 import importlib
+import resume
 def num(v):
     for f in (int, float):
         try: return f(v)
@@ -20,8 +21,11 @@ if kind == "context": s = np.array(s[:T + 1])
 elif kind == "text":
     s = np.frombuffer(open("../PROJECT_DOCUMENTS/MINIFLY_OUTSIDE_ADVICE_20261118/nano/data/tinyshakespeare.txt", "rb").read(), np.uint8)[:T + 1].astype(int)
 else: s = rng.integers(0, V, T + 1)
-right = np.zeros(T, bool); t0 = time.time()
-for t in range(T):
+right = np.zeros(T, bool); t0 = time.time(); T0 = 0
+_s = resume.load()                                                       # a state saved before a container restart (resume.py)
+if _s: net, right, T0 = _s['net'], _s['right'], _s['t']
+for t in range(T0, T):
+    resume.save(dict(net=net, right=right, t=t), f"byte {t}")
     net.step(int(s[t])); right[t] = net.answer() == s[t + 1]
 ref = ""
 if kind == "text":                                       # count tables of the whole past: reference only, not learners
@@ -35,3 +39,4 @@ if kind == "text":                                       # count tables of the w
 q = T // 4; dec = np.array([d for d in dec if 3 * q <= d < T])
 print(f"{' '.join(f'{k}={v}' for k, v in a.items())} G={G} {kind}: right by quarter " + " ".join(f"{right[i*q:(i+1)*q].mean():.3f}" for i in range(4))
       + (f" | after the gap (last quarter) {right[dec].mean():.3f} (1/NB without memory)" if kind == "context" else "") + ref + f" | {time.time()-t0:.0f} s")
+resume.done()
