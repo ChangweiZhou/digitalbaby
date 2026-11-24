@@ -1,4 +1,4 @@
-Data-scaling part C (t26_calib, M=128, moby/code, T=16k/64k/256k). Run: started 2026-11-24T03:22:31Z, ended 2026-11-24T15:01:43Z (last jsonl line); container resets: 3 seen (03:33Z, 03:45Z, about 05:50Z, after which the batch stayed dead until restarted at 14:50Z); source commit 02fb37f58 (branch claude/newnet-ds-c-sei232). Restarts after 04:46Z used CKPT_EVERY=90 (owner-side parent instruction; results unaffected per resume.py).
+Data-scaling part C (t26_calib, M=128, moby/code, T=16k/64k/256k). Run: started 2026-11-24T03:22:31Z, ended 2026-11-24T15:01:43Z (last jsonl line); container resets: 3 seen (03:33Z, 03:45Z, about 05:50Z, after which the batch stayed dead until restarted at 14:50Z); source commit 02fb37f58 (branch claude/newnet-ds-c-sei232). The 14:50Z restart used CKPT_EVERY=90, at the parent session's request (resume.py: saving does not change results).
 
 
 ### moby
