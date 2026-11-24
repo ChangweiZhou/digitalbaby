@@ -26,7 +26,11 @@ here = os.path.dirname(os.path.abspath(__file__))
 K8 = "L=16 cC=64 joint=1 mesh=1 mesh_base=0 mesh_dag=5 c_k_win=4 c_th_on=0.9 c_th_match=0.75"
 o = f"net={net} {K8} {opts}"                                    # later options override K8's
 sm = os.environ.get("SMOKE") == "1"
-S = dict(t17="T=2000 NT=1000" if sm else "", keep="TA=1000 TB=2000" if sm else "", mem="T=4000" if sm else "T=40000",
+qk = os.environ.get("QUICK") == "1"                             # the quick battery (24 Nov; owner: fast iteration, every experiment within minutes):
+if qk and not sm:                                                # the lives about 1/5, the rest shortened; scores comparable only with other QUICK lines
+    S = dict(t17="T=16000 NT=4000", keep="TA=4000 TB=8000", mem="T=20000",
+             t23="N0=1200 N1=1200 TXT=8000 N3=1200 N4=600 N5=600 PROBE=600", t27="NB=600 TXT=8000 PROBE=600", lang="TA=8000 TB=8000 NT=2000")
+if not (qk and not sm): S = dict(t17="T=2000 NT=1000" if sm else "", keep="TA=1000 TB=2000" if sm else "", mem="T=4000" if sm else "T=40000",
          t23="N0=300 N1=300 TXT=2000 N3=300 N4=150 N5=150 PROBE=300" if sm else "", t27="NB=150 TXT=2000 PROBE=300" if sm else "",
          lang="TA=2000 TB=2000 NT=1000" if sm else "NT=10000")
 cmd = {"moby": f"python3 t17_general.py stream=moby {S['t17']} {o}",
@@ -40,6 +44,7 @@ cmd = {"moby": f"python3 t17_general.py stream=moby {S['t17']} {o}",
        "enzh": f"python3 t13_life8.py life=enzh n_values=256 {S['lang']} {o}",
        "zhen": f"python3 t13_life8.py life=zhen n_values=256 {S['lang']} {o}"}
 REF = {"life23": 1984668.0, "life27": 2002585.0}
+if qk and not sm: REF = {"life23": 405661.0, "life27": 425369.0}       # the storage baseline (net=store) at the quick sizes
 def parse(t, out):
     if t in ("moby", "code"):
         m = re.search(r"held-out ([0-9.]+)", out); return float(m.group(1)) if m else None
@@ -57,7 +62,7 @@ def parse(t, out):
     return None
 env = dict(os.environ, OMP_NUM_THREADS="1")
 def tenv(t):                                                       # long tests save their state and go on after a container restart (resume.py)
-    if sm or t not in ("life23", "life27", "enzh", "zhen", "keep", "keep4", "keep2"): return env
+    if sm or t not in ("life23", "life27", "enzh", "zhen", "keep", "keep4", "keep2", "mem"): return env
     return dict(env, CKPT=os.path.join(here, "search2_ckpt", f"{name}.{t}.pkl.gz"))
 procs = {t: (subprocess.Popen(cmd[t], shell=True, cwd=here, env=tenv(t), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True), time.time()) for t in tests}
 res = {}
@@ -66,7 +71,7 @@ for t, (p, t0) in procs.items():
     out = p.communicate()[0]; v = parse(t, out); res[t] = v
     open(os.path.join(here, "search2_logs", f"{name}.{t}.log"), "w").write(cmd[t] + "\n" + out)
     with open(os.path.join(here, os.environ.get("SEARCH2_OUT", "search2_results.tsv")), "a") as f:
-        f.write(f"{name}\t{net}\t{opts}\t{t}\t{'nan' if v is None else f'{v:.4f}'}\t{time.time() - t0:.0f}\t{'smoke' if sm else 'full'}\n")
+        f.write(f"{name}\t{net}\t{opts}\t{t}\t{'nan' if v is None else f'{v:.4f}'}\t{time.time() - t0:.0f}\t{'smoke' if sm else 'quick' if qk else 'full'}\n")
     if v is None: print(f"{name} {t}: no result\n{out[-800:]}")
 def mean(ks):
     v = [res[k] for k in ks if k in res and res[k] is not None]; return sum(v) / len(v) if v else float("nan")

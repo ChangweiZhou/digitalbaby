@@ -1,6 +1,7 @@
 """Summary of search2 results: one row per candidate (full runs only), dev and held-out means, sorted by dev.
 Usage: python3 search2_summary.py [search2_results.tsv ...]"""
-import sys, collections, re
+import sys, collections, re, os
+MODE = "quick" if os.environ.get("QUICK") == "1" else "full"        # QUICK=1: rows of the quick battery only
 def depth(opts):
     """serial depth of the context tissue: regions on the longest source path (the per-byte serial steps; owner, 23 Nov: real-time
     reaction allows only a few serial steps, so the search widens and records this)"""
@@ -19,7 +20,7 @@ R = collections.defaultdict(dict); OPT = {}
 for f in (sys.argv[1:] or ["search2_results.tsv"]):
     for line in open(f):
         p = line.rstrip("\n").split("\t")
-        if len(p) < 7 or p[6] != "full": continue
+        if len(p) < 7 or p[6] != MODE: continue
         R[p[0]][p[3]] = float(p[4]); OPT[p[0]] = f"net={p[1]} {p[2]}"
 def m(d, ks):
     v = [d[k] for k in ks if k in d and d[k] == d[k]]; return (sum(v) / len(v), len(v)) if v else (float("nan"), 0)
