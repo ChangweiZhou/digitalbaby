@@ -1,0 +1,5 @@
+S4 part b (F2: net13 cC=128 M=128, seed 1), branch claude/newnet-s5b-sei232. Date 2026-11-23/24 UTC; 4 cores (nproc --all), 15 GB RAM (memory sufficient: 4 jobs used about 3.5 GB). Wall time 23:29 -> 05:49:52 UTC (6 h 21 min) including container resets: the batch was restarted at 23:51, 00:05, 00:32, 01:15, 01:33 (resumable checkpoints merged, ef0a7cc6), 03:22, 03:34, 03:46 and 03:47 (CKPT_EVERY=90; mem resumable from c6765682 merged at 03:48, used only after a later restart, none occurred). Before 01:33 nothing was saved and all running work was lost at each reset; after it the long tests resumed from their last checkpoint. The time column in search2_results_s4b.tsv is the wall time of each test's last uninterrupted run segment, not its total. Candidates and options unchanged.
+
+| cand | moby | keep | keep4 | keep2 | mem | life23 | enzh | code | life27 | zhen | dev | held | depth | options |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| F2 | 0.412 | 1.000 | 1.000 | 1.000 | 1.000 | 0.636 | 0.995 | 0.436 | 0.622 | 0.978 | 0.8632 (7) | 0.6788 (3) | 8 | net=13 cC=128 M=128 |
