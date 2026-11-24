@@ -16,6 +16,7 @@ Scores (all prequential: every byte predicted before it is read, learning on; th
 Baseline net=store: the back-off n-gram table of t22 (orders 1-8).
 Usage: python3 t23_life_rules.py net=10|12|store [struct=K8|N1 cue=0|1 seed ...net options] [out=FILE]"""
 import sys, json, time, numpy as np
+import resume
 from collections import defaultdict
 def num(v):
     for f in (int, float):
@@ -65,7 +66,9 @@ def item(rule, n_al, r):
     return w, W
 
 seen, answered, past, hist = set(), defaultdict(int), set(), []
-R = defaultdict(lambda: [0, 0, 0.0]); WIN = defaultdict(lambda: [0, 0]); BITS = defaultdict(float); NB = defaultdict(int)
+def _z3(): return [0, 0, 0.0]
+def _z2(): return [0, 0]
+R = defaultdict(_z3); WIN = defaultdict(_z2); BITS = defaultdict(float); NB = defaultdict(int)   # module-level factories: picklable (resume.py)
 probes = []; t0 = time.time()
 def read(b, kind, learn=True, score=None):
     """predict b, then read it; score: None, or (phase, layer) for a first-met answer byte"""
@@ -93,14 +96,21 @@ def probe(ln, n_al):
     probes.append(dict(line=ln, **r)); print(json.dumps(probes[-1]), flush=True)
 
 phases = [("copy", N0), ("rev", N1), ("text", TXT), ("succ", N3), ("copy", N4), ("rev", N5)]
-ln = 0
+ln = 0; PH0 = K0 = 0
+STATE = ("net", "rng", "prng", "seen", "answered", "past", "hist", "R", "WIN", "BITS", "NB", "probes", "ln")
+_s = resume.load()                                                                 # a state saved before a container restart
+if _s: globals().update({k: _s[k] for k in STATE}); PH0, K0 = _s["ph"], _s["k"]; t0 = time.time() - _s["elapsed"]
+def _save(ph, k, force=False): resume.save(dict({n: globals()[n] for n in STATE}, ph=ph, k=k, elapsed=time.time() - t0), f"phase {ph} step {k}", force)
 for ph, (rule, n) in enumerate(phases):
+    if ph < PH0: continue
+    k0 = K0 if ph == PH0 else 0
     if rule == "text":
-        for t in range(n):
+        for t in range(k0, n):
             read(int(SH[t]), "text")
             if (t + 1) % (PROBE * 8) == 0: probe(ln + (t + 1) // 8, min(40, 8 + ln // 150))
-        ln += n // 8; continue                                                     # the text counts as n/8 lines (for the probes' clock)
-    for k in range(n):
+            _save(ph, t + 1)
+        ln += n // 8; _save(ph + 1, 0, True); continue                                                     # the text counts as n/8 lines (for the probes' clock)
+    for k in range(k0, n):
         n_al = min(40, 8 + ln // 150); w, W = item(rule, n_al, rng)
         first = (rule, tuple(w)) not in seen; seen.add((rule, tuple(w)))
         for b in w + [DEL[rule]]: read(b, "input")
@@ -116,11 +126,14 @@ for ph, (rule, n) in enumerate(phases):
             answered[b] += 1
         read(10, "input"); ln += 1
         if ln % PROBE == 0: probe(ln, n_al)
+        _save(ph, k + 1)
     print(f"phase {ph} {rule} done at line {ln}, {time.time() - t0:.0f}s: " + " ".join(f"{l}:{v[1] / max(v[0], 1):.2f}({v[0]})" for (p_, r_, l), v in sorted(R.items()) if p_ == ph), flush=True)
+    _save(ph + 1, 0, True)
 res = dict(net=netn, struct=sname if netn != "store" else None, cue=cue, seed=seed, opts=a, phases=[f"{r}:{n}" for r, n in phases], s=round(time.time() - t0),
            bits=dict(total=round(sum(BITS.values())), **{k: round(v) for k, v in BITS.items()}, per_byte={k: round(BITS[k] / NB[k], 3) for k in BITS}),
            first_met={f"P{p_}_{r_}_{l}": dict(n=v[0], right=round(v[1] / max(v[0], 1), 3), bits=round(v[2] / max(v[0], 1), 2)) for (p_, r_, l), v in sorted(R.items())},
            windows={f"P{p_}": [round(WIN[(p_, k)][1] / max(WIN[(p_, k)][0], 1), 2) for k in range(24) if WIN[(p_, k)][0]] for p_ in range(len(phases)) if phases[p_][0] != "text"},
            probes=probes)
 print(json.dumps(res), flush=True)
+resume.done()
 if out: open(out, "a").write(json.dumps(res) + "\n")
