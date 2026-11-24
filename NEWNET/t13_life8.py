@@ -5,6 +5,7 @@ texts: right share on 2,000 bytes of A never read, from 600,000) and the B test 
 Control: TA=0 (B only). Usage: python3 t13_life8.py [life=ctx|texts TA TB TR G seed ...net8 parameters]"""
 import sys, numpy as np
 import importlib
+import resume
 def num(v):
     for f in (int, float):
         try: return f(v)
@@ -72,16 +73,26 @@ else:
     def test_a(): return run(SH[600000:600000 + NT + 1], False).mean()
     A1 = None; B1 = EM[50000:]; Bt = EM[600000:600000 + NT + 1]
 test = lambda: (test_a(), run(Bt, False).mean())
-if TA: A1(TA) if life == "ctx" else run(SH[:TA + 1], True)
-m1 = test()
+STATE = ("net", "rng", "srng", "store", "buf", "seen", "nread", "m1", "m2")      # saved at each stage end (resume.py; not with putback)
+stage, m1, m2 = 0, None, None
+_s = None if putback else resume.load()
+if _s: globals().update({k: _s[k] for k in STATE}); stage = _s["stage"]
+def _save(st):
+    if not putback: resume.save(dict({k: globals()[k] for k in STATE}, stage=st), f"stage {st}", True)
+if stage < 1:
+    if TA: A1(TA) if life == "ctx" else run(SH[:TA + 1], True)
+    _save(1)
+if stage < 2: m1 = test(); _save(2)
 if putback: Af1, As1 = net.Af.copy(), net.slow.A.copy()
-run(B1[:TB + 1], True); m2 = test()
+if stage < 3: run(B1[:TB + 1], True); _save(3)
+if stage < 4: m2 = test(); _save(4)
 pb = ""
 if putback:                                          # which compartment holds the loss: put each back as it was after A
     Af2, As2 = net.Af.copy(), net.slow.A.copy()
     net.Af[...] = Af1; pf = test_a(); net.Af[...] = Af2
     net.slow.A[...] = As1; ps = test_a(); net.slow.A[...] = As2
     pb = f" | A after B with the fast compartment of after A put back {pf:.3f}, the slow one {ps:.3f}"
-A1(TR) if life == "ctx" else run(SH[TA:TA + TR + 1], True)
+if stage < 5: A1(TR) if life == "ctx" else run(SH[TA:TA + TR + 1], True); _save(5)
 m3 = test()
 print(f"life={life} G={G} rho={rho} warm={warm} NT={NT} {' '.join(f'{k}={v}' for k, v in a.items())} TA={TA} TB={TB}: tests A / B   after A {m1[0]:.3f} / {m1[1]:.3f}   after B {m2[0]:.3f} / {m2[1]:.3f}   after the return {m3[0]:.3f} / {m3[1]:.3f}" + pb)
+resume.done()
