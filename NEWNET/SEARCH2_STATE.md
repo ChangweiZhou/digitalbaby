@@ -70,3 +70,16 @@ The first t13 check, before the C generator was saved, differed in the 3rd decim
 
 - 01:42 UTC: S3a merged (seeds 2-3 of E1 cC=128 M=32 and E4 cC=128 M=32 rc_all=1). Over seeds 1-3, rc_all=1 adds about +0.006 on both lives (+0.007 life23, +0.005 life27; seed spread ≤0.001) and leaves the rest unchanged. rc_all=1 is kept in the leading line. Running: S4a-d only.
 - 02:18 UTC: S4c merged (seeds 2-3 of M=64). Over seeds 1-3, M=64 beats M=32 by about +0.01 on both lives and on code, beyond the seed spread; moby gains are within the spread. Running: S4a (M=128, lives), S4b (cC=128 M=128), S4d (seeds 2-3 of cC=128 M=64).
+
+## Data-scaling batch (owner approved 24 Nov ~03:00 UTC: "Do this. Send some agents.")
+Question: does a net gain more from reading more bytes, and do wider nets gain more than narrow ones? The search so far varied size only,
+with the data fixed (moby reads 16 kB). Test: t26_calib.py, seed 1, moby and code. Each net reads T = 16k, 64k or 256k bytes and is scored
+on the same 10,000 never-read bytes from the middle of the stream. It reports the right share (clip readout, as in the battery), bits and
+nats per byte (learned-temperature readout), and the bits of a back-off count table fitted on the same T bytes (reference).
+Runner datascale_batch.sh (resumable; finished jobs skipped), table datascale_summary.py. Helpers started 03:09 UTC:
+- a: E6 cC=128 M=64, on claude/newnet-ds-a-sei232
+- b: M=64 and net13 (M=16), on claude/newnet-ds-b-sei232
+- c: M=128, on claude/newnet-ds-c-sei232
+- d: E4 cC=128 M=32 rc_all=1, on claude/newnet-ds-d-sei232
+Results go in datascale_results_{a,b,c,d}.jsonl and the summaries in DATASCALE_{A,B,C,D}.md.
+Reading: the gap between nets should grow with T if moby is limited by data. Compare also against the count table's own gain.
