@@ -69,3 +69,4 @@ Identity check (resume_check.sh: the same command run whole, and run killed twic
 The first t13 check, before the C generator was saved, differed in the 3rd decimal (0.292 vs 0.293). It was found and fixed (commit 7a531da1f).
 
 - 01:42 UTC: S3a merged (seeds 2-3 of E1 cC=128 M=32 and E4 cC=128 M=32 rc_all=1). Over seeds 1-3, rc_all=1 adds about +0.006 on both lives (+0.007 life23, +0.005 life27; seed spread ≤0.001) and leaves the rest unchanged. rc_all=1 is kept in the leading line. Running: S4a-d only.
+- 02:18 UTC: S4c merged (seeds 2-3 of M=64). Over seeds 1-3, M=64 beats M=32 by about +0.01 on both lives and on code, beyond the seed spread; moby gains are within the spread. Running: S4a (M=128, lives), S4b (cC=128 M=128), S4d (seeds 2-3 of cC=128 M=64).
