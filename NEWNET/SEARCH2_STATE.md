@@ -102,3 +102,9 @@ Life scores use storage references recomputed at these sizes: life23 405,661 and
 Validation: search2_cands_q1.txt (11 candidates with known full scores) runs on the S4a helper (claude/newnet-s5a-sei232), writing search2_results_q1.tsv and SEARCH2_Q1.md. It gives the Spearman agreement with the full battery, per test and dev/held, and the wall time per test.
 The quick battery is used to choose only if the agreement is good, especially on the lives. Otherwise its sizes are revised.
 English and Chinese generation samples are to be added to each round's report (owner, 24 Nov).
+- 04:25 UTC, owner: "I did not ask for a quick battery; 2 to 16 minutes is enough to test the scaling law. Why do you need hours?" The quick-battery validation is stopped and is not used. In its place runs a scaling-law grid within 16 minutes (scaling_jobs.txt, on the S4a helper, claude/newnet-s5a-sei232; results scaling_results.jsonl, SCALING.md):
+  - nets: M = 16, 32, 64, 128 cells per column;
+  - data: T = 4k, 8k, 16k, 32k bytes read;
+  - streams: moby and code;
+  - all scored on the same 4,000 never-read bytes.
+  The largest cell takes about 15 min, and the whole grid about 30 min on 4 cores.
