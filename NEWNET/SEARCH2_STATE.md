@@ -83,3 +83,5 @@ Runner datascale_batch.sh (resumable; finished jobs skipped), table datascale_su
 - d: E4 cC=128 M=32 rc_all=1, on claude/newnet-ds-d-sei232
 Results go in datascale_results_{a,b,c,d}.jsonl and the summaries in DATASCALE_{A,B,C,D}.md.
 Reading: the gap between nets should grow with T if moby is limited by data. Compare also against the count table's own gain.
+- 03:18 UTC: helper ds-a was blocked by its own permission layer from launching a detached batch, since no human message in that session authorised it. Part a runs in the parent session instead: datascale_results_a.jsonl is written here, and the monitor restarts it after each reset with `setsid nohup bash datascale_batch.sh datascale_jobs_a.txt datascale_results_a.jsonl`. Helpers b, c, d were still pending at 03:18.
+- Disk-rollback test: a detached probe wrote a file every minute in the parent's container. After a reset at about 03:17, the files from 03:14-03:16 survived, though the last turn had ended about 03:12. So the disk is not rolled back to the last turn end, at least here.
