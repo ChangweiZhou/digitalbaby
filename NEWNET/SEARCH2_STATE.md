@@ -67,3 +67,5 @@ Identity check (resume_check.sh: the same command run whole, and run killed twic
 - t27 life (resumed mid-text at byte 1051 and at phase 4): IDENTICAL.
 - t13 keep/ctx (resumed at stages 2 and 3): IDENTICAL.
 The first t13 check, before the C generator was saved, differed in the 3rd decimal (0.292 vs 0.293). It was found and fixed (commit 7a531da1f).
+
+- 01:42 UTC: S3a merged (seeds 2-3 of E1 cC=128 M=32 and E4 cC=128 M=32 rc_all=1). Over seeds 1-3, rc_all=1 adds about +0.006 on both lives (+0.007 life23, +0.005 life27; seed spread ≤0.001) and leaves the rest unchanged. rc_all=1 is kept in the leading line. Running: S4a-d only.
