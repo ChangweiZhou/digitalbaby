@@ -1,4 +1,6 @@
-/* lt.c - a local tissue (24 Nov 2026). Event-driven; a whole phase of bytes runs in one call.
+/* NON-COMPLIANT REFERENCE ONLY (25 Nov 2026): this network breaks the owner's requirements: global readout (rho_o up to 0.5),
+   fixed connection counts, a fixed firing share (k-WTA), and no feedback cells or error relay into the tissue. Not a base for new work.
+   lt.c - a local tissue (24 Nov 2026). Event-driven; a whole phase of bytes runs in one call.
    Locality: every cell has bounded fan-in (P proximal + S distal slots) and bounded fan-out (FO distal, FOP proximal, FOO to the
    output cells); a connection is made only within a radius (ring coordinates fixed at birth); only region 0 reads the input lines;
    the output cells read only the boundary region (outr: 0 = last region, 1 = region 0).

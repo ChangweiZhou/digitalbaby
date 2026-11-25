@@ -1,5 +1,7 @@
 # NEWNET/LOCAL 三轮局部网络搜索结果（2026-11-24，本机 Mac）
 
+> **NON-COMPLIANT REFERENCE ONLY (25 Nov 2026).** `lt`, `lt2`, `lt3` and `lt3o` break the owner's requirements: global readout (`rho_o` up to 0.5), fixed connection counts, a fixed firing share, and no feedback cells or error relay into the tissue. None of them is a base for new work.
+
 三轮已于 11 月 24 日按要求全部停止。所有数字都是 log-perplexity，单位 nats/字节，负的变化表示变好。
 
 ## 文件

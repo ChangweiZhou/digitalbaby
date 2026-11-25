@@ -1,4 +1,6 @@
-/* lt3o.c - lt3.c with the same mechanism and faster code (24 Nov 2026). Not bit-identical to lt3: random draws and visiting order
+/* NON-COMPLIANT REFERENCE ONLY (25 Nov 2026): this network breaks the owner's requirements: global readout (rho_o up to 0.5),
+   fixed connection counts, a fixed firing share (k-WTA), and no feedback cells or error relay into the tissue. Not a base for new work.
+   lt3o.c - lt3.c with the same mechanism and faster code (24 Nov 2026). Not bit-identical to lt3: random draws and visiting order
    differ. Changes, each keeping lt3's rule:
    1. grow: lt3 scanned every active source of every allowed population for every learning cell (cost ~ active x active). Here the
       active lists are kept sorted by cell index (= position on the ring), the reach regions of the cell (its own position and its

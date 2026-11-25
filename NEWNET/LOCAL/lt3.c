@@ -1,4 +1,6 @@
-/* lt3.c - lt2 plus mechanism dimensions (24 Nov 2026), each off by default (off = lt2's computation):
+/* NON-COMPLIANT REFERENCE ONLY (25 Nov 2026): this network breaks the owner's requirements: global readout (rho_o up to 0.5),
+   fixed connection counts, a fixed firing share (k-WTA), and no feedback cells or error relay into the tissue. Not a base for new work.
+   lt3.c - lt2 plus mechanism dimensions (24 Nov 2026), each off by default (off = lt2's computation):
    TAG (synaptic tagging and capture: changes go to a labile part decaying with TAUTAG bytes; a cell that fires with a dendritic
    event moves CAP of its labile part into the lasting part), GATE (plasticity in a block only when the block is surprised: at least GTH
    of its firing cells had no dendritic event), TURN (every 1,000 bytes the share TURN/10 of the least-used cells of each population

@@ -1,4 +1,6 @@
-/* lt2.c - a local tissue of K populations (cell kinds), 24 Nov 2026. Event-driven synapses; one call reads a whole phase.
+/* NON-COMPLIANT REFERENCE ONLY (25 Nov 2026): this network breaks the owner's requirements: global readout (rho_o up to 0.5),
+   fixed connection counts, a fixed firing share (k-WTA), and no feedback cells or error relay into the tissue. Not a base for new work.
+   lt2.c - a local tissue of K populations (cell kinds), 24 Nov 2026. Event-driven synapses; one call reads a whole phase.
    Sheet: every population and the sensor array lie on one ring [0,1). A cell reads only sources within its reach (radius rho) or
    inside its own npatch distant patches (fixed at birth); every cell has FP proximal + FD distal slots (fan-in) and every source has
    at most FO outgoing synapses (fan-out; sensor lines FOI). Only populations with reads_in read the sensor lines; only readable

@@ -1,5 +1,7 @@
 # lt3o check (24–25 Nov 2026)
 
+> **NON-COMPLIANT REFERENCE ONLY (25 Nov 2026).** `lt`, `lt2`, `lt3` and `lt3o` break the owner's requirements: global readout (`rho_o` up to 0.5), fixed connection counts, a fixed firing share, and no feedback cells or error relay into the tissue. None of them is a base for new work.
+
 `lt3o.c` is `lt3.c` with faster code and the same mechanism. Its results are not bit-identical to lt3, because random draws and visiting order differ. The file header lists every change and one small deviation: a source that gains room partway through a byte is offered from the next byte.
 
 To run the scripts, build the two libraries in this folder first:
