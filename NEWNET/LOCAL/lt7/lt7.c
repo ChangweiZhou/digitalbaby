@@ -113,7 +113,7 @@ typedef struct {
     int *so0, *so, *os0, *os;                        /* static: output cells near each feedback site, and sites near each output */
     int *hist, *lag, HL, head; int T, have; uint64_t rs;   /* input history ring (HL bytes) and the lag of each input-line group */
     double Ds[V], beta, c[V];
-    float lnl; long st_made, st_cut, st_offers, st_viol, st_fall; int norelay, biasonly;
+    float lnl; long st_made, st_cut, st_offers, st_viol, st_fall; int norelay, biasonly; long st_visit;
     void *snap; size_t snapsz;
 } Net;
 
@@ -141,7 +141,7 @@ static inline void decay2(Net *h, Syn *s, int d, float *f, float *sl) {     /* e
     float ea = expf(-(float)h->gd[D_LAM] * d), em = expf(-(float)h->gd[D_MU] * d);
     *f = s->w * ea; *sl = s->sl * em; }
 static inline void dw(Net *h, Syn *s, float d) { s->w += d; if (d > 0) { float c = (float)h->gd[D_KAP] * s->w; s->sl += c; s->w -= c; } }   /* tag and capture */
-static inline float weff(Net *h, Syn *s) { int d = h->T - s->tl; if (d <= 0) return s->w + s->sl; float f, g; decay2(h, s, d, &f, &g); return f + g; }
+static inline float weff(Net *h, Syn *s) { h->st_visit++; int d = h->T - s->tl; if (d <= 0) return s->w + s->sl; float f, g; decay2(h, s, d, &f, &g); return f + g; }
 static inline float need(Net *h, int i) { float q = (h->rho[i] - rate(h, i)) / h->rho[i]; return q < 0 ? 0 : (q > 1 ? 1 : q); }
 static inline float excess(Net *h, int i) { float q = (rate(h, i) - h->rho[i]) / h->rho[i]; return q < 0 ? 0 : (q > 1 ? 1 : q); }
 
@@ -164,7 +164,7 @@ static void syn_make(Net *h, int pre, int post, int ty, float w) {
     budget(h, post, ty, (float)h->gd[bix[ty]]);
 }
 static int syn_touch(Net *h, int id) {                     /* bring to now; withdraw if of no use. 0 = withdrawn */
-    Syn *s = h->S + id; int d = h->T - s->tl; if (d > 0) { float f, g; decay2(h, s, d, &f, &g); s->w = f; s->sl = g; } s->tl = h->T;
+    Syn *s = h->S + id; h->st_visit++; int d = h->T - s->tl; if (d > 0) { float f, g; decay2(h, s, d, &f, &g); s->w = f; s->sl = g; } s->tl = h->T;
     if (s->w + s->sl < h->gd[D_WMIN]) { syn_cut(h, id); return 0; } return 1;
 }
 static inline float elig(Net *h, Syn *s) { int d = h->T - s->tl; return d > 0 ? s->el * expf(h->lel[s->post] * d) : s->el; }
@@ -487,3 +487,6 @@ void lt7_outstats(Net *h, long *a) {
     a[0] = ns; a[2] = ns ? (long)(1000 * sw / ns) : 0; a[4] = (long)(1000 * sb / h->nk[K_OUT]);
     double sz = 0; for (int k = 0; k < h->out_touch.n; k++) sz += h->zc[h->out_touch.a[k]]; a[6] = h->out_touch.n; a[5] = h->out_touch.n ? (long)(1000 * sz / h->out_touch.n) : 0;
 }
+
+/* operation count: synapse visits (reads and touches) since birth */
+long lt7_visits(Net *h) { return h->st_visit; }

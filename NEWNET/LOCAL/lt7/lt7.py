@@ -20,8 +20,8 @@ GD = ["r", "r_out", "r_fb", "tau_lo", "tau_hi", "rho_lo", "rho_hi", "tau_r", "et
       "lam", "w_min", "eta_h", "eta_e", "eta_o", "eta_b", "eta_d", "eta_i", "eta_q", "eta_r", "eps", "eta_t", "g_acc", "b0", "tau_el", "tr_out", "kap", "mu", "p_ret", "B_exc", "B_inh", "B_dis", "B_out", "B_rd", "B_rly"]
 DEF = dict(KIN=2, KOUT=16, KFB=8, ntis=4096, ninh=1024, nrly=1024, S=3, H=2, seed=1,
            r=0.12, r_out=0.25, r_fb=0.15, tau_lo=1.0, tau_hi=16.0, rho_lo=0.02, rho_hi=0.1, tau_r=500.0, eta_th=0.01, th0=0.3,
-           w0=0.4, wi0=0.3, d0=0.2, g_d=0.3, p_off=0.3, p_dis=0.3, lam=2e-5, w_min=0.01, eta_h=0.02, eta_e=0.005, eta_o=0.5,
-           eta_b=0.01, eta_d=0.05, eta_i=0.01, eta_q=0.05, eta_r=0.05, eps=0.03, eta_t=0.01, g_acc=5.0, b0=-4.0, tau_el=4.0, tr_out=8.0, kap=0.01, mu=1e-6, p_ret=0.0, B_exc=3.0, B_inh=2.0, B_dis=2.0, B_out=20.0, B_rd=2.0, B_rly=3.0)
+           w0=0.4, wi0=0.3, d0=0.2, g_d=0.3, p_off=0.3, p_dis=0.3, lam=0.0, w_min=0.01, eta_h=0.02, eta_e=0.005, eta_o=0.5,
+           eta_b=0.01, eta_d=0.05, eta_i=0.01, eta_q=0.05, eta_r=0.05, eps=0.03, eta_t=0.01, g_acc=5.0, b0=-4.0, tau_el=4.0, tr_out=8.0, kap=0.01, mu=1e-6, p_ret=0.0, B_exc=3.0, B_inh=2.0, B_dis=2.0, B_out=5.0, B_rd=2.0, B_rly=3.0)
 # input passages: (offset, length); the lags are their union. Short passages from different places, not one window.
 PASSAGES = [(d, 1) for d in (0, 1, 2, 3, 4, 6, 8, 12, 16, 24, 32, 48, 64, 96, 128, 192)]   # per-synapse delays, log-spaced
 
@@ -37,7 +37,10 @@ AUD = ["syn_exc", "syn_inh", "syn_dis", "syn_out", "syn_rly", "syn_rd", "localit
 class Net7:
     def __init__(self, cand=None, scale=1):
         o = dict(DEF, **(cand or {})); lags = lags_of(o.get("passages", PASSAGES)); o["L"] = len(lags)
-        for k in ("ntis", "ninh", "nrly"): o[k] = int(o[k] * scale)
+        # a bigger network is a larger sheet at the same density (as cortex grows in area): every cell count grows with scale,
+        # and the radii shrink by 1/sqrt(scale) on the unit torus, so each cell keeps the same number of neighbours
+        for k in ("ntis", "ninh", "nrly", "KOUT", "KIN"): o[k] = int(round(o[k] * scale))
+        for k in ("r", "r_out", "r_fb"): o[k] = o[k] / scale ** 0.5
         self.o = o; gi = np.array([int(o[k]) for k in GI], np.int32); gd = np.array([float(o[k]) for k in GD])
         lg = np.array(lags, np.int32); self.lags = lags
         self._keep = (gi, gd, lg); self.h = _lib.lt7_new(gi.ctypes.data, gd.ctypes.data, lg.ctypes.data)
@@ -80,3 +83,5 @@ def biasonly_test(net, x):
 def outstats(net):
     a = np.zeros(7, np.int64); _lib.lt7_outstats(net.h, a.ctypes.data)
     return dict(zip(["syn", "outputs_with_syn", "mean_w_x1000", "max_w_x1000", "mean_bias_x1000", "mean_drive_x1000", "driven"], a.tolist()))
+_lib.lt7_visits.restype = ctypes.c_long; _lib.lt7_visits.argtypes = [ctypes.c_void_p]
+def visits(net): return _lib.lt7_visits(net.h)

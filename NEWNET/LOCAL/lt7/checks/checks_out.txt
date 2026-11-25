@@ -25,3 +25,8 @@ PASS   c1_test_is_pure: {"two_tests": [3.6342710819081483, 3.6342710819081483], 
 PASS   c3_cycle: {"test_nats_every_5k": [0.031, 0.0283, 0.0295, 0.0327]}
 FAIL   c4_memory_beyond_window: {"answer_nats_every_10k": [5.573, 5.5737, 5.0892, 5.2651, 5.7435, 5.0204]}
 FAIL   c5_relay_ablation: {"memory_full": 5.0204, "memory_norelay": 5.0037, "english_full": 3.4843, "english_norelay": 3.4701}
+PASS   c1_test_is_pure: {"two_tests": [3.4463198978801106, 3.4463198978801106], "with_tests": 3.37018581116971, "without_tests": 3.37018581116971}
+PASS   c2_requirements: {"audit": {"syn_exc": 25050, "syn_inh": 7592, "syn_dis": 6497, "syn_out": 25407, "syn_rly": 23657, "syn_rd": 25986, "locality_violations": 0, "fanin_tis_max": 10, "fanin_tis_mean_x1000": 4753, "fanin_out_max": 138, "tis_with_input": 2048, "tis_rate_mean_x1e6": 67590, "tis_rate_p10_x1e6": 14176, "tis_rate_p90_x1e6": 144027, "made": 3635803, "cut": 3521614, "tis_reading_relay": 2048, "relay_with_input": 1024, "syn_touching_answer": 0, "syn_into_interface": 0, "fanout_tis_max": 27, "tis_silent_x1000": 0}, "fanin_hist": {"1": 1, "2": 44, "3": 346, "4": 566, "5": 525, "6": 345, "7": 142, "8": 60, "9": 14, "10": 5}, "largest_share": 0.276}
+PASS   c3_cycle: {"test_nats_every_5k": [0.1585, 0.0849, 0.0665, 0.0482]}
+PASS   c7_tissue_reaches_output: {"full_vs_biasonly_every_16k": [[3.5294, 3.7095], [3.4078, 3.6032], [3.4239, 3.6304], [3.4434, 3.6201]], "out": {"syn": 25407, "outputs_with_syn": 917, "mean_w_x1000": 114, "max_w_x1000": 4643, "mean_bias_x1000": -3748, "mean_drive_x1000": 79, "driven": 387}}
+FAIL   c6_cost: {"us_per_byte": [[626.1, 735.9], [1363.0, 1587.4], [4115.9, 4962.1]], "exponent_in_cells": 1.38, "late_over_early": 1.21, "synapses_at_45k": [114608, 223915, 454585]}
